@@ -1,0 +1,146 @@
+{
+  "name": "The Unfinished March",
+  "version": "1.0.0",
+  "creator": "AIME Education",
+  "description": "An interactive lesson exploring the civil rights movement in American history, from legal segregation and Brown v. Board of Education through the ongoing struggle for equality and justice.",
+  "subject": "US History",
+  "topic": "Civil Rights Movement",
+  "creationDate": "2026-02-09",
+  "lastModified": "2026-02-09",
+  "totalSlides": 16,
+  "estimatedDuration": "45-60 minutes",
+  "gradeLevel": "9-12",
+  "slides": [
+    {
+      "id": 1,
+      "file": "slide01.html",
+      "title": "The Boiling Point",
+      "description": "Introduction to the pressure building in American society leading to the civil rights movement",
+      "notes": "Welcome students to this lesson on the Civil Rights Movement. This opening slide sets the stage for understanding the historical context.\n\nKey Points to Emphasize:\n• The period after World War II saw increasing tensions around racial inequality\n• African Americans who fought for freedom abroad returned to face segregation at home\n• Economic and social pressures were building throughout the 1940s and early 1950s\n• This wasn't a sudden movement - it was the result of decades of systematic oppression\n\nDiscussion Prompt: Ask students what they know about life in America during this time period. What might 'separate but equal' have meant in practice?\n\nTime: 3-5 minutes"
+    },
+    {
+      "id": 2,
+      "file": "slide02.html",
+      "title": "The Case of the Separate Schools",
+      "description": "Brown v. Board of Education and the challenge to 'separate but equal'",
+      "notes": "Brown v. Board of Education (1954) - A Landmark Decision\n\nBackground Information:\n• Linda Brown was a third-grader in Topeka, Kansas who had to walk miles to an all-Black school\n• Thurgood Marshall and the NAACP Legal Defense Fund argued the case\n• This actually combined five separate cases from different states\n• Chief Justice Earl Warren wrote the unanimous decision\n\nKey Quote to Share: 'Separate educational facilities are inherently unequal' - Chief Justice Warren\n\nImportant Context:\n• Overturned Plessy v. Ferguson (1896)\n• Relied on psychological studies showing harm to Black children\n• Implementation was slow - 'with all deliberate speed' became an excuse for delay\n• Massive resistance in the South followed\n\nActivity Suggestion: Have students imagine being a parent in 1954 hearing this news. What would their reactions be? How might reactions differ based on where they lived?\n\nTime: 8-10 minutes"
+    },
+    {
+      "id": 3,
+      "file": "slide03.html",
+      "title": "Slide 3",
+      "description": "Lesson content",
+      "notes": "This slide continues exploring the early civil rights movement. Use the visual materials to engage students with primary sources from the era.\n\nRemember to draw connections between historical events and contemporary issues where appropriate."
+    },
+    {
+      "id": 4,
+      "file": "slide04.html",
+      "title": "Slide 4",
+      "description": "Lesson content"
+    },
+    {
+      "id": 5,
+      "file": "slide05.html",
+      "title": "Slide 5",
+      "description": "Lesson content"
+    },
+    {
+      "id": 6,
+      "file": "slide06.html",
+      "title": "Slide 6",
+      "description": "Lesson content"
+    },
+    {
+      "id": 7,
+      "file": "slide07.html",
+      "title": "Slide 7",
+      "description": "Lesson content"
+    },
+    {
+      "id": 8,
+      "file": "slide08.html",
+      "title": "Slide 8",
+      "description": "Lesson content"
+    },
+    {
+      "id": 9,
+      "file": "slide09.html",
+      "title": "Slide 9",
+      "description": "Lesson content"
+    },
+    {
+      "id": 10,
+      "file": "slide10.html",
+      "title": "Slide 10",
+      "description": "Lesson content"
+    },
+    {
+      "id": 11,
+      "file": "slide11.html",
+      "title": "Slide 11",
+      "description": "Lesson content"
+    },
+    {
+      "id": 12,
+      "file": "slide12.html",
+      "title": "Slide 12",
+      "description": "Lesson content"
+    },
+    {
+      "id": 13,
+      "file": "slide13.html",
+      "title": "Slide 13",
+      "description": "Lesson content"
+    },
+    {
+      "id": 14,
+      "file": "slide14.html",
+      "title": "Slide 14",
+      "description": "Lesson content"
+    },
+    {
+      "id": 15,
+      "file": "slide15.html",
+      "title": "Slide 15",
+      "description": "Lesson content"
+    },
+    {
+      "id": 16,
+      "file": "slide16.html",
+      "title": "Slide 16",
+      "description": "Lesson content"
+    }
+  ],
+  "resources": [
+    {
+      "type": "stylesheet",
+      "file": "styles.css",
+      "description": "Main stylesheet for lesson presentation"
+    },
+    {
+      "type": "script",
+      "file": "navigation.js",
+      "description": "Navigation and interaction logic"
+    },
+    {
+      "type": "directory",
+      "path": "images/",
+      "description": "Image assets for the lesson"
+    }
+  ],
+  "features": {
+    "mathJax": true,
+    "interactiveVisuals": true,
+    "splitLayout": true
+  },
+  "tags": [
+    "history",
+    "civil-rights",
+    "american-history",
+    "social-studies",
+    "interactive",
+    "high-school"
+  ],
+  "packFormat": "aimepack",
+  "packFormatVersion": "1.0"
+}

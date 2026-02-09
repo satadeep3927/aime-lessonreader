@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: The Power of a Single Seat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>The Power of a Single Seat</h1>
+                <p>A new legal reality is one thing. Changing everyday life is another.</p>
+                <p>In Montgomery, Alabama, in 1955, the city buses have rules. White passengers sit in the front, Black passengers sit in the back. If the white section fills up, a Black person must give up their seat.</p>
+                <p>One day, a seamstress named Rosa Parks decides not to move. Her simple act of defiance will ignite a firestorm.</p>
+            </div>
+            <div class="visual-column">
+                <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="20" y="50" width="460" height="150" rx="15" fill="#f0e68c" stroke="#6c757d" stroke-width="2"/>
+                    <rect x="40" y="180" width="420" height="10" fill="#8b4513"/>
+                    <line x1="250" y1="50" x2="250" y2="200" stroke-dasharray="5,5" stroke="#6c757d" stroke-width="2"/>
+                    <text x="135" y="40" font-family="Poppins" font-size="16" text-anchor="middle">"White Section"</text>
+                    <text x="365" y="40" font-family="Poppins" font-size="16" text-anchor="middle">"Colored Section"</text>
+                    <!-- Seats -->
+                    <rect x="60" y="120" width="30" height="30" fill="#fff" stroke="#000"/>
+                    <rect x="110" y="120" width="30" height="30" fill="#fff" stroke="#000"/>
+                    <rect x="160" y="120" width="30" height="30" fill="#fff" stroke="#000"/>
+                    <rect x="280" y="120" width="30" height="30" fill="#6c757d" stroke="#000"/>
+                    <rect id="rosa-seat" x="330" y="120" width="30" height="30" fill="#dc3545" stroke="#000" stroke-width="3">
+                        <animate attributeName="fill" from="#6c757d" to="#dc3545" dur="3s" begin="1s" fill="freeze" />
+                    </rect>
+                    <rect x="380" y="120" width="30" height="30" fill="#6c757d" stroke="#000"/>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+</body>
+</html>

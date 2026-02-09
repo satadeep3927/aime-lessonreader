@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AIME Lesson Reader",
+  "version": "0.1.0",
+  "identifier": "com.aime52.lessonreader",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "splash",
+        "title": "AIME Lesson Reader",
+        "width": 800,
+        "height": 500,
+        "center": true,
+        "resizable": false,
+        "decorations": false,
+        "alwaysOnTop": false,
+        "url": "splash.html",
+        "transparent": true
+      },
+      {
+        "label": "main",
+        "title": "AIME Lesson Reader",
+        "width": 1200,
+        "height": 800,
+        "center": true,
+        "decorations": false,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' asset: http://asset.localhost https://asset.localhost https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-eval' asset: http://asset.localhost https://asset.localhost https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' asset: http://asset.localhost https://asset.localhost; img-src 'self' asset: http://asset.localhost https://asset.localhost https: data: blob:; font-src 'self' asset: http://asset.localhost data:; connect-src 'self' asset: http://asset.localhost https:; frame-src 'self' asset: http://asset.localhost https://asset.localhost",
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": [
+            "$TEMP/**",
+            "$APPDATA/**",
+            "$RESOURCE/**"
+          ],
+          "deny": []
+        }
+      }
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

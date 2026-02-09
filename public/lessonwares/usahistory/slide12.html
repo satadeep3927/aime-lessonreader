@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: The Voting Test (Simulation)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>The Voting Test</h1>
+                <p>Could you pass a 1960s literacy test?</p>
+                <p>These tests were not about literacy. They were tools of oppression, with impossible questions and biased grading. Failure meant you could not vote.</p>
+                <p>Try this question from a real Alabama literacy test. Your answer must be perfect.</p>
+            </div>
+            <div class="visual-column">
+                <div class="simulation-container">
+                    <p id="literacy-test-question">The news is submitted to the press by the ________ ________, which comes from all over the country.</p>
+                    <input type="text" id="literacy-test-input" placeholder="Type your two-word answer here">
+                    <button id="literacy-submit-btn">Submit Answer</button>
+                    <div id="literacy-feedback"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const submitBtn = document.getElementById('literacy-submit-btn');
+            const input = document.getElementById('literacy-test-input');
+            const feedback = document.getElementById('literacy-feedback');
+
+            submitBtn.addEventListener('click', () => {
+                const userAnswer = input.value.trim().toLowerCase();
+                // The actual answer was 'Associated Press', but registrars could fail people for any reason.
+                const correctAnswer = "associated press";
+
+                if (userAnswer === correctAnswer) {
+                    feedback.textContent = `Correct. But the registrar doesn't like your handwriting. FAILED.`;
+                    feedback.style.color = '#dc3545';
+                } else if (userAnswer) {
+                    feedback.textContent = `Incorrect. The answer is "Associated Press". You have FAILED.`;
+                    feedback.style.color = '#dc3545';
+                } else {
+                     feedback.textContent = `You must provide an answer. You have FAILED.`;
+                     feedback.style.color = '#dc3545';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

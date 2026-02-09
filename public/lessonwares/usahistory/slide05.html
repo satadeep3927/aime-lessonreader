@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: Anatomy of a Boycott</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>Anatomy of a Boycott</h1>
+                <p>Rosa Parks' arrest sparks outrage. The Black community of Montgomery organizes. For 381 days, they refuse to ride the city buses.</p>
+                <p>They walk, they carpool, they create their own taxi services. They endure harassment and economic hardship.</p>
+                <p>This is non-violent direct action. It's not passive waiting; it's an active, coordinated, and powerful economic protest that brings a city's transit system to its knees.</p>
+            </div>
+            <div class="visual-column">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .bus-money { animation: drain 4s forwards; animation-delay: 1s; }
+                        .community-money { animation: grow 4s forwards; animation-delay: 1s; }
+                        @keyframes drain {
+                            from { transform: scaleY(1); }
+                            to { transform: scaleY(0.1); }
+                        }
+                        @keyframes grow {
+                            from { transform: scaleY(0.1); }
+                            to { transform: scaleY(1); }
+                        }
+                    </style>
+                    <!-- Bus Company Revenue -->
+                    <rect x="50" y="100" width="150" height="250" fill="#e9ecef" />
+                    <rect class="bus-money" x="50" y="100" width="150" height="250" fill="#dc3545" transform-origin="bottom center"/>
+                    <text x="125" y="80" font-family="Poppins" font-weight="800" text-anchor="middle">Bus Company Revenue</text>
+                    <text x="125" y="380" font-family="Poppins" font-size="24" text-anchor="middle">BEFORE</text>
+
+                    <!-- Community Alternatives -->
+                    <rect x="300" y="100" width="150" height="250" fill="#e9ecef" />
+                    <rect class="community-money" x="300" y="100" width="150" height="250" fill="#198754" transform-origin="bottom center" transform="scaleY(0.1)"/>
+                    <text x="375" y="80" font-family="Poppins" font-weight="800" text-anchor="middle">Community Alternatives</text>
+                    <text x="375" y="380" font-family="Poppins" font-size="24" text-anchor="middle">DURING BOYCOTT</text>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+</body>
+</html>

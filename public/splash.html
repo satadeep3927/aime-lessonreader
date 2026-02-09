@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIME Lesson Reader</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .splash-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .left-panel {
+        width: 50%;
+        background: #ffffff;
+        padding: 50px 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+      }
+
+      .logo-section {
+        margin-bottom: 30px;
+      }
+
+      .logo {
+        width: 120px;
+        height: auto;
+        margin-bottom: 50px;
+      }
+
+      .title-section {
+        margin-bottom: 40px;
+      }
+
+      .title {
+        font-size: 36px;
+        font-weight: 400;
+        color: #000000;
+        margin-bottom: 15px;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+        font-family:
+          "Segoe UI",
+          -apple-system,
+          BlinkMacSystemFont,
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+      }
+
+      .subtitle {
+        font-size: 17px;
+        color: #333;
+        font-weight: 400;
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+
+      .content-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .info-block {
+        line-height: 1.6;
+      }
+
+      .info-text {
+        font-size: 13px;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        font-weight: 400;
+      }
+
+      .copyright {
+        font-size: 13px;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+        font-weight: 400;
+      }
+
+      .legal-text {
+        font-size: 13px;
+        color: #1a1a1a;
+        margin-bottom: 2px;
+        line-height: 1.5;
+      }
+
+      .loading-text {
+        font-size: 13px;
+        color: #1a1a1a;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .credits {
+        font-size: 12px;
+        color: #1a1a1a;
+        line-height: 1.7;
+        font-weight: 400;
+      }
+
+      .company {
+        font-size: 14px;
+        color: #999;
+        font-weight: 500;
+      }
+
+      .bottom-section {
+        margin-top: auto;
+      }
+
+      .progress-container {
+        margin-bottom: 20px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #e5e5e5;
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #1a8b9d 0%, #16a4ba 100%);
+        width: 0%;
+        animation: loading 3s ease-in-out forwards;
+        border-radius: 2px;
+      }
+
+      @keyframes loading {
+        0% {
+          width: 0%;
+        }
+        100% {
+          width: 100%;
+        }
+      }
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .version {
+        font-size: 12px;
+        color: #999;
+        font-weight: 500;
+      }
+
+      .percentage {
+        font-size: 12px;
+        color: #666;
+        font-weight: 600;
+      }
+
+      .right-panel {
+        width: 50%;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .splash-image-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .splash-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="splash-container">
+      <!-- Left Panel - White Background -->
+      <div class="left-panel">
+        <div class="logo-section">
+          <img src="assets/images/logofull.png" alt="AIME Logo" class="logo" />
+
+          <div class="title-section">
+            <h1 class="title">Lesson Reader</h1>
+            <p class="subtitle">Advanced Educational Content Platform</p>
+          </div>
+        </div>
+
+        <div class="bottom-section">
+          <div class="info-block">
+            <p class="copyright">© 2024-2026 AIME Inc. All rights reserved.</p>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+            <div class="progress-info">
+              <span class="version">Version 0.1.0</span>
+              <span class="percentage" id="percentage">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel - Splash Image -->
+      <div class="right-panel">
+        <div class="splash-image-container">
+          <img
+            src="assets/images/splash.jpg"
+            alt="Splash"
+            class="splash-image"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Animate percentage counter
+      let percent = 0;
+      const percentageEl = document.getElementById("percentage");
+
+      const interval = setInterval(() => {
+        if (percent >= 100) {
+          clearInterval(interval);
+          percentageEl.textContent = "100%";
+
+          // Close splash and show main window
+          setTimeout(async () => {
+            try {
+              if (window.__TAURI_INTERNALS__) {
+                await window.__TAURI_INTERNALS__.invoke("close_splashscreen");
+              } else {
+                console.error("Tauri API not available");
+              }
+            } catch (error) {
+              console.error("Error closing splash screen:", error);
+            }
+          }, 300);
+        } else {
+          percent += 2;
+          percentageEl.textContent = percent + "%";
+        }
+      }, 30);
+    </script>
+  </body>
+</html>

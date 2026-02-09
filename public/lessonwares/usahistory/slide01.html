@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: The Boiling Point</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>The Boiling Point</h1>
+                <p>Imagine a giant pot of water sitting on a stove. For decades, the heat has been slowly turned up.</p>
+                <p>One law adds a little heat. An unfair rule adds more. A silenced voice turns the dial even higher.</p>
+                <p>What happens when the pressure becomes too much? What does it look like when an entire society starts to boil over?</p>
+            </div>
+            <div class="visual-column">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .pot-body { fill: #6c757d; }
+                        .water { fill: #a1c4fd; }
+                        .flame { fill: #ffc107; animation: flicker 2s infinite linear; }
+                        .bubble { fill: #e9ecef; animation: rise 4s infinite ease-in; }
+                        @keyframes flicker {
+                            0%, 100% { transform: scaleY(1) skewX(0); }
+                            50% { transform: scaleY(1.1) skewX(5deg); }
+                        }
+                        @keyframes rise {
+                            0% { transform: translateY(0); opacity: 1; }
+                            90% { opacity: 1; }
+                            100% { transform: translateY(-150px); opacity: 0; }
+                        }
+                        .bubble1 { animation-delay: 0s; }
+                        .bubble2 { animation-delay: 1s; }
+                        .bubble3 { animation-delay: 2.5s; }
+                    </style>
+                    <path class="pot-body" d="M50,150 a150,50 0 0,0 300,0 v150 a20,20 0 0,1 -20,20 h-260 a20,20 0 0,1 -20,-20 z"/>
+                    <path class="water" d="M60,150 a140,40 0 0,0 280,0 v10 H60z" />
+                    <circle class="bubble bubble1" cx="120" cy="200" r="8"/>
+                    <circle class="bubble bubble2" cx="200" cy="200" r="12"/>
+                    <circle class="bubble bubble3" cx="280" cy="200" r="6"/>
+                    <g transform="translate(150, 330)">
+                      <path class="flame" d="M50,0 C-10,-80 110,-80 50,-150 C-10,-80 110,-80 50,0" transform="scale(0.5)"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+</body>
+</html>

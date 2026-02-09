@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: From Bill to Law</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>From Bill to Law: The Final Push</h1>
+                <p>Passing a law, especially one this controversial, is a brutal fight. A bill must survive both houses of Congress before it can be signed by the President.</p>
+                <p>Opponents, led by Southern senators, launched one of the longest filibusters in history to try and kill the Civil Rights Act.</p>
+                <p>But a bipartisan coalition, fueled by public pressure, held firm, broke the filibuster, and pushed the bill over the finish line. It was a testament to the power of political will meeting a moral cause.</p>
+            </div>
+            <div class="visual-column">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        #bill { animation: journey 8s linear forwards; }
+                        @keyframes journey {
+                            0% { transform: translate(0, 0); }
+                            33% { transform: translate(160px, 0); }
+                            66% { transform: translate(160px, 150px); }
+                            100% { transform: translate(320px, 150px); }
+                        }
+                    </style>
+                    <!-- Path -->
+                    <path d="M 75 100 H 235 V 250 H 395" stroke="#ced4da" stroke-width="4" stroke-dasharray="8" fill="none"/>
+                    
+                    <!-- Stages -->
+                    <text x="75" y="60" font-family="Poppins" font-weight="800" text-anchor="middle">House of Reps</text>
+                    <rect x="25" y="70" width="100" height="60" fill="#e3f2fd" stroke="#3a7bd5" stroke-width="2"/>
+                    
+                    <text x="235" y="60" font-family="Poppins" font-weight="800" text-anchor="middle">Senate</text>
+                    <rect x="185" y="70" width="100" height="60" fill="#e3f2fd" stroke="#3a7bd5" stroke-width="2"/>
+                    
+                    <text x="235" y="210" font-family="Poppins" font-weight="800" text-anchor="middle">Filibuster</text>
+                    <rect x="185" y="220" width="100" height="60" fill="#f8d7da" stroke="#dc3545" stroke-width="2"/>
+
+                    <text x="395" y="210" font-family="Poppins" font-weight="800" text-anchor="middle">President</text>
+                    <rect x="345" y="220" width="100" height="60" fill="#d1e7dd" stroke="#198754" stroke-width="2"/>
+
+                    <!-- Bill -->
+                    <g id="bill">
+                        <rect x="60" y="85" width="30" height="30" fill="#ffc107" stroke="#000" stroke-width="1"/>
+                        <text x="75" y="105" font-family="Poppins" font-size="12" text-anchor="middle">B</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+</body>
+</html>

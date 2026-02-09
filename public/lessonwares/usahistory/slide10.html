@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: Mapping the Movement (Interactive)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>Mapping the Movement</h1>
+                <p>The Civil Rights Movement wasn't just one event in one place. It was a constellation of brave actions across the entire nation, especially the South.</p>
+                <p>Click on the dots on the map to discover the key events that happened in each city. See for yourself how the fight for freedom spread from one community to the next.</p>
+                <div id="map-info-box">
+                    <h3>Click a city to learn more!</h3>
+                    <p>Each location represents a pivotal moment in the struggle for civil rights.</p>
+                </div>
+            </div>
+            <div class="visual-column map-container">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Simplified USA Map -->
+                    <path d="M41.3,282.9l-1.3,1.9l-3.3,1.3l-3.6-1.9l-2.6,3.2l-3.3,0.6l-1.9-1.9l-3.2,1.9l-3.2-1.3l-1.3-3.2l-4.2-1.3l-2.9,1.3 l-2.6-1.3l-1.9,1.9l-3.6,1l-1.6-1.3l-1.6,1.3l-0.6,2.6l-2.6,1l-1.3-1.6l-2.6,1.3l-1.3-1.3l-1-1.6l-1.3,0.6l-1.3-1.3l-1-1.3l-1.3,1.3 L0,278.4l1.3-2.6l-1.3-1l1.3-1.6l-1-1.3l1-1.3l-1.6-1.9l1.6-1l-1.9-1.3l1.9-1l-1.6-1.3l1.3-1l-1.3-1.3l1.3-1.6l-1-1l-1.3,1.3l-1.3-1.3l-1.6,1.3l-1-1.3l-1,1.3l-1.3,0.3l-1-1.3l-1.3,1.6l-1-1.6l-1,1.3l-1.6,1.3l-1.6-1.3l-1.3-1.3l-1,1.3l-1-1.3l-1.3,1.3l-1.3,1l-1.6-1.3l-1.3,1.3l-1.6-1.3l-1.3-1.6l-1.3-1.3l-1.6,1.3l-1.3-1.3l-1-1l-1,1.3l-1.3-1.3 L450,100 L499,140 L440,290z" fill="#e9ecef" stroke="#ced4da" stroke-width="1"/>
+                    <!-- Cities -->
+                    <circle class="city-dot" id="montgomery" cx="335" cy="245" r="10" fill="#3a7bd5" />
+                    <text x="340" y="240" font-size="12">Montgomery</text>
+                    <circle class="city-dot" id="greensboro" cx="380" cy="200" r="10" fill="#3a7bd5" />
+                    <text x="385" y="195" font-size="12">Greensboro</text>
+                    <circle class="city-dot" id="selma" cx="320" cy="255" r="10" fill="#3a7bd5" />
+                    <text x="325" y="275" font-size="12">Selma</text>
+                    <circle class="city-dot" id="birmingham" cx="325" cy="230" r="10" fill="#3a7bd5" />
+                    <text x="330" y="225" font-size="12">Birmingham</text>
+                    <circle class="city-dot" id="washington" cx="410" cy="160" r="10" fill="#3a7bd5" />
+                    <text x="415" y="155" font-size="12">Washington D.C.</text>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cityData = {
+                montgomery: {
+                    title: 'Montgomery, AL (1955)',
+                    text: 'The 381-day Bus Boycott began here after Rosa Parks\' arrest, led by a young Dr. Martin Luther King Jr. It demonstrated the power of mass non-violent protest.'
+                },
+                greensboro: {
+                    title: 'Greensboro, NC (1960)',
+                    text: 'Four college students started the sit-in movement at a segregated Woolworth\'s lunch counter. The tactic quickly spread across the South, challenging segregation in public places.'
+                },
+                selma: {
+                    title: 'Selma, AL (1965)',
+                    text: 'Activists organized a march for voting rights from Selma to Montgomery. The violent response from police on "Bloody Sunday" shocked the nation and spurred the passage of the Voting Rights Act.'
+                },
+                birmingham: {
+                    title: 'Birmingham, AL (1963)',
+                    text: 'Known as "Bombingham" for its violence, this campaign involved child protesters. The brutal tactics used by police, broadcast on national TV, created immense pressure for federal intervention.'
+                },
+                washington: {
+                    title: 'Washington, D.C. (1963)',
+                    text: 'The March on Washington for Jobs and Freedom gathered over 250,000 people. It was here that Dr. King delivered his iconic "I Have a Dream" speech, a defining moment of the movement.'
+                }
+            };
+
+            const infoBox = document.getElementById('map-info-box');
+            const dots = document.querySelectorAll('.city-dot');
+
+            dots.forEach(dot => {
+                dot.addEventListener('click', (event) => {
+                    const cityId = event.target.id;
+                    const data = cityData[cityId];
+                    
+                    dots.forEach(d => d.classList.remove('active'));
+                    event.target.classList.add('active');
+
+                    infoBox.innerHTML = `<h3>${data.title}</h3><p>${data.text}</p>`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

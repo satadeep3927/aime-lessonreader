@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unfinished March: Two Visions for Freedom</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="blob"></div>
+    <main class="content-container">
+        <div class="split-layout">
+            <div class="text-column">
+                <h1>Two Visions for Freedom</h1>
+                <p>As the movement grew, two powerful voices emerged, offering different paths to the same goal: liberation.</p>
+                <p>Dr. Martin Luther King Jr. championed non-violent resistance and integration. He believed in appealing to the conscience of America to create a "Beloved Community" where all races could coexist in peace.</p>
+                <p>Malcolm X, however, argued for Black self-reliance, self-defense, and empowerment "by any means necessary." He was skeptical that the white power structure would ever willingly give up its advantages.</p>
+            </div>
+            <div class="visual-column">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- MLK Path -->
+                    <path id="mlk-path" d="M50,300 C150,100 350,100 450,300" stroke="#3a7bd5" stroke-width="4" fill="none" stroke-dasharray="10, 5"/>
+                    <text font-family="Poppins" font-size="16">
+                        <textPath href="#mlk-path" startOffset="50%" text-anchor="middle" fill="#3a7bd5">Integration & Nonviolence</textPath>
+                    </text>
+                    <circle cx="50" cy="300" r="15" fill="#3a7bd5" filter="url(#glow)"/>
+                    <text x="50" y="340" font-family="Poppins" font-weight="800" text-anchor="middle">MLK Jr.</text>
+
+                    <!-- Malcolm X Path -->
+                    <path id="x-path" d="M50,300 C150,350 350,350 450,300" stroke="#dc3545" stroke-width="4" fill="none"/>
+                    <text font-family="Poppins" font-size="16">
+                         <textPath href="#x-path" startOffset="50%" text-anchor="middle" fill="#dc3545">Self-Reliance & Self-Defense</textPath>
+                    </text>
+                    <circle cx="450" cy="300" r="15" fill="#dc3545" filter="url(#glow)"/>
+                    <text x="450" y="340" font-family="Poppins" font-weight="800" text-anchor="middle">Malcolm X</text>
+                    
+                    <text x="250" y="50" font-family="Poppins" font-weight="800" font-size="30" text-anchor="middle">FREEDOM</text>
+                </svg>
+            </div>
+        </div>
+    </main>
+    <script src="navigation.js" defer></script>
+</body>
+</html>
