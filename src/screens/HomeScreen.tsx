@@ -54,7 +54,7 @@ export const HomeScreen = () => {
 
   return (
     <div className="flex-1 overflow-auto bg-zinc-50 dark:bg-zinc-900">
-      <div className="mx-auto px-12 py-8 max-w-[1400px]">
+      <div className="mx-auto px-12 py-8 max-w-350">
         {/* Greeting Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-light text-zinc-800 dark:text-zinc-100 mb-1">
@@ -68,7 +68,7 @@ export const HomeScreen = () => {
             <button
               onClick={() => openLessonPack.mutate(undefined)}
               disabled={openLessonPack.isPending}
-              className="group relative w-[200px] h-[140px] rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all flex flex-col items-center justify-center gap-2 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-750"
+              className="group relative w-50 h-35 rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all flex flex-col items-center justify-center gap-2 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-750"
             >
               <FolderOpen className="w-12 h-12 text-zinc-400 dark:text-zinc-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
               <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
@@ -120,7 +120,7 @@ export const HomeScreen = () => {
                   className="w-full grid grid-cols-12 gap-4 px-4 py-3 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group text-left items-center"
                 >
                   <div className="col-span-6 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded bg-linear-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 flex items-center justify-center shrink-0">
                       <BookOpen className="w-4 h-4 text-white" />
                     </div>
                     <div className="min-w-0 flex-1">

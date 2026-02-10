@@ -40,10 +40,10 @@ export const SlideViewer = ({
         className="transition-transform duration-200"
         style={{ transform: `scale(${zoom / 100})` }}
       >
-        {/* Aspect ratio container - maintains 16:9 */}
+        {/* Aspect ratio container - maintains 75:46 (1500:920) to match iframe */}
         <div 
           ref={containerRef}
-          className={`aspect-video bg-white dark:bg-zinc-800 ${isFullScreen ? 'w-screen' : 'w-[min(calc(100vw-400px),calc((100vh-150px)*16/9))]'} ${isFullScreen ? '' : 'rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700'} overflow-hidden relative`}
+          className={`aspect-[75/46] bg-white dark:bg-zinc-800 ${isFullScreen ? 'w-screen' : 'w-[min(calc(100vw-400px),calc((100vh-150px)*75/46))]'} ${isFullScreen ? '' : 'rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700'} overflow-hidden relative`}
         >
           <iframe
             key={iframeKey}
@@ -51,7 +51,7 @@ export const SlideViewer = ({
             className="border-0 absolute top-0 left-0"
             style={{
               width: '1500px',
-              height: '720px',
+              height: '920px',
               transform: isFullScreen ? `scale(${window.innerWidth / 1500})` : `scale(${scale})`,
               transformOrigin: 'top left',
               colorScheme: 'light',

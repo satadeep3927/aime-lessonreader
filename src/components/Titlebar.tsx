@@ -43,6 +43,7 @@ export function Titlebar() {
   const [userGuideOpen, setUserGuideOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { currentPack, currentSlide, setCurrentPack, setCurrentSlide } = useLessonPack();
@@ -207,6 +208,10 @@ export function Titlebar() {
     setAboutOpen(true);
   };
 
+  const handleProperties = () => {
+    setPropertiesOpen(true);
+  };
+
   // Determine OS-specific styles
   const isMac = currentPlatform === "macos";
   const isWindows = currentPlatform === "windows";
@@ -277,7 +282,7 @@ export function Titlebar() {
               <MenubarItem onClick={handleCloseLesson} disabled={!currentPack}>
                 Close Lesson <MenubarShortcut>Ctrl+W</MenubarShortcut>
               </MenubarItem>
-              <MenubarItem disabled={!currentPack}>Properties</MenubarItem>
+              <MenubarItem onClick={handleProperties} disabled={!currentPack}>Properties</MenubarItem>
               <MenubarSeparator />
               <MenubarItem onClick={handleClose} variant="destructive">
                 Exit <MenubarShortcut>Alt+F4</MenubarShortcut>
@@ -620,6 +625,156 @@ export function Titlebar() {
               <p>© 2026 AIME Education. All rights reserved.</p>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Properties Dialog */}
+      <Dialog open={propertiesOpen} onOpenChange={setPropertiesOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Info className="w-5 h-5" />
+              Lesson Properties
+            </DialogTitle>
+            <DialogDescription>
+              Information about the current lesson pack
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-4 py-4">
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">Lesson Name</Label>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    {currentPack?.meta.name || 'N/A'}
+                  </p>
+                </div>
+
+                {currentPack?.meta.description && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Description</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.description}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.creator && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Creator</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.creator}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.subject && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Subject</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.subject}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.topic && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Topic</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.topic}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.gradeLevel && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Grade Level</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.gradeLevel}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.estimatedDuration && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Estimated Duration</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.estimatedDuration}
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">Total Slides</Label>
+                  <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                    {currentPack?.meta.totalSlides || currentPack?.meta.slides.length || 0}
+                  </p>
+                </div>
+
+                {currentPack?.meta.version && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Version</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.version}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.packFormat && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Pack Format</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {currentPack.meta.packFormat} v{currentPack.meta.packFormatVersion || '1.0'}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.creationDate && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Created</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {new Date(currentPack.meta.creationDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.lastModified && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Last Modified</Label>
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                      {new Date(currentPack.meta.lastModified).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+
+                {currentPack?.meta.tags && currentPack.meta.tags.length > 0 && (
+                  <div className="space-y-1">
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Tags</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {currentPack.meta.tags.map((tag: string, index: number) => (
+                        <span
+                          key={index}
+                          className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">File Location</Label>
+                  <p className="text-sm text-zinc-700 dark:text-zinc-300 break-all font-mono text-xs bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
+                    {currentPack?.extractedPath || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+          <DialogFooter>
+            <Button onClick={() => setPropertiesOpen(false)}>Close</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
