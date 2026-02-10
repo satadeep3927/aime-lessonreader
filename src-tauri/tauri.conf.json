@@ -19,7 +19,7 @@
         "center": true,
         "resizable": false,
         "decorations": false,
-        "alwaysOnTop": false,
+        "alwaysOnTop": true,
         "url": "splash.html",
         "transparent": true
       },

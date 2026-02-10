@@ -94,18 +94,19 @@ pub fn run() {
             
             // In release, the first argument is typically the file path if opened via association
             if args.len() > 1 {
-                // Try to find an efficient way to detect the pack file
+                // Try case-insensitive extension check first
                 for arg in args.iter().skip(1) {
-                    if arg.ends_with(".aimepack") {
+                    if arg.to_lowercase().ends_with(".aimepack") {
                         launch_path = Some(arg.clone());
                         break;
                     }
                 }
                 
-                // Fallback for double click if extension check fails but arg exists
-                #[cfg(not(debug_assertions))]
+                // Fallback: take the first non-flag argument
                 if launch_path.is_none() {
-                     launch_path = Some(args[1].clone());
+                     if let Some(arg) = args.iter().skip(1).find(|a| !a.starts_with("-")) {
+                         launch_path = Some(arg.clone());
+                     }
                 }
             }
 
