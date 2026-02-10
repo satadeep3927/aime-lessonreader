@@ -8,13 +8,14 @@ import { SlideSidebar } from '@/components/presentation/SlideSidebar';
 import { SlideViewer } from '@/components/presentation/SlideViewer';
 import { FloatingNavigation } from '@/components/presentation/FloatingNavigation';
 import { NotesPanel } from '@/components/presentation/NotesPanel';
+import { WhiteboardCanvas } from '@/components/presentation/WhiteboardCanvas';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export const PresentationViewer = () => {
-  const { currentPack, currentSlide, setCurrentSlide } = useLessonPack();
-  const { isPresentationMode, setIsPresentationMode, isSidebarCollapsed, setIsSidebarCollapsed, isNotesPanelVisible, zoom } = usePresentation();
+  const { currentPack, currentSlide, setCurrentSlide, saveWhiteboardData, getWhiteboardData } = useLessonPack();
+  const { isPresentationMode, setIsPresentationMode, isSidebarCollapsed, setIsSidebarCollapsed, isNotesPanelVisible, isWhiteboardMode, toggleWhiteboardMode, zoom } = usePresentation();
   const navigate = useNavigate();
   const [iframeKey, setIframeKey] = useState(0);
 
@@ -29,20 +30,17 @@ export const PresentationViewer = () => {
   const goToNextSlide = () => {
     if (currentPack && currentSlide < currentPack.meta.slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
-      setIframeKey((prev) => prev + 1);
     }
   };
 
   const goToPrevSlide = () => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
-      setIframeKey((prev) => prev + 1);
     }
   };
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
-    setIframeKey((prev) => prev + 1);
   };
 
   const togglePresentationMode = async () => {
@@ -106,6 +104,10 @@ export const PresentationViewer = () => {
       key: 'F11',
       callback: () => toggleFullScreen(),
     },
+    {
+      key: 'w',
+      callback: () => toggleWhiteboardMode(),
+    },
   ]);
 
   if (!currentPack) {
@@ -157,13 +159,23 @@ export const PresentationViewer = () => {
           />
         )}
 
-        <SlideViewer
-          slideContent={slideContent}
-          slideTitle={currentSlideData.title}
-          iframeKey={iframeKey}
-          isFullScreen={isPresentationMode}
-          zoom={zoom}
-        />
+        {/* Conditional rendering: Whiteboard or regular slide viewer */}
+        {isWhiteboardMode ? (
+          <WhiteboardCanvas
+            slideContent={slideContent}
+            slideTitle={currentSlideData.title}
+            onSave={(snapshot) => saveWhiteboardData(currentSlide, snapshot)}
+            initialData={getWhiteboardData(currentSlide)}
+          />
+        ) : (
+          <SlideViewer
+            slideContent={slideContent}
+            slideTitle={currentSlideData.title}
+            iframeKey={iframeKey}
+            isFullScreen={isPresentationMode}
+            zoom={zoom}
+          />
+        )}
 
         {/* Notes Panel - shown when enabled and not in presentation mode */}
         {!isPresentationMode && isNotesPanelVisible && (
@@ -186,6 +198,8 @@ export const PresentationViewer = () => {
             canGoNext={currentSlide < currentPack.meta.slides.length - 1}
             isSidebarCollapsed={isSidebarCollapsed}
             onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            isWhiteboardMode={isWhiteboardMode}
+            onToggleWhiteboard={toggleWhiteboardMode}
           />
         )}
       </div>

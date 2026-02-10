@@ -6,6 +6,10 @@ interface LessonPackContextType {
   setCurrentPack: (pack: LessonPack | null) => void;
   currentSlide: number;
   setCurrentSlide: (slide: number) => void;
+  whiteboardData: Record<number, any>;
+  saveWhiteboardData: (slideIndex: number, data: any) => void;
+  getWhiteboardData: (slideIndex: number) => any;
+  clearWhiteboardData: () => void;
 }
 
 const LessonPackContext = createContext<LessonPackContextType | undefined>(undefined);
@@ -13,6 +17,22 @@ const LessonPackContext = createContext<LessonPackContextType | undefined>(undef
 export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
   const [currentPack, setCurrentPack] = useState<LessonPack | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [whiteboardData, setWhiteboardData] = useState<Record<number, any>>({});
+
+  const saveWhiteboardData = (slideIndex: number, data: any) => {
+    setWhiteboardData(prev => ({
+      ...prev,
+      [slideIndex]: data,
+    }));
+  };
+
+  const getWhiteboardData = (slideIndex: number) => {
+    return whiteboardData[slideIndex] || null;
+  };
+
+  const clearWhiteboardData = () => {
+    setWhiteboardData({});
+  };
 
   return (
     <LessonPackContext.Provider
@@ -21,6 +41,10 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPack,
         currentSlide,
         setCurrentSlide,
+        whiteboardData,
+        saveWhiteboardData,
+        getWhiteboardData,
+        clearWhiteboardData,
       }}
     >
       {children}

@@ -4,14 +4,17 @@ interface PresentationContextType {
   isPresentationMode: boolean;
   isSidebarCollapsed: boolean;
   isNotesPanelVisible: boolean;
+  isWhiteboardMode: boolean;
   zoom: number;
   setIsPresentationMode: (value: boolean) => void;
   setIsSidebarCollapsed: (value: boolean) => void;
   setIsNotesPanelVisible: (value: boolean) => void;
+  setIsWhiteboardMode: (value: boolean) => void;
   setZoom: (value: number) => void;
   togglePresentationMode: () => void;
   toggleSidebar: () => void;
   toggleNotesPanel: () => void;
+  toggleWhiteboardMode: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
   resetZoom: () => void;
@@ -23,6 +26,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isNotesPanelVisible, setIsNotesPanelVisible] = useState(false);
+  const [isWhiteboardMode, setIsWhiteboardMode] = useState(false);
   const [zoom, setZoom] = useState(100);
 
   const togglePresentationMode = () => {
@@ -35,6 +39,10 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleNotesPanel = () => {
     setIsNotesPanelVisible((prev) => !prev);
+  };
+
+  const toggleWhiteboardMode = () => {
+    setIsWhiteboardMode((prev) => !prev);
   };
 
   const zoomIn = () => {
@@ -55,14 +63,17 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         isPresentationMode,
         isSidebarCollapsed,
         isNotesPanelVisible,
+        isWhiteboardMode,
         zoom,
         setIsPresentationMode,
         setIsSidebarCollapsed,
         setIsNotesPanelVisible,
+        setIsWhiteboardMode,
         setZoom,
         togglePresentationMode,
         toggleSidebar,
         toggleNotesPanel,
+        toggleWhiteboardMode,
         zoomIn,
         zoomOut,
         resetZoom,

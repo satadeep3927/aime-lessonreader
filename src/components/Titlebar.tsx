@@ -47,7 +47,7 @@ export function Titlebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentPack, currentSlide, setCurrentPack, setCurrentSlide } = useLessonPack();
-  const { isSidebarCollapsed, isNotesPanelVisible, toggleSidebar, toggleNotesPanel, zoomIn, zoomOut, resetZoom } = usePresentation();
+  const { isSidebarCollapsed, isNotesPanelVisible, isWhiteboardMode, toggleSidebar, toggleNotesPanel, toggleWhiteboardMode, zoomIn, zoomOut, resetZoom } = usePresentation();
   const { setTheme } = useTheme();
   const { mutate: openLessonPack } = useOpenLessonPack();
 
@@ -318,6 +318,9 @@ export function Titlebar() {
               </MenubarItem>
               <MenubarItem onClick={handleToggleNotesPanel} disabled={!isViewerPage}>
                 {isNotesPanelVisible ? 'Hide Notes Panel' : 'Show Notes Panel'}
+              </MenubarItem>
+              <MenubarItem onClick={toggleWhiteboardMode} disabled={!isViewerPage}>
+                {isWhiteboardMode ? 'Exit Whiteboard Mode' : 'Enter Whiteboard Mode'} <MenubarShortcut>W</MenubarShortcut>
               </MenubarItem>
               <MenubarSeparator />
               <MenubarItem onClick={handleLightMode}>
@@ -765,7 +768,7 @@ export function Titlebar() {
 
                 <div className="space-y-1">
                   <Label className="text-xs text-zinc-500 dark:text-zinc-400">File Location</Label>
-                  <p className="text-sm text-zinc-700 dark:text-zinc-300 break-all font-mono text-xs bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
+                  <p className="text-xs text-zinc-700 dark:text-zinc-300 break-all font-mono bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
                     {currentPack?.extractedPath || 'N/A'}
                   </p>
                 </div>
