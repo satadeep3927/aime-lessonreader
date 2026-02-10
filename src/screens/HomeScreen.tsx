@@ -5,6 +5,7 @@ import { useRecentLessons } from "@/query/useLessonPack";
 import { BookOpen, Clock, FolderOpen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { lessonPackService } from "@/service/lessonPackService";
 
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
@@ -14,6 +15,21 @@ export const HomeScreen = () => {
     useLessonPack();
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Good morning");
+
+  // Check for launch file on mount
+  useEffect(() => {
+    const checkLaunch = async () => {
+      try {
+        const path = await lessonPackService.checkLaunchFile();
+        if (path) {
+          openLessonPack.mutate(path);
+        }
+      } catch (error) {
+        console.error("Failed to check launch file:", error);
+      }
+    };
+    checkLaunch();
+  }, [openLessonPack]);
 
   // Set greeting based on time of day
   useEffect(() => {

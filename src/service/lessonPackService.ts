@@ -1,11 +1,10 @@
+import type {
+  OpenFileResult,
+  RecentLesson,
+  VerifyMetaResult,
+} from "@/types/lessonPack";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import type {
-  LessonPack,
-  OpenFileResult,
-  VerifyMetaResult,
-  RecentLesson,
-} from "@/types/lessonPack";
 
 /**
  * Service layer for Tauri commands
@@ -37,6 +36,13 @@ export const lessonPackService = {
    */
   async openLessonPack(filePath: string): Promise<OpenFileResult> {
     return await invoke<OpenFileResult>("open_lesson_pack", { filePath });
+  },
+
+  /**
+   * Check if app was launched with a file
+   */
+  async checkLaunchFile(): Promise<string | null> {
+    return await invoke<string | null>("check_launch_file");
   },
 
   /**

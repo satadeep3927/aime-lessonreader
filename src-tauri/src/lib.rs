@@ -1,8 +1,11 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri::Manager;
+use tauri::{Manager, State};
+use std::sync::Mutex;
 
 mod lesson_pack;
 use lesson_pack::*;
+
+struct LaunchFile(Mutex<Option<String>>);
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -27,6 +30,12 @@ async fn open_lesson_pack(
     lesson_pack::open_lesson_pack(file_path, app)
         .await
         .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn check_launch_file(state: State<'_, LaunchFile>) -> Result<Option<String>, String> {
+    let mut file = state.0.lock().map_err(|_| "Failed to lock mutex")?;
+    Ok(file.take())
 }
 
 #[tauri::command]
@@ -67,9 +76,42 @@ async fn cleanup_lesson_pack(extracted_path: String) -> Result<(), String> {
     lesson_pack::cleanup_lesson_pack(&extracted_path).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn create_new_window() -> Result<(), String> {
+    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    std::process::Command::new(exe)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            let args: Vec<String> = std::env::args().collect();
+            let mut launch_path = None;
+            
+            // In release, the first argument is typically the file path if opened via association
+            if args.len() > 1 {
+                // Try to find an efficient way to detect the pack file
+                for arg in args.iter().skip(1) {
+                    if arg.ends_with(".aimepack") {
+                        launch_path = Some(arg.clone());
+                        break;
+                    }
+                }
+                
+                // Fallback for double click if extension check fails but arg exists
+                #[cfg(not(debug_assertions))]
+                if launch_path.is_none() {
+                     launch_path = Some(args[1].clone());
+                }
+            }
+
+            app.manage(LaunchFile(Mutex::new(launch_path)));
+            Ok(())
+        })
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
@@ -79,12 +121,14 @@ pub fn run() {
             greet,
             close_splashscreen,
             open_lesson_pack,
+            check_launch_file,
             verify_meta,
             get_recent_lessons,
             add_to_recent,
             remove_from_recent,
             clear_recent,
-            cleanup_lesson_pack
+            cleanup_lesson_pack,
+            create_new_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

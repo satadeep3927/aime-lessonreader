@@ -58,6 +58,16 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "aimepack"
+        ],
+        "name": "AIME Lesson Pack",
+        "description": "AIME Lesson Reader Pack",
+        "role": "Viewer"
+      }
     ]
   }
 }

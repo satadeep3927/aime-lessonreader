@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
 import {
@@ -108,6 +109,14 @@ export function Titlebar() {
 
   const handleClose = () => {
     appWindow.close();
+  };
+
+  const handleNewWindow = async () => {
+    try {
+      await invoke("create_new_window");
+    } catch (error) {
+      console.error("Failed to create new window:", error);
+    }
   };
 
   const handleOpenLesson = () => {
@@ -307,6 +316,9 @@ export function Titlebar() {
           <MenubarMenu>
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent>
+              <MenubarItem onClick={handleNewWindow}>
+                New Window <MenubarShortcut>Ctrl+N</MenubarShortcut>
+              </MenubarItem>
               <MenubarItem onClick={handleOpenLesson}>
                 Open Lesson... <MenubarShortcut>Ctrl+O</MenubarShortcut>
               </MenubarItem>
