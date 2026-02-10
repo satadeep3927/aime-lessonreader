@@ -1,31 +1,32 @@
-import { useLessonPack } from '@/context/LessonPackContext';
-import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
-import { useClearRecent, useOpenLessonPack } from '@/mutation/useLessonPack';
-import { useRecentLessons } from '@/query/useLessonPack';
-import { BookOpen, Clock, FolderOpen, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLessonPack } from "@/context/LessonPackContext";
+import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
+import { useClearRecent, useOpenLessonPack } from "@/mutation/useLessonPack";
+import { useRecentLessons } from "@/query/useLessonPack";
+import { BookOpen, Clock, FolderOpen, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
   const clearRecent = useClearRecent();
   const { data: recentLessons, isLoading: loadingRecent } = useRecentLessons();
-  const { setCurrentPack, setCurrentSlide } = useLessonPack();
+  const { setCurrentPack, setCurrentSlide, clearWhiteboardData } =
+    useLessonPack();
   const navigate = useNavigate();
-  const [greeting, setGreeting] = useState('Good morning');
+  const [greeting, setGreeting] = useState("Good morning");
 
   // Set greeting based on time of day
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 18) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
+    if (hour < 12) setGreeting("Good morning");
+    else if (hour < 18) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
   }, []);
 
   // Keyboard shortcuts
   useKeyboardShortcut([
     {
-      key: 'o',
+      key: "o",
       ctrl: true,
       callback: () => {
         openLessonPack.mutate(undefined);
@@ -35,19 +36,31 @@ export const HomeScreen = () => {
 
   // Navigate to viewer when lesson pack is opened
   useEffect(() => {
-    if (openLessonPack.isSuccess && openLessonPack.data.success && openLessonPack.data.lessonPack) {
+    if (
+      openLessonPack.isSuccess &&
+      openLessonPack.data.success &&
+      openLessonPack.data.lessonPack
+    ) {
+      clearWhiteboardData();
       setCurrentPack(openLessonPack.data.lessonPack);
       setCurrentSlide(0);
-      navigate('/viewer');
+      navigate("/viewer");
     }
-  }, [openLessonPack.isSuccess, openLessonPack.data, setCurrentPack, setCurrentSlide, navigate]);
+  }, [
+    openLessonPack.isSuccess,
+    openLessonPack.data,
+    setCurrentPack,
+    setCurrentSlide,
+    navigate,
+    clearWhiteboardData,
+  ]);
 
   const handleOpenRecent = (filePath: string) => {
     openLessonPack.mutate(filePath);
   };
 
   const handleClearRecent = () => {
-    if (confirm('Are you sure you want to clear all recent lessons?')) {
+    if (confirm("Are you sure you want to clear all recent lessons?")) {
       clearRecent.mutate();
     }
   };
@@ -72,7 +85,7 @@ export const HomeScreen = () => {
             >
               <FolderOpen className="w-12 h-12 text-zinc-400 dark:text-zinc-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
               <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                {openLessonPack.isPending ? 'Opening...' : 'Open'}
+                {openLessonPack.isPending ? "Opening..." : "Open"}
               </span>
             </button>
           </div>
@@ -87,7 +100,9 @@ export const HomeScreen = () => {
         {/* Recent Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-100">Recent</h2>
+            <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-100">
+              Recent
+            </h2>
             {recentLessons && recentLessons.length > 0 && (
               <button
                 onClick={handleClearRecent}
@@ -133,13 +148,16 @@ export const HomeScreen = () => {
                     </div>
                   </div>
                   <div className="col-span-3 text-sm text-zinc-600 dark:text-zinc-400 truncate">
-                    {lesson.meta?.subject || '—'}
+                    {lesson.meta?.subject || "—"}
                   </div>
                   <div className="col-span-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    {lesson.meta?.totalSlides || '—'}
+                    {lesson.meta?.totalSlides || "—"}
                   </div>
                   <div className="col-span-1 text-sm text-zinc-600 dark:text-zinc-400 truncate">
-                    {lesson.meta?.estimatedDuration?.replace(/minutes?/, 'min') || '—'}
+                    {lesson.meta?.estimatedDuration?.replace(
+                      /minutes?/,
+                      "min",
+                    ) || "—"}
                   </div>
                 </button>
               ))}
@@ -147,7 +165,9 @@ export const HomeScreen = () => {
           ) : (
             <div className="text-center py-16">
               <Clock className="w-12 h-12 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500 dark:text-zinc-400">No recent lessons</p>
+              <p className="text-zinc-500 dark:text-zinc-400">
+                No recent lessons
+              </p>
               <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">
                 Open a lesson pack to get started
               </p>

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Presentation } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Presentation } from "lucide-react";
 
 interface SlideNavigationProps {
   currentSlide: number;
@@ -35,7 +35,10 @@ export const SlideNavigation = ({
 
         <div className="text-sm text-gray-700 dark:text-zinc-300">
           <span className="font-semibold">{currentSlide + 1}</span>
-          <span className="text-gray-400 dark:text-zinc-500"> / {totalSlides}</span>
+          <span className="text-gray-400 dark:text-zinc-500">
+            {" "}
+            / {totalSlides}
+          </span>
         </div>
 
         <button

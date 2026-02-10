@@ -1,4 +1,11 @@
-import { ChevronLeft, ChevronRight, X, Maximize2, Minimize2, PenTool } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Maximize2,
+  Minimize2,
+  PenTool,
+} from "lucide-react";
 
 interface FloatingNavigationProps {
   currentSlide: number;
@@ -34,10 +41,14 @@ export const FloatingNavigation = ({
         onClick={onToggleWhiteboard}
         className={`p-3 rounded-lg backdrop-blur-sm transition-all shadow-lg ${
           isWhiteboardMode
-            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-            : 'bg-black/80 hover:bg-black text-white'
+            ? "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-black/80 hover:bg-black text-white"
         }`}
-        title={isWhiteboardMode ? 'Exit Whiteboard Mode' : 'Enter Whiteboard Mode (W)'}
+        title={
+          isWhiteboardMode
+            ? "Exit Whiteboard Mode"
+            : "Enter Whiteboard Mode (W)"
+        }
       >
         <PenTool className="w-5 h-5" />
       </button>
@@ -46,9 +57,13 @@ export const FloatingNavigation = ({
       <button
         onClick={onToggleSidebar}
         className="p-3 rounded-lg bg-black/80 hover:bg-black text-white backdrop-blur-sm transition-all shadow-lg"
-        title={isSidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar'}
+        title={isSidebarCollapsed ? "Show Sidebar" : "Hide Sidebar"}
       >
-        {isSidebarCollapsed ? <Maximize2 className="w-5 h-5" /> : <Minimize2 className="w-5 h-5" />}
+        {isSidebarCollapsed ? (
+          <Maximize2 className="w-5 h-5" />
+        ) : (
+          <Minimize2 className="w-5 h-5" />
+        )}
       </button>
 
       {/* Navigation controls */}

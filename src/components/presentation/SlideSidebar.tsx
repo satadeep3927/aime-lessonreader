@@ -1,6 +1,6 @@
-import { Home } from 'lucide-react';
-import { SlideThumbnail } from './SlideThumbnail';
-import type { LessonPackSlide } from '@/types/lessonPack';
+import { Home } from "lucide-react";
+import { SlideThumbnail } from "./SlideThumbnail";
+import type { LessonPackSlide } from "@/types/lessonPack";
 
 interface SlideSidebarProps {
   lessonName: string;
@@ -22,7 +22,7 @@ export const SlideSidebar = ({
   onBackToHome,
 }: SlideSidebarProps) => {
   return (
-    <div className="w-72 bg-[#fafafa] dark:bg-zinc-800 border-r border-gray-200 dark:border-zinc-700 flex flex-col">
+    <div className="w-72 bg-[#fafafa] dark:bg-zinc-800 border-r border-gray-200 dark:border-zinc-700 flex flex-col shrink-0">
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-200 dark:border-zinc-700">
         <h2
@@ -31,13 +31,15 @@ export const SlideSidebar = ({
         >
           {lessonName}
         </h2>
-        <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">{totalSlides} slides</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
+          {totalSlides} slides
+        </p>
       </div>
 
       {/* Slide Thumbnails */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
         {slides.map((slide, index) => {
-          const thumbnailHtml = thumbnailContents.get(index) || '';
+          const thumbnailHtml = thumbnailContents.get(index) || "";
 
           return (
             <SlideThumbnail

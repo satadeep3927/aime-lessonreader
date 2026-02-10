@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import type { LessonPack } from '@/types/lessonPack';
+import { createContext, useContext, useState, ReactNode } from "react";
+import type { LessonPack } from "@/types/lessonPack";
 
 interface LessonPackContextType {
   currentPack: LessonPack | null;
@@ -12,7 +12,9 @@ interface LessonPackContextType {
   clearWhiteboardData: () => void;
 }
 
-const LessonPackContext = createContext<LessonPackContextType | undefined>(undefined);
+const LessonPackContext = createContext<LessonPackContextType | undefined>(
+  undefined,
+);
 
 export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
   const [currentPack, setCurrentPack] = useState<LessonPack | null>(null);
@@ -20,7 +22,7 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
   const [whiteboardData, setWhiteboardData] = useState<Record<number, any>>({});
 
   const saveWhiteboardData = (slideIndex: number, data: any) => {
-    setWhiteboardData(prev => ({
+    setWhiteboardData((prev) => ({
       ...prev,
       [slideIndex]: data,
     }));
@@ -55,7 +57,7 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
 export const useLessonPack = () => {
   const context = useContext(LessonPackContext);
   if (!context) {
-    throw new Error('useLessonPack must be used within LessonPackProvider');
+    throw new Error("useLessonPack must be used within LessonPackProvider");
   }
   return context;
 };

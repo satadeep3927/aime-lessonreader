@@ -1,60 +1,105 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Unfinished March: The March Continues</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script>
-        window.MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
-          },
-          svg: { fontCache: 'global' }
-        };
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          packages: { "[+]": ["base", "newcommand", "configMacros"] },
+        },
+        svg: { fontCache: "global" },
+      };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
-</head>
-<body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"
+      defer
+    ></script>
+  </head>
+  <body>
     <div class="blob"></div>
     <main class="content-container">
-        <div class="split-layout">
-            <div class="text-column">
-                <h1>The March Continues</h1>
-                <p>The period between 1954 and 1968 saw a revolution. Legal segregation was dismantled, and the right to vote was secured. But the work was not, and is not, finished.</p>
-                <p>The movement provided a blueprint for social change, showing how ordinary people, armed with courage and a just cause, can force a nation to live up to its own ideals.</p>
-                <p>The march for a more perfect union continues today, built on the foundation they laid.</p>
-            </div>
-            <div class="visual-column">
-                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
-                    <style>
-                        .path-line {
-                            stroke-dasharray: 1000;
-                            stroke-dashoffset: 1000;
-                            animation: draw 5s linear forwards;
-                        }
-                        @keyframes draw {
-                            to {
-                                stroke-dashoffset: 0;
-                            }
-                        }
-                    </style>
-                    <path class="path-line" d="M 50 300 C 150 200, 250 200, 300 150 C 350 100, 400 100, 450 150 C 500 200, 500 200, 500 200" stroke="#3a7bd5" stroke-width="5" fill="none" />
-
-                    <text x="50" y="320" font-family="Poppins" font-weight="800">1954</text>
-                    <text x="290" y="130" font-family="Poppins" font-weight="800">1968</text>
-                    <text x="480" y="180" font-family="Poppins" font-weight="800">TODAY...</text>
-                    
-                    <circle cx="50" cy="300" r="8" fill="#3a7bd5" />
-                    <text x="50" y="280" font-family="Poppins" font-size="12" text-anchor="middle">Brown v. Board</text>
-
-                    <circle cx="300" cy="150" r="8" fill="#3a7bd5" />
-                    <text x="300" y="185" font-family="Poppins" font-size="12" text-anchor="middle">Fair Housing Act</text>
-                </svg>
-            </div>
+      <div class="split-layout">
+        <div class="text-column">
+          <h1>The March Continues</h1>
+          <p>
+            The period between 1954 and 1968 saw a revolution. Legal segregation
+            was dismantled, and the right to vote was secured. But the work was
+            not, and is not, finished.
+          </p>
+          <p>
+            The movement provided a blueprint for social change, showing how
+            ordinary people, armed with courage and a just cause, can force a
+            nation to live up to its own ideals.
+          </p>
+          <p>
+            The march for a more perfect union continues today, built on the
+            foundation they laid.
+          </p>
         </div>
+        <div class="visual-column">
+          <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .path-line {
+                stroke-dasharray: 1000;
+                stroke-dashoffset: 1000;
+                animation: draw 5s linear forwards;
+              }
+              @keyframes draw {
+                to {
+                  stroke-dashoffset: 0;
+                }
+              }
+            </style>
+            <path
+              class="path-line"
+              d="M 50 300 C 150 200, 250 200, 300 150 C 350 100, 400 100, 450 150 C 500 200, 500 200, 500 200"
+              stroke="#3a7bd5"
+              stroke-width="5"
+              fill="none"
+            />
+
+            <text x="50" y="320" font-family="Poppins" font-weight="800">
+              1954
+            </text>
+            <text x="290" y="130" font-family="Poppins" font-weight="800">
+              1968
+            </text>
+            <text x="480" y="180" font-family="Poppins" font-weight="800">
+              TODAY...
+            </text>
+
+            <circle cx="50" cy="300" r="8" fill="#3a7bd5" />
+            <text
+              x="50"
+              y="280"
+              font-family="Poppins"
+              font-size="12"
+              text-anchor="middle"
+            >
+              Brown v. Board
+            </text>
+
+            <circle cx="300" cy="150" r="8" fill="#3a7bd5" />
+            <text
+              x="300"
+              y="185"
+              font-family="Poppins"
+              font-size="12"
+              text-anchor="middle"
+            >
+              Fair Housing Act
+            </text>
+          </svg>
+        </div>
+      </div>
     </main>
     <script src="navigation.js" defer></script>
-</body>
+  </body>
 </html>

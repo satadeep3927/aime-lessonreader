@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface PresentationContextType {
   isPresentationMode: boolean;
@@ -20,7 +20,9 @@ interface PresentationContextType {
   resetZoom: () => void;
 }
 
-const PresentationContext = createContext<PresentationContextType | undefined>(undefined);
+const PresentationContext = createContext<PresentationContextType | undefined>(
+  undefined,
+);
 
 export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
@@ -87,7 +89,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 export const usePresentation = () => {
   const context = useContext(PresentationContext);
   if (!context) {
-    throw new Error('usePresentation must be used within PresentationProvider');
+    throw new Error("usePresentation must be used within PresentationProvider");
   }
   return context;
 };

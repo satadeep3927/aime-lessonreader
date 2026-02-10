@@ -18,8 +18,8 @@ export const SlideThumbnail = ({
       onClick={onClick}
       className={`w-full text-left p-2 rounded transition-all ${
         isActive
-          ? 'bg-blue-500 dark:bg-blue-600 ring-2 ring-blue-400 dark:ring-blue-500 shadow-md'
-          : 'bg-white dark:bg-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-600 border border-gray-200 dark:border-zinc-600'
+          ? "bg-blue-500 dark:bg-blue-600 ring-2 ring-blue-400 dark:ring-blue-500 shadow-md"
+          : "bg-white dark:bg-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-600 border border-gray-200 dark:border-zinc-600"
       }`}
     >
       {/* Slide preview iframe */}
@@ -28,10 +28,10 @@ export const SlideThumbnail = ({
           srcDoc={htmlContent}
           className="w-full h-full border-0 pointer-events-none absolute top-0 left-0"
           style={{
-            transform: 'scale(0.2)',
-            transformOrigin: 'top left',
-            width: '500%',
-            height: '500%',
+            transform: "scale(0.2)",
+            transformOrigin: "top left",
+            width: "500%",
+            height: "500%",
           }}
           title={`Thumbnail ${index + 1}`}
           scrolling="no"
@@ -40,14 +40,16 @@ export const SlideThumbnail = ({
       <div className="flex items-center gap-2">
         <span
           className={`text-xs font-medium ${
-            isActive ? 'text-white' : 'text-gray-500 dark:text-zinc-400'
+            isActive ? "text-white" : "text-gray-500 dark:text-zinc-400"
           }`}
         >
           {index + 1}
         </span>
         <p
           className={`text-xs truncate flex-1 ${
-            isActive ? 'text-white font-medium' : 'text-gray-700 dark:text-zinc-300'
+            isActive
+              ? "text-white font-medium"
+              : "text-gray-700 dark:text-zinc-300"
           }`}
         >
           {title}

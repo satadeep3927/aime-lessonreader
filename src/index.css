@@ -30,3 +30,7 @@
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #71717a;
 }
+
+.tl-watermark_SEE-LICENSE {
+  display: none !important;
+}

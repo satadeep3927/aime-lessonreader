@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
-import { Minus, Square, X, Copy, Hash, List, BookOpen, Keyboard, Info } from "lucide-react";
+import {
+  Minus,
+  Square,
+  X,
+  Copy,
+  Hash,
+  List,
+  BookOpen,
+  Keyboard,
+  Info,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLessonPack } from "@/context/LessonPackContext";
 import { usePresentation } from "@/context/PresentationContext";
@@ -46,12 +56,29 @@ export function Titlebar() {
   const [propertiesOpen, setPropertiesOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentPack, currentSlide, setCurrentPack, setCurrentSlide } = useLessonPack();
-  const { isSidebarCollapsed, isNotesPanelVisible, isWhiteboardMode, toggleSidebar, toggleNotesPanel, toggleWhiteboardMode, zoomIn, zoomOut, resetZoom } = usePresentation();
+  const {
+    currentPack,
+    currentSlide,
+    setCurrentPack,
+    setCurrentSlide,
+    clearWhiteboardData,
+  } = useLessonPack();
+  const {
+    isSidebarCollapsed,
+    isNotesPanelVisible,
+    isWhiteboardMode,
+    toggleSidebar,
+    toggleNotesPanel,
+    toggleWhiteboardMode,
+    setIsWhiteboardMode,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+  } = usePresentation();
   const { setTheme } = useTheme();
   const { mutate: openLessonPack } = useOpenLessonPack();
 
-  const isViewerPage = location.pathname === '/viewer';
+  const isViewerPage = location.pathname === "/viewer";
 
   useEffect(() => {
     // Get the current platform
@@ -88,13 +115,16 @@ export function Titlebar() {
   };
 
   const handleGoHome = () => {
-    navigate('/');
+    setIsWhiteboardMode(false);
+    navigate("/");
   };
 
   const handleCloseLesson = () => {
+    setIsWhiteboardMode(false);
+    clearWhiteboardData();
     setCurrentPack(null);
     setCurrentSlide(0);
-    navigate('/');
+    navigate("/");
   };
 
   const handleFullScreen = async () => {
@@ -105,7 +135,10 @@ export function Titlebar() {
   // Navigation functions (only work when on viewer page)
   const handleNextSlide = () => {
     if (currentPack && isViewerPage) {
-      const nextSlide = Math.min(currentSlide + 1, currentPack.meta.slides.length - 1);
+      const nextSlide = Math.min(
+        currentSlide + 1,
+        currentPack.meta.slides.length - 1,
+      );
       setCurrentSlide(nextSlide);
     }
   };
@@ -153,18 +186,18 @@ export function Titlebar() {
   const handlePresentationMode = async () => {
     const appWindow = getCurrentWindow();
     const isFullscreen = await appWindow.isFullscreen();
-    
+
     if (!isFullscreen) {
       await appWindow.setFullscreen(true);
     }
   };
 
   const handleLightMode = () => {
-    setTheme('light');
+    setTheme("light");
   };
 
   const handleDarkMode = () => {
-    setTheme('dark');
+    setTheme("dark");
   };
 
   const handleSettings = () => {
@@ -222,8 +255,8 @@ export function Titlebar() {
         isMac
           ? "bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800"
           : isWindows
-          ? "bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
-          : "bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-700"
+            ? "bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
+            : "bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-700"
       }`}
     >
       {/* Logo on the left */}
@@ -282,7 +315,9 @@ export function Titlebar() {
               <MenubarItem onClick={handleCloseLesson} disabled={!currentPack}>
                 Close Lesson <MenubarShortcut>Ctrl+W</MenubarShortcut>
               </MenubarItem>
-              <MenubarItem onClick={handleProperties} disabled={!currentPack}>Properties</MenubarItem>
+              <MenubarItem onClick={handleProperties} disabled={!currentPack}>
+                Properties
+              </MenubarItem>
               <MenubarSeparator />
               <MenubarItem onClick={handleClose} variant="destructive">
                 Exit <MenubarShortcut>Alt+F4</MenubarShortcut>
@@ -309,26 +344,37 @@ export function Titlebar() {
               <MenubarItem onClick={handleFullScreen}>
                 Full Screen <MenubarShortcut>F11</MenubarShortcut>
               </MenubarItem>
-              <MenubarItem onClick={handlePresentationMode} disabled={!isViewerPage}>
+              <MenubarItem
+                onClick={handlePresentationMode}
+                disabled={!isViewerPage}
+              >
                 Presentation Mode <MenubarShortcut>F5</MenubarShortcut>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem onClick={handleToggleSidebar} disabled={!isViewerPage}>
-                {isSidebarCollapsed ? 'Show Sidebar' : 'Hide Sidebar'}
+              <MenubarItem
+                onClick={handleToggleSidebar}
+                disabled={!isViewerPage}
+              >
+                {isSidebarCollapsed ? "Show Sidebar" : "Hide Sidebar"}
               </MenubarItem>
-              <MenubarItem onClick={handleToggleNotesPanel} disabled={!isViewerPage}>
-                {isNotesPanelVisible ? 'Hide Notes Panel' : 'Show Notes Panel'}
+              <MenubarItem
+                onClick={handleToggleNotesPanel}
+                disabled={!isViewerPage}
+              >
+                {isNotesPanelVisible ? "Hide Notes Panel" : "Show Notes Panel"}
               </MenubarItem>
-              <MenubarItem onClick={toggleWhiteboardMode} disabled={!isViewerPage}>
-                {isWhiteboardMode ? 'Exit Whiteboard Mode' : 'Enter Whiteboard Mode'} <MenubarShortcut>W</MenubarShortcut>
+              <MenubarItem
+                onClick={toggleWhiteboardMode}
+                disabled={!isViewerPage}
+              >
+                {isWhiteboardMode
+                  ? "Exit Whiteboard Mode"
+                  : "Enter Whiteboard Mode"}{" "}
+                <MenubarShortcut>W</MenubarShortcut>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem onClick={handleLightMode}>
-                Light Mode
-              </MenubarItem>
-              <MenubarItem onClick={handleDarkMode}>
-                Dark Mode
-              </MenubarItem>
+              <MenubarItem onClick={handleLightMode}>Light Mode</MenubarItem>
+              <MenubarItem onClick={handleDarkMode}>Dark Mode</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
 
@@ -351,7 +397,10 @@ export function Titlebar() {
               <MenubarItem onClick={handleGoToSlide} disabled={!isViewerPage}>
                 Go to Slide... <MenubarShortcut>Ctrl+G</MenubarShortcut>
               </MenubarItem>
-              <MenubarItem onClick={handleTableOfContents} disabled={!isViewerPage}>
+              <MenubarItem
+                onClick={handleTableOfContents}
+                disabled={!isViewerPage}
+              >
                 Table of Contents <MenubarShortcut>Ctrl+T</MenubarShortcut>
               </MenubarItem>
             </MenubarContent>
@@ -365,7 +414,9 @@ export function Titlebar() {
                 Keyboard Shortcuts <MenubarShortcut>Ctrl+?</MenubarShortcut>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem onClick={handleAbout}>About Lesson Reader</MenubarItem>
+              <MenubarItem onClick={handleAbout}>
+                About Lesson Reader
+              </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
@@ -377,7 +428,9 @@ export function Titlebar() {
           <button
             onClick={handleMinimize}
             className={`h-full px-4 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors ${
-              isWindows ? "text-zinc-700 dark:text-zinc-300" : "text-zinc-600 dark:text-zinc-400"
+              isWindows
+                ? "text-zinc-700 dark:text-zinc-300"
+                : "text-zinc-600 dark:text-zinc-400"
             }`}
             aria-label="Minimize"
           >
@@ -386,16 +439,24 @@ export function Titlebar() {
           <button
             onClick={handleMaximize}
             className={`h-full px-4 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors ${
-              isWindows ? "text-zinc-700 dark:text-zinc-300" : "text-zinc-600 dark:text-zinc-400"
+              isWindows
+                ? "text-zinc-700 dark:text-zinc-300"
+                : "text-zinc-600 dark:text-zinc-400"
             }`}
             aria-label="Maximize"
           >
-            {isMaximized ? <Copy className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+            {isMaximized ? (
+              <Copy className="w-3.5 h-3.5" />
+            ) : (
+              <Square className="w-3.5 h-3.5" />
+            )}
           </button>
           <button
             onClick={handleClose}
             className={`h-full px-4 hover:bg-red-600 hover:text-white transition-colors ${
-              isWindows ? "text-zinc-700 dark:text-zinc-300" : "text-zinc-600 dark:text-zinc-400"
+              isWindows
+                ? "text-zinc-700 dark:text-zinc-300"
+                : "text-zinc-600 dark:text-zinc-400"
             }`}
             aria-label="Close"
           >
@@ -416,7 +477,8 @@ export function Titlebar() {
               Go to Slide
             </DialogTitle>
             <DialogDescription>
-              Enter a slide number to jump to (1-{currentPack?.meta.slides.length || 0})
+              Enter a slide number to jump to (1-
+              {currentPack?.meta.slides.length || 0})
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -463,43 +525,90 @@ export function Titlebar() {
           <ScrollArea className="max-h-[60vh] pr-4">
             <div className="space-y-6">
               <section>
-                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">Getting Started</h3>
+                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">
+                  Getting Started
+                </h3>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-                  Open a lesson pack (.aimepack file) using <strong>File → Open Lesson</strong> or by pressing <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">Ctrl+O</kbd>.
+                  Open a lesson pack (.aimepack file) using{" "}
+                  <strong>File → Open Lesson</strong> or by pressing{" "}
+                  <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">
+                    Ctrl+O
+                  </kbd>
+                  .
                 </p>
               </section>
 
               <section>
-                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">Navigation</h3>
+                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">
+                  Navigation
+                </h3>
                 <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                  <li>Use arrow keys or click thumbnails to navigate between slides</li>
-                  <li>Press <strong>Home</strong> to go to the first slide, <strong>End</strong> for the last</li>
-                  <li>Use <strong>Navigate → Go to Slide</strong> to jump to a specific slide number</li>
-                  <li>Access <strong>Table of Contents</strong> for an overview of all slides</li>
+                  <li>
+                    Use arrow keys or click thumbnails to navigate between
+                    slides
+                  </li>
+                  <li>
+                    Press <strong>Home</strong> to go to the first slide,{" "}
+                    <strong>End</strong> for the last
+                  </li>
+                  <li>
+                    Use <strong>Navigate → Go to Slide</strong> to jump to a
+                    specific slide number
+                  </li>
+                  <li>
+                    Access <strong>Table of Contents</strong> for an overview of
+                    all slides
+                  </li>
                 </ul>
               </section>
 
               <section>
-                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">Presentation Mode</h3>
+                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">
+                  Presentation Mode
+                </h3>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-                  Press <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">F5</kbd> to enter presentation mode (fullscreen). Press <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">Esc</kbd> to exit.
+                  Press{" "}
+                  <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">
+                    F5
+                  </kbd>{" "}
+                  to enter presentation mode (fullscreen). Press{" "}
+                  <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-700 rounded text-xs">
+                    Esc
+                  </kbd>{" "}
+                  to exit.
                 </p>
               </section>
 
               <section>
-                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">Viewing Options</h3>
+                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">
+                  Viewing Options
+                </h3>
                 <ul className="text-sm text-zinc-600 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                  <li><strong>Zoom:</strong> Use Ctrl++ and Ctrl+- to zoom in/out</li>
-                  <li><strong>Sidebar:</strong> Toggle the thumbnail sidebar for more viewing space</li>
-                  <li><strong>Notes Panel:</strong> View presenter notes for teaching guidance</li>
-                  <li><strong>Theme:</strong> Switch between light and dark modes in the View menu</li>
+                  <li>
+                    <strong>Zoom:</strong> Use Ctrl++ and Ctrl+- to zoom in/out
+                  </li>
+                  <li>
+                    <strong>Sidebar:</strong> Toggle the thumbnail sidebar for
+                    more viewing space
+                  </li>
+                  <li>
+                    <strong>Notes Panel:</strong> View presenter notes for
+                    teaching guidance
+                  </li>
+                  <li>
+                    <strong>Theme:</strong> Switch between light and dark modes
+                    in the View menu
+                  </li>
                 </ul>
               </section>
 
               <section>
-                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">Settings</h3>
+                <h3 className="font-semibold text-lg mb-2 text-zinc-900 dark:text-zinc-100">
+                  Settings
+                </h3>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  Access <strong>Home → Settings</strong> to customize default zoom, sidebar visibility, and other preferences.
+                  Access <strong>Home → Settings</strong> to customize default
+                  zoom, sidebar visibility, and other preferences.
                 </p>
               </section>
             </div>
@@ -522,75 +631,137 @@ export function Titlebar() {
           <ScrollArea className="max-h-[60vh] pr-4">
             <div className="space-y-6">
               <section>
-                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">General</h3>
+                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">
+                  General
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Open Lesson</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+O</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Open Lesson
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+O
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Close Lesson</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+W</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Close Lesson
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+W
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Go to Home</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Esc</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Go to Home
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Esc
+                    </kbd>
                   </div>
                 </div>
               </section>
 
               <section>
-                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">Navigation</h3>
+                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">
+                  Navigation
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Next Slide</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">→</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Next Slide
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      →
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Previous Slide</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">←</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Previous Slide
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      ←
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">First Slide</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Home</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      First Slide
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Home
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Last Slide</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">End</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Last Slide
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      End
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Go to Slide</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+G</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Go to Slide
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+G
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Table of Contents</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+T</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Table of Contents
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+T
+                    </kbd>
                   </div>
                 </div>
               </section>
 
               <section>
-                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">View</h3>
+                <h3 className="font-semibold text-base mb-3 text-zinc-900 dark:text-zinc-100">
+                  View
+                </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Zoom In</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl++</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Zoom In
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl++
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Zoom Out</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+-</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Zoom Out
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+-
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Reset Zoom</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">Ctrl+0</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Reset Zoom
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      Ctrl+0
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Full Screen</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">F11</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Full Screen
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      F11
+                    </kbd>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">Presentation Mode</span>
-                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">F5</kbd>
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                      Presentation Mode
+                    </span>
+                    <kbd className="px-2 py-1 bg-zinc-200 dark:bg-zinc-700 rounded text-xs font-mono">
+                      F5
+                    </kbd>
                   </div>
                 </div>
               </section>
@@ -613,12 +784,17 @@ export function Titlebar() {
               <img src={logoImage} alt="AIME Logo" className="h-20 w-20" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="font-semibold text-lg text-zinc-900 dark:text-zinc-100">AIME Lesson Reader</h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">Version 1.0.0</p>
+              <h3 className="font-semibold text-lg text-zinc-900 dark:text-zinc-100">
+                AIME Lesson Reader
+              </h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Version 1.0.0
+              </p>
             </div>
             <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
               <p className="text-center">
-                A modern desktop application for viewing and presenting interactive educational lessons.
+                A modern desktop application for viewing and presenting
+                interactive educational lessons.
               </p>
               <p className="text-center">
                 Built with React, TypeScript, and Tauri.
@@ -647,15 +823,19 @@ export function Titlebar() {
             <div className="space-y-4 py-4">
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">Lesson Name</Label>
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                    Lesson Name
+                  </Label>
                   <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    {currentPack?.meta.name || 'N/A'}
+                    {currentPack?.meta.name || "N/A"}
                   </p>
                 </div>
 
                 {currentPack?.meta.description && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Description</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Description
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.description}
                     </p>
@@ -664,7 +844,9 @@ export function Titlebar() {
 
                 {currentPack?.meta.creator && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Creator</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Creator
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.creator}
                     </p>
@@ -673,7 +855,9 @@ export function Titlebar() {
 
                 {currentPack?.meta.subject && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Subject</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Subject
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.subject}
                     </p>
@@ -682,7 +866,9 @@ export function Titlebar() {
 
                 {currentPack?.meta.topic && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Topic</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Topic
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.topic}
                     </p>
@@ -691,7 +877,9 @@ export function Titlebar() {
 
                 {currentPack?.meta.gradeLevel && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Grade Level</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Grade Level
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.gradeLevel}
                     </p>
@@ -700,7 +888,9 @@ export function Titlebar() {
 
                 {currentPack?.meta.estimatedDuration && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Estimated Duration</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Estimated Duration
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.estimatedDuration}
                     </p>
@@ -708,15 +898,21 @@ export function Titlebar() {
                 )}
 
                 <div className="space-y-1">
-                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">Total Slides</Label>
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                    Total Slides
+                  </Label>
                   <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {currentPack?.meta.totalSlides || currentPack?.meta.slides.length || 0}
+                    {currentPack?.meta.totalSlides ||
+                      currentPack?.meta.slides.length ||
+                      0}
                   </p>
                 </div>
 
                 {currentPack?.meta.version && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Version</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Version
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
                       {currentPack.meta.version}
                     </p>
@@ -725,51 +921,68 @@ export function Titlebar() {
 
                 {currentPack?.meta.packFormat && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Pack Format</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Pack Format
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.packFormat} v{currentPack.meta.packFormatVersion || '1.0'}
+                      {currentPack.meta.packFormat} v
+                      {currentPack.meta.packFormatVersion || "1.0"}
                     </p>
                   </div>
                 )}
 
                 {currentPack?.meta.creationDate && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Created</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Created
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {new Date(currentPack.meta.creationDate).toLocaleDateString()}
+                      {new Date(
+                        currentPack.meta.creationDate,
+                      ).toLocaleDateString()}
                     </p>
                   </div>
                 )}
 
                 {currentPack?.meta.lastModified && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Last Modified</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Last Modified
+                    </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {new Date(currentPack.meta.lastModified).toLocaleDateString()}
+                      {new Date(
+                        currentPack.meta.lastModified,
+                      ).toLocaleDateString()}
                     </p>
                   </div>
                 )}
 
                 {currentPack?.meta.tags && currentPack.meta.tags.length > 0 && (
                   <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">Tags</Label>
+                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Tags
+                    </Label>
                     <div className="flex flex-wrap gap-1.5">
-                      {currentPack.meta.tags.map((tag: string, index: number) => (
-                        <span
-                          key={index}
-                          className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                      {currentPack.meta.tags.map(
+                        (tag: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
 
                 <div className="space-y-1">
-                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">File Location</Label>
+                  <Label className="text-xs text-zinc-500 dark:text-zinc-400">
+                    File Location
+                  </Label>
                   <p className="text-xs text-zinc-700 dark:text-zinc-300 break-all font-mono bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
-                    {currentPack?.extractedPath || 'N/A'}
+                    {currentPack?.extractedPath || "N/A"}
                   </p>
                 </div>
               </div>
@@ -790,7 +1003,8 @@ export function Titlebar() {
               Table of Contents
             </DialogTitle>
             <DialogDescription>
-              {currentPack?.meta.name} - {currentPack?.meta.slides.length} slides
+              {currentPack?.meta.name} - {currentPack?.meta.slides.length}{" "}
+              slides
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh] pr-4">

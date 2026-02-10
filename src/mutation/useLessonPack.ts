@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { lessonPackService } from '@/service/lessonPackService';
-import type { RecentLesson, OpenFileResult } from '@/types/lessonPack';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { lessonPackService } from "@/service/lessonPackService";
+import type { RecentLesson, OpenFileResult } from "@/types/lessonPack";
 
 /**
  * Mutation hook for opening lesson pack
@@ -14,7 +14,7 @@ export const useOpenLessonPack = () => {
       const selectedPath = filePath || (await lessonPackService.selectFile());
 
       if (!selectedPath) {
-        throw new Error('No file selected');
+        throw new Error("No file selected");
       }
 
       return lessonPackService.openLessonPack(selectedPath);
@@ -32,7 +32,7 @@ export const useOpenLessonPack = () => {
         await lessonPackService.addToRecent(recentLesson);
 
         // Invalidate recent lessons query to refetch
-        queryClient.invalidateQueries({ queryKey: ['recentLessons'] });
+        queryClient.invalidateQueries({ queryKey: ["recentLessons"] });
       }
     },
   });
@@ -47,7 +47,7 @@ export const useAddToRecent = () => {
   return useMutation({
     mutationFn: (lesson: RecentLesson) => lessonPackService.addToRecent(lesson),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recentLessons'] });
+      queryClient.invalidateQueries({ queryKey: ["recentLessons"] });
     },
   });
 };
@@ -59,9 +59,10 @@ export const useRemoveFromRecent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (filePath: string) => lessonPackService.removeFromRecent(filePath),
+    mutationFn: (filePath: string) =>
+      lessonPackService.removeFromRecent(filePath),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recentLessons'] });
+      queryClient.invalidateQueries({ queryKey: ["recentLessons"] });
     },
   });
 };
@@ -75,7 +76,7 @@ export const useClearRecent = () => {
   return useMutation({
     mutationFn: () => lessonPackService.clearRecent(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recentLessons'] });
+      queryClient.invalidateQueries({ queryKey: ["recentLessons"] });
     },
   });
 };

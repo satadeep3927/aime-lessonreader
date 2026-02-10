@@ -1,56 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Unfinished March: The Case of the Separate Schools</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script>
-        window.MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
-          },
-          svg: { fontCache: 'global' }
-        };
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          packages: { "[+]": ["base", "newcommand", "configMacros"] },
+        },
+        svg: { fontCache: "global" },
+      };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
-</head>
-<body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"
+      defer
+    ></script>
+  </head>
+  <body>
     <div class="blob"></div>
     <main class="content-container">
-        <div class="split-layout">
-            <div class="text-column">
-                <h1>The Case of the Separate Schools</h1>
-                <p>The year is 1954. The law of the land, from a case called <em>Plessy v. Ferguson</em>, says that things can be "separate but equal."</p>
-                <p>But what if "separate" is never truly "equal"?</p>
-                <p>The Supreme Court takes on this question in <em>Brown v. Board of Education</em>. Their decision doesn't just change schools; it signals that the very foundation of legal segregation is starting to crack.</p>
-            </div>
-            <div class="visual-column">
-                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
-                    <style>
-                        .wall { animation: crumble 5s forwards; animation-delay: 1s; }
-                        @keyframes crumble {
-                            0% { opacity: 1; transform: translateY(0); }
-                            100% { opacity: 0; transform: translateY(40px) rotate(5deg); }
-                        }
-                    </style>
-                    <g id="white-school">
-                        <rect x="50" y="100" width="180" height="200" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
-                        <text x="140" y="150" font-family="Poppins" font-weight="800" text-anchor="middle" font-size="20">SCHOOL A</text>
-                        <text x="140" y="220" font-family="Poppins" font-size="50" text-anchor="middle" fill="#198754">$ $ $</text>
-                    </g>
-                    <g id="black-school">
-                        <rect x="270" y="100" width="180" height="200" fill="#e9ecef" stroke="#6c757d" stroke-width="2"/>
-                        <text x="360" y="150" font-family="Poppins" font-weight="800" text-anchor="middle" font-size="20">SCHOOL B</text>
-                        <text x="360" y="220" font-family="Poppins" font-size="50" text-anchor="middle" fill="#dc3545">$</text>
-                    </g>
-                    <rect class="wall" x="245" y="50" width="10" height="300" fill="#adb5bd"/>
-                    <text x="250" y="40" font-family="Poppins" font-size="16" text-anchor="middle">"Separate but Equal"</text>
-                </svg>
-            </div>
+      <div class="split-layout">
+        <div class="text-column">
+          <h1>The Case of the Separate Schools</h1>
+          <p>
+            The year is 1954. The law of the land, from a case called
+            <em>Plessy v. Ferguson</em>, says that things can be "separate but
+            equal."
+          </p>
+          <p>But what if "separate" is never truly "equal"?</p>
+          <p>
+            The Supreme Court takes on this question in
+            <em>Brown v. Board of Education</em>. Their decision doesn't just
+            change schools; it signals that the very foundation of legal
+            segregation is starting to crack.
+          </p>
         </div>
+        <div class="visual-column">
+          <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+            <style>
+              .wall {
+                animation: crumble 5s forwards;
+                animation-delay: 1s;
+              }
+              @keyframes crumble {
+                0% {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+                100% {
+                  opacity: 0;
+                  transform: translateY(40px) rotate(5deg);
+                }
+              }
+            </style>
+            <g id="white-school">
+              <rect
+                x="50"
+                y="100"
+                width="180"
+                height="200"
+                fill="#f8f9fa"
+                stroke="#6c757d"
+                stroke-width="2"
+              />
+              <text
+                x="140"
+                y="150"
+                font-family="Poppins"
+                font-weight="800"
+                text-anchor="middle"
+                font-size="20"
+              >
+                SCHOOL A
+              </text>
+              <text
+                x="140"
+                y="220"
+                font-family="Poppins"
+                font-size="50"
+                text-anchor="middle"
+                fill="#198754"
+              >
+                $ $ $
+              </text>
+            </g>
+            <g id="black-school">
+              <rect
+                x="270"
+                y="100"
+                width="180"
+                height="200"
+                fill="#e9ecef"
+                stroke="#6c757d"
+                stroke-width="2"
+              />
+              <text
+                x="360"
+                y="150"
+                font-family="Poppins"
+                font-weight="800"
+                text-anchor="middle"
+                font-size="20"
+              >
+                SCHOOL B
+              </text>
+              <text
+                x="360"
+                y="220"
+                font-family="Poppins"
+                font-size="50"
+                text-anchor="middle"
+                fill="#dc3545"
+              >
+                $
+              </text>
+            </g>
+            <rect
+              class="wall"
+              x="245"
+              y="50"
+              width="10"
+              height="300"
+              fill="#adb5bd"
+            />
+            <text
+              x="250"
+              y="40"
+              font-family="Poppins"
+              font-size="16"
+              text-anchor="middle"
+            >
+              "Separate but Equal"
+            </text>
+          </svg>
+        </div>
+      </div>
     </main>
     <script src="navigation.js" defer></script>
-</body>
+  </body>
 </html>

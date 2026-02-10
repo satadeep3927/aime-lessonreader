@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface Settings {
   autoOpenLastLesson: boolean;
@@ -20,16 +26,18 @@ const defaultSettings: Settings = {
   enableTransitions: true,
 };
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+const SettingsContext = createContext<SettingsContextType | undefined>(
+  undefined,
+);
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(() => {
-    const stored = localStorage.getItem('app-settings');
+    const stored = localStorage.getItem("app-settings");
     return stored ? JSON.parse(stored) : defaultSettings;
   });
 
   useEffect(() => {
-    localStorage.setItem('app-settings', JSON.stringify(settings));
+    localStorage.setItem("app-settings", JSON.stringify(settings));
   }, [settings]);
 
   const updateSettings = (updates: Partial<Settings>) => {
@@ -41,7 +49,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+    <SettingsContext.Provider
+      value={{ settings, updateSettings, resetSettings }}
+    >
       {children}
     </SettingsContext.Provider>
   );
@@ -50,7 +60,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (!context) {
-    throw new Error('useSettings must be used within SettingsProvider');
+    throw new Error("useSettings must be used within SettingsProvider");
   }
   return context;
 };

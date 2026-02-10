@@ -1,23 +1,38 @@
-import { useLessonPack } from '@/context/LessonPackContext';
-import { usePresentation } from '@/context/PresentationContext';
-import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
-import { useSlideLoader } from '@/hooks/useSlideLoader';
-import { useThumbnailLoader } from '@/hooks/useThumbnailLoader';
-import { SlideNavigation } from '@/components/presentation/SlideNavigation';
-import { SlideSidebar } from '@/components/presentation/SlideSidebar';
-import { SlideViewer } from '@/components/presentation/SlideViewer';
-import { FloatingNavigation } from '@/components/presentation/FloatingNavigation';
-import { NotesPanel } from '@/components/presentation/NotesPanel';
-import { WhiteboardCanvas } from '@/components/presentation/WhiteboardCanvas';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { useLessonPack } from "@/context/LessonPackContext";
+import { usePresentation } from "@/context/PresentationContext";
+import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
+import { useSlideLoader } from "@/hooks/useSlideLoader";
+import { useThumbnailLoader } from "@/hooks/useThumbnailLoader";
+import { SlideNavigation } from "@/components/presentation/SlideNavigation";
+import { SlideSidebar } from "@/components/presentation/SlideSidebar";
+import { SlideViewer } from "@/components/presentation/SlideViewer";
+import { FloatingNavigation } from "@/components/presentation/FloatingNavigation";
+import { NotesPanel } from "@/components/presentation/NotesPanel";
+import { WhiteboardCanvas } from "@/components/presentation/WhiteboardCanvas";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export const PresentationViewer = () => {
-  const { currentPack, currentSlide, setCurrentSlide, saveWhiteboardData, getWhiteboardData } = useLessonPack();
-  const { isPresentationMode, setIsPresentationMode, isSidebarCollapsed, setIsSidebarCollapsed, isNotesPanelVisible, isWhiteboardMode, toggleWhiteboardMode, zoom } = usePresentation();
+  const {
+    currentPack,
+    currentSlide,
+    setCurrentSlide,
+    saveWhiteboardData,
+    getWhiteboardData,
+  } = useLessonPack();
+  const {
+    isPresentationMode,
+    setIsPresentationMode,
+    isSidebarCollapsed,
+    setIsSidebarCollapsed,
+    isNotesPanelVisible,
+    isWhiteboardMode,
+    toggleWhiteboardMode,
+    zoom,
+  } = usePresentation();
   const navigate = useNavigate();
-  const [iframeKey, setIframeKey] = useState(0);
+  const [iframeKey] = useState(0);
 
   // Redirect if no pack is loaded
   useEffect(() => {
@@ -45,7 +60,7 @@ export const PresentationViewer = () => {
 
   const togglePresentationMode = async () => {
     const appWindow = getCurrentWindow();
-    
+
     if (!isPresentationMode) {
       // Enter fullscreen
       await appWindow.setFullscreen(true);
@@ -75,37 +90,37 @@ export const PresentationViewer = () => {
   // Keyboard navigation
   useKeyboardShortcut([
     {
-      key: 'ArrowLeft',
+      key: "ArrowLeft",
       callback: () => goToPrevSlide(),
     },
     {
-      key: 'ArrowRight',
+      key: "ArrowRight",
       callback: () => goToNextSlide(),
     },
     {
-      key: 'Home',
+      key: "Home",
       callback: () => setCurrentSlide(0),
     },
     {
-      key: 'End',
+      key: "End",
       callback: () =>
         setCurrentSlide((currentPack?.meta.slides.length || 1) - 1),
     },
     {
-      key: 'Escape',
+      key: "Escape",
       callback: () =>
-        isPresentationMode ? exitPresentationMode() : navigate('/'),
+        isPresentationMode ? exitPresentationMode() : navigate("/"),
     },
     {
-      key: 'F5',
+      key: "F5",
       callback: () => togglePresentationMode(),
     },
     {
-      key: 'F11',
+      key: "F11",
       callback: () => toggleFullScreen(),
     },
     {
-      key: 'w',
+      key: "w",
       callback: () => toggleWhiteboardMode(),
     },
   ]);
@@ -115,22 +130,22 @@ export const PresentationViewer = () => {
   }
 
   const currentSlideData = currentPack.meta.slides[currentSlide];
-  const slidePath = `${currentPack.extractedPath}/${currentSlideData.file}`.replace(
-    /\\/g,
-    '/'
-  );
-  const baseDir = currentPack.extractedPath.replace(/\\/g, '/');
+  const slidePath =
+    `${currentPack.extractedPath}/${currentSlideData.file}`.replace(/\\/g, "/");
+  const baseDir = currentPack.extractedPath.replace(/\\/g, "/");
 
   // Load slide and thumbnail contents
   const slideContent = useSlideLoader(slidePath, baseDir);
   const thumbnailContents = useThumbnailLoader(
     currentPack.meta.slides,
     currentPack.extractedPath,
-    baseDir
+    baseDir,
   );
 
   return (
-    <div className={`flex-1 flex overflow-hidden relative ${isPresentationMode ? 'bg-black' : 'bg-[#f3f3f3] dark:bg-zinc-900'}`}>
+    <div
+      className={`flex-1 flex overflow-hidden relative ${isPresentationMode ? "bg-black" : "bg-[#f3f3f3] dark:bg-zinc-900"}`}
+    >
       {/* Sidebar - collapsible */}
       {!isSidebarCollapsed && (
         <SlideSidebar
@@ -140,11 +155,11 @@ export const PresentationViewer = () => {
           thumbnailContents={thumbnailContents}
           currentSlide={currentSlide}
           onSlideClick={goToSlide}
-          onBackToHome={() => navigate('/')}
+          onBackToHome={() => navigate("/")}
         />
       )}
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-[calc(100%-288px)]">
         {/* Top navigation - hidden in presentation mode */}
         {!isPresentationMode && (
           <SlideNavigation
@@ -162,6 +177,7 @@ export const PresentationViewer = () => {
         {/* Conditional rendering: Whiteboard or regular slide viewer */}
         {isWhiteboardMode ? (
           <WhiteboardCanvas
+            key={currentSlide}
             slideContent={slideContent}
             slideTitle={currentSlideData.title}
             onSave={(snapshot) => saveWhiteboardData(currentSlide, snapshot)}
@@ -182,7 +198,7 @@ export const PresentationViewer = () => {
           <NotesPanel
             currentSlide={currentSlide}
             slideTitle={currentSlideData.title}
-            notes={currentSlideData.notes || ''}
+            notes={currentSlideData.notes || ""}
           />
         )}
 

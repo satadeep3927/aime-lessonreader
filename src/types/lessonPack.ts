@@ -9,7 +9,7 @@ export interface LessonPackSlide {
 }
 
 export interface LessonPackResource {
-  type: 'stylesheet' | 'script' | 'directory' | 'image' | 'other';
+  type: "stylesheet" | "script" | "directory" | "image" | "other";
   file?: string;
   path?: string;
   description: string;

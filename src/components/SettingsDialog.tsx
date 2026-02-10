@@ -37,14 +37,18 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
         <div className="space-y-6 py-4">
           {/* Appearance */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Appearance</h3>
-            
+            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+              Appearance
+            </h3>
+
             <div className="space-y-2">
               <Label htmlFor="theme">Theme</Label>
               <select
                 id="theme"
                 value={theme}
-                onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
+                onChange={(e) =>
+                  setTheme(e.target.value as "light" | "dark" | "system")
+                }
                 className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100"
               >
                 <option value="light">Light</option>
@@ -56,8 +60,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
           {/* General Settings */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">General</h3>
-            
+            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+              General
+            </h3>
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="auto-open">Auto-open last lesson</Label>
@@ -109,8 +115,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
           {/* Zoom Settings */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Display</h3>
-            
+            <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+              Display
+            </h3>
+
             <div className="space-y-2">
               <Label htmlFor="zoom">Default Zoom Level (%)</Label>
               <input
@@ -134,7 +142,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               variant="outline"
               onClick={() => {
                 resetSettings();
-                setTheme('system');
+                setTheme("system");
               }}
               className="w-full"
             >
