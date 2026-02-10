@@ -21,6 +21,7 @@ export const HomeScreen = () => {
     const checkLaunch = async () => {
       try {
         const path = await lessonPackService.checkLaunchFile();
+        console.log("Launch check path:", path);
         if (path) {
           openLessonPack.mutate(path);
         }
@@ -29,7 +30,7 @@ export const HomeScreen = () => {
       }
     };
     checkLaunch();
-  }, [openLessonPack]);
+  }, []); // Run once on mount
 
   // Set greeting based on time of day
   useEffect(() => {

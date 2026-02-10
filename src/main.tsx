@@ -10,6 +10,20 @@ import App from "./App";
 import "./index.css";
 import "./main.css";
 
+// Disable context menu
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  return false;
+});
+
+// Disable Ctrl+R
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "r") {
+    e.preventDefault();
+    return false;
+  }
+});
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
