@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Immortal Coil: DNA's Replication Secret</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['base', 'newcommand', 'configMacros']}
+          },
+          svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js" defer></script>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="blob" style="top: -20vh; right: -20vh; background: radial-gradient(circle, #ff9a9e, #fecfef);"></div>
+        <div class="slide-content">
+            <div class="left-column">
+                <h2>How does life make copies of its blueprint?</h2>
+                <p>Imagine you have a priceless ancient scroll. To preserve it, you make a copy. But what if you could split the scroll in half, and each half magically regenerated its other side?</p>
+                <p>This is what DNA does. It's called semi-conservative replication. The double helix unwinds, and each strand acts as a template to build a new, complementary strand.</p>
+                <p>The result? Two identical DNA molecules, each with one old strand and one new strand. The blueprint is perfectly preserved and passed on.</p>
+            </div>
+            <div class="right-column">
+                <svg width="400" height="400" viewBox="0 0 400 400">
+                    <style>
+                        #original-strand-1, #original-strand-2 { animation: unzip 4s ease-out forwards; }
+                        #new-strand-1, #new-strand-2 { stroke-dasharray: 200; stroke-dashoffset: 200; animation: build 3s linear forwards 3s; }
+                        @keyframes unzip {
+                            0% { transform: translateX(0); }
+                            100% { transform: translateX(-50px); }
+                        }
+                        #original-strand-2 { animation-delay: 0.1s; transform-origin: top left; animation: unzip-2 4s ease-out forwards; }
+                        @keyframes unzip-2 {
+                             0% { transform: translateX(0); }
+                            100% { transform: translateX(50px); }
+                        }
+                        @keyframes build {
+                            to { stroke-dashoffset: 0; }
+                        }
+                    </style>
+                    <g>
+                        <path id="original-strand-1" d="M 200,50 Q 150,150 200,250 T 200,450" stroke="#3a7bd5" stroke-width="8" fill="none" />
+                        <path id="original-strand-2" d="M 200,50 Q 250,150 200,250 T 200,450" stroke="#3a7bd5" stroke-width="8" fill="none" />
+                        <path id="new-strand-1" d="M 150,50 Q 200,150 150,250 T 150,450" stroke="#00D2FF" stroke-width="8" fill="none" />
+                        <path id="new-strand-2" d="M 250,50 Q 200,150 250,250 T 250,450" stroke="#00D2FF" stroke-width="8" fill="none" />
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

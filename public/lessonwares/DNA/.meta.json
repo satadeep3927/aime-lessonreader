@@ -1,0 +1,143 @@
+{
+  "name": "DNA: The Blueprint of Life",
+  "version": "1.0.0",
+  "creator": "AIME Education",
+  "description": "An interactive lesson exploring the structure and function of DNA, from the double helix discovery to its role in genetics and heredity.",
+  "subject": "Biology",
+  "topic": "Genetics",
+  "creationDate": "2026-02-10",
+  "lastModified": "2026-02-10",
+  "totalSlides": 16,
+  "estimatedDuration": "45-60 minutes",
+  "gradeLevel": "9-12",
+  "slides": [
+    {
+      "id": 1,
+      "file": "slide1.html",
+      "title": "Introduction to DNA",
+      "description": "Overview of the molecule that carries genetic instructions"
+    },
+    {
+      "id": 2,
+      "file": "slide2.html",
+      "title": "The Structure of DNA",
+      "description": "Exploring the double helix structure"
+    },
+    {
+      "id": 3,
+      "file": "slide3.html",
+      "title": "Nucleotides",
+      "description": "The building blocks: Sugar, Phosphate, and Base"
+    },
+    {
+      "id": 4,
+      "file": "slide4.html",
+      "title": "Base Pairing Rules",
+      "description": "Adenine, Thymine, Cytosine, and Guanine"
+    },
+    {
+      "id": 5,
+      "file": "slide5.html",
+      "title": "DNA Replication",
+      "description": "How DNA copies itself before cell division"
+    },
+    {
+      "id": 6,
+      "file": "slide6.html",
+      "title": "Slide 6",
+      "description": "Lesson content"
+    },
+    {
+      "id": 7,
+      "file": "slide7.html",
+      "title": "Slide 7",
+      "description": "Lesson content"
+    },
+    {
+      "id": 8,
+      "file": "slide8.html",
+      "title": "Slide 8",
+      "description": "Lesson content"
+    },
+    {
+      "id": 9,
+      "file": "slide9.html",
+      "title": "Slide 9",
+      "description": "Lesson content"
+    },
+    {
+      "id": 10,
+      "file": "slide10.html",
+      "title": "Slide 10",
+      "description": "Lesson content"
+    },
+    {
+      "id": 11,
+      "file": "slide11.html",
+      "title": "Slide 11",
+      "description": "Lesson content"
+    },
+    {
+      "id": 12,
+      "file": "slide12.html",
+      "title": "Slide 12",
+      "description": "Lesson content"
+    },
+    {
+      "id": 13,
+      "file": "slide13.html",
+      "title": "Slide 13",
+      "description": "Lesson content"
+    },
+    {
+      "id": 14,
+      "file": "slide14.html",
+      "title": "Slide 14",
+      "description": "Lesson content"
+    },
+    {
+      "id": 15,
+      "file": "slide15.html",
+      "title": "Slide 15",
+      "description": "Lesson content"
+    },
+    {
+      "id": 16,
+      "file": "slide16.html",
+      "title": "Slide 16",
+      "description": "Lesson content"
+    }
+  ],
+  "resources": [
+    {
+      "type": "stylesheet",
+      "file": "style.css",
+      "description": "Main stylesheet for lesson presentation"
+    },
+    {
+      "type": "script",
+      "file": "script.js",
+      "description": "Navigation and interaction logic"
+    },
+    {
+      "type": "directory",
+      "path": "images/",
+      "description": "Image assets for the lesson"
+    }
+  ],
+  "features": {
+    "mathJax": false,
+    "interactiveVisuals": true,
+    "splitLayout": true
+  },
+  "tags": [
+    "biology",
+    "genetics",
+    "science",
+    "DNA",
+    "high-school",
+    "interactive"
+  ],
+  "packFormat": "aimepack",
+  "packFormatVersion": "1.0"
+}
