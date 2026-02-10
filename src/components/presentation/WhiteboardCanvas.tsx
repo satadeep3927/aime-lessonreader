@@ -374,7 +374,6 @@ export const WhiteboardCanvas = ({
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
             }}
             title={slideTitle}
-            sandbox="allow-same-origin allow-scripts"
           />
         </div>
 
