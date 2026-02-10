@@ -7,10 +7,15 @@ import { invoke } from "@tauri-apps/api/core";
 
 function App() {
   useEffect(() => {
-    // Signal that the main window is ready to be shown
-    invoke("close_splashscreen").catch((e) =>
-      console.error("Failed to close splashscreen:", e)
-    );
+    // Keep splash screen visible for a minimum detailed time (e.g., 2.5 seconds)
+    // to prevent flashing and ensure a smooth experience.
+    const minSplashDuration = 2500;
+
+    setTimeout(() => {
+      invoke("close_splashscreen").catch((e) =>
+        console.error("Failed to close splashscreen:", e),
+      );
+    }, minSplashDuration);
   }, []);
 
   return (
