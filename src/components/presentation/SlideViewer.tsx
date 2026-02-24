@@ -101,10 +101,14 @@ export const SlideViewer = ({
   return (
     <div className="flex-1 flex items-center justify-center overflow-hidden bg-[#f3f3f3] dark:bg-zinc-950">
       <div
+        key={slide.slide_number}
         className="h-full aspect-video max-w-full bg-white transition-transform duration-200 origin-center overflow-hidden relative shadow-2xl"
         style={{ transform: scale() }}
       >
-        {renderSlideContent()}
+        {/* 1.25× font scale: inner div is 80% the container, scaled back up 1.25× from top-left */}
+        <div style={{ width: "80%", height: "80%", transform: "scale(1.25)", transformOrigin: "top left" }}>
+          {renderSlideContent()}
+        </div>
       </div>
     </div>
   );
