@@ -1,59 +1,68 @@
+import {
+  FileText,
+  HelpCircle,
+  Lightbulb,
+  List,
+  PenTool,
+  Target,
+} from "lucide-react";
+import { AnySlide } from "@/types/lessonPack";
+
 interface SlideThumbnailProps {
+  slide: AnySlide;
   index: number;
-  title: string;
-  htmlContent: string;
   isActive: boolean;
   onClick: () => void;
 }
 
+const getSlideIcon = (type: string) => {
+  switch (type) {
+    case "TITLE":
+    case "SUMMARY":
+      return <FileText className="w-4 h-4" />;
+    case "HOOK":
+    case "PRIOR_KNOWLEDGE":
+      return <HelpCircle className="w-4 h-4" />;
+    case "TEACH":
+    case "CONCEPT_MAP":
+      return <Lightbulb className="w-4 h-4" />;
+    case "WORKED_EXAMPLE":
+    case "GUIDED_PRACTICE":
+    case "STUDENT_TASK":
+      return <PenTool className="w-4 h-4" />;
+    case "ASSESSMENT_QUESTION":
+    case "EXIT_TICKET":
+      return <Target className="w-4 h-4" />;
+    default:
+      return <List className="w-4 h-4" />;
+  }
+};
+
 export const SlideThumbnail = ({
+  slide,
   index,
-  title,
-  htmlContent,
   isActive,
   onClick,
 }: SlideThumbnailProps) => {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-2 rounded transition-all ${
-        isActive
-          ? "bg-blue-500 dark:bg-blue-600 ring-2 ring-blue-400 dark:ring-blue-500 shadow-md"
-          : "bg-white dark:bg-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-600 border border-gray-200 dark:border-zinc-600"
-      }`}
+      className={w-full text-left p-3 rounded-lg transition-all flex items-center gap-3  border}
     >
-      {/* Slide preview iframe */}
-      <div className="aspect-video bg-white dark:bg-zinc-800 rounded overflow-hidden relative mb-2 shadow-sm border border-gray-100 dark:border-zinc-600">
-        <iframe
-          srcDoc={htmlContent}
-          className="w-full h-full border-0 pointer-events-none absolute top-0 left-0"
-          style={{
-            transform: "scale(0.2)",
-            transformOrigin: "top left",
-            width: "500%",
-            height: "500%",
-          }}
-          title={`Thumbnail ${index + 1}`}
-          scrolling="no"
-        />
+      <div
+        className={w-8 h-8 rounded-full flex items-center justify-center shrink-0 }
+      >
+        <span className="text-xs font-semibold">{index + 1}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <span
-          className={`text-xs font-medium ${
-            isActive ? "text-white" : "text-gray-500 dark:text-zinc-400"
-          }`}
-        >
-          {index + 1}
-        </span>
-        <p
-          className={`text-xs truncate flex-1 ${
-            isActive
-              ? "text-white font-medium"
-              : "text-gray-700 dark:text-zinc-300"
-          }`}
-        >
-          {title}
+      
+      <div className="flex-1 min-w-0">
+        <p className={\	ext-sm font-medium truncate \\}>
+          {slide.title}
         </p>
+        <div className="flex items-center gap-1.5 mt-0.5 text-xs text-gray-500 dark:text-zinc-500">
+          {getSlideIcon(slide.slide_type)}
+          <span className="capitalize text-[10px] tracking-wide font-medium">{slide.slide_type.replace(/_/g, " ")}</span>
+        </div>
       </div>
     </button>
   );

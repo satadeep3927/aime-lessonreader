@@ -1,69 +1,67 @@
-import { useEffect, useRef, useState } from "react";
+// src/components/presentation/SlideViewer.tsx
+import { AnySlide } from "@/types/lessonPack";
+import { CoverSlide } from "./slides/CoverSlide";
+import { TeachSlide } from "./slides/TeachSlide";
+import { HookSlide } from "./slides/HookSlide";
+import { WorkedExampleSlide } from "./slides/WorkedExampleSlide";
+import { LearningObjectivesSlide } from "./slides/LearningObjectivesSlide";
+import { GenericSlide } from "./slides/GenericSlide";
 
 interface SlideViewerProps {
-  slideContent: string;
-  slideTitle: string;
-  iframeKey: number;
+  slide: AnySlide;
   isFullScreen?: boolean;
   zoom?: number;
+  embedded?: boolean;
 }
 
-export const SlideViewer = ({
-  slideContent,
-  slideTitle,
-  iframeKey,
-  isFullScreen = false,
-  zoom = 100,
-}: SlideViewerProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    if (!isFullScreen && containerRef.current) {
-      const updateScale = () => {
-        if (containerRef.current) {
-          const containerWidth = containerRef.current.clientWidth;
-          setScale(containerWidth / 1500);
-        }
-      };
-
-      updateScale();
-      window.addEventListener("resize", updateScale);
-      return () => window.removeEventListener("resize", updateScale);
+export const SlideViewer = ({ slide, isFullScreen = false, zoom = 100, embedded = false }: SlideViewerProps) => {
+  // Helper to render content based on slide type
+  const renderSlideContent = () => {
+    switch (slide.slide_type) {
+      case "TITLE":
+        return <CoverSlide slide={slide} />;
+      case "TEACH":
+         return <TeachSlide slide={slide} />;
+      case "HOOK":
+          return <HookSlide slide={slide} />;
+      case "WORKED_EXAMPLE":
+          return <WorkedExampleSlide slide={slide} />;
+      case "LEARNING_OBJECTIVES":
+          return <LearningObjectivesSlide slide={slide} />;
+      default:
+        // Use generic slide for unimplemented types so the app doesn't break
+        return <GenericSlide slide={slide} />;
     }
-  }, [isFullScreen]);
+  };
 
-  return (
-    <div
-      className={`flex-1 bg-[#f3f3f3] dark:bg-zinc-900 flex items-center justify-center ${isFullScreen ? "p-0" : "p-8"} overflow-auto`}
-    >
-      {/* Zoom wrapper - scrollable when zoomed beyond 100% */}
-      <div
-        className="transition-transform duration-200"
-        style={{ transform: `scale(${zoom / 100})` }}
-      >
-        {/* Aspect ratio container - maintains 75:46 (1500:920) to match iframe */}
-        <div
-          ref={containerRef}
-          className={`aspect-75/46 bg-white dark:bg-zinc-800 ${isFullScreen ? "w-screen" : "w-[min(calc(100vw-400px),calc((100vh-150px)*75/46))]"} ${isFullScreen ? "" : "rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700"} overflow-hidden relative`}
-        >
-          <iframe
-            key={iframeKey}
-            srcDoc={slideContent}
-            className="border-0 absolute top-0 left-0"
-            style={{
-              width: "1500px",
-              height: "920px",
-              transform: isFullScreen
-                ? `scale(${window.innerWidth / 1500})`
-                : `scale(${scale})`,
-              transformOrigin: "top left",
-              colorScheme: "light",
-            }}
-            title={slideTitle}
-          />
+  const scale = () => {
+     return isFullScreen ? "scale(1)" : `scale(${zoom / 100})`;
+  };
+
+  if (embedded) {
+    return (
+      <div className="w-full h-full bg-white dark:bg-zinc-900 overflow-hidden relative">
+        <div className="absolute inset-0 overflow-y-auto custom-scrollbar">
+          {renderSlideContent()}
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 bg-[#f3f3f3] dark:bg-zinc-950 flex items-center justify-center overflow-hidden">
+        <div 
+          className="transition-transform duration-200 origin-center"
+          style={{ transform: scale() }}
+        >
+          <div 
+            className="aspect-video w-[1280px] bg-white dark:bg-zinc-900 shadow-2xl rounded-xl overflow-hidden relative border border-zinc-200 dark:border-zinc-800"
+          >
+            <div className="absolute inset-0 overflow-y-auto custom-scrollbar">
+              {renderSlideContent()}
+            </div>
+          </div>
+        </div>
     </div>
   );
 };
