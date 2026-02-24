@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import type { LessonPack } from "@/types/lessonPack";
 
 interface LessonPackContextType {
@@ -21,20 +21,20 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [whiteboardData, setWhiteboardData] = useState<Record<number, any>>({});
 
-  const saveWhiteboardData = (slideIndex: number, data: any) => {
+  const saveWhiteboardData = useCallback((slideIndex: number, data: any) => {
     setWhiteboardData((prev) => ({
       ...prev,
       [slideIndex]: data,
     }));
-  };
+  }, []);
 
-  const getWhiteboardData = (slideIndex: number) => {
+  const getWhiteboardData = useCallback((slideIndex: number) => {
     return whiteboardData[slideIndex] || null;
-  };
+  }, [whiteboardData]);
 
-  const clearWhiteboardData = () => {
+  const clearWhiteboardData = useCallback(() => {
     setWhiteboardData({});
-  };
+  }, []);
 
   return (
     <LessonPackContext.Provider

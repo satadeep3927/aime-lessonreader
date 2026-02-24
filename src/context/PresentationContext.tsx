@@ -29,7 +29,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isNotesPanelVisible, setIsNotesPanelVisible] = useState(false);
   const [isWhiteboardMode, setIsWhiteboardMode] = useState(false);
-  const [zoom, setZoom] = useState(100);
+  const [zoom, setZoom] = useState(90);
 
   const togglePresentationMode = () => {
     setIsPresentationMode((prev) => !prev);
