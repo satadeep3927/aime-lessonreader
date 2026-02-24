@@ -1,15 +1,13 @@
 import { useLessonPack } from "@/context/LessonPackContext";
 import { usePresentation } from "@/context/PresentationContext";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
-import { useSlideLoader } from "@/hooks/useSlideLoader";
-import { useThumbnailLoader } from "@/hooks/useThumbnailLoader";
 import { SlideNavigation } from "@/components/presentation/SlideNavigation";
 import { SlideSidebar } from "@/components/presentation/SlideSidebar";
 import { SlideViewer } from "@/components/presentation/SlideViewer";
 import { FloatingNavigation } from "@/components/presentation/FloatingNavigation";
 import { NotesPanel } from "@/components/presentation/NotesPanel";
 import { WhiteboardCanvas } from "@/components/presentation/WhiteboardCanvas";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
@@ -32,7 +30,6 @@ export const PresentationViewer = () => {
     zoom,
   } = usePresentation();
   const navigate = useNavigate();
-  const [iframeKey] = useState(0);
 
   // Redirect if no pack is loaded
   useEffect(() => {
@@ -130,29 +127,15 @@ export const PresentationViewer = () => {
   }
 
   const currentSlideData = currentPack.meta.slides[currentSlide];
-  const slidePath =
-    `${currentPack.extractedPath}/${currentSlideData.file}`.replace(/\\/g, "/");
-  const baseDir = currentPack.extractedPath.replace(/\\/g, "/");
-
-  // Load slide and thumbnail contents
-  const slideContent = useSlideLoader(slidePath, baseDir);
-  const thumbnailContents = useThumbnailLoader(
-    currentPack.meta.slides,
-    currentPack.extractedPath,
-    baseDir,
-  );
 
   return (
-    <div
-      className={`flex-1 flex overflow-hidden relative ${isPresentationMode ? "bg-black" : "bg-[#f3f3f3] dark:bg-zinc-900"}`}
-    >
+    <div className="flex-1 flex overflow-hidden relative">
       {/* Sidebar - collapsible */}
       {!isSidebarCollapsed && (
         <SlideSidebar
-          lessonName={currentPack.meta.name}
-          totalSlides={currentPack.meta.totalSlides}
+          lessonName={currentPack.meta.title}
+          totalSlides={currentPack.meta.slides.length}
           slides={currentPack.meta.slides}
-          thumbnailContents={thumbnailContents}
           currentSlide={currentSlide}
           onSlideClick={goToSlide}
           onBackToHome={() => navigate("/")}
@@ -164,7 +147,7 @@ export const PresentationViewer = () => {
         {!isPresentationMode && (
           <SlideNavigation
             currentSlide={currentSlide}
-            totalSlides={currentPack.meta.totalSlides}
+            totalSlides={currentPack.meta.slides.length}
             currentSlideTitle={currentSlideData.title}
             onPrevious={goToPrevSlide}
             onNext={goToNextSlide}
@@ -178,16 +161,13 @@ export const PresentationViewer = () => {
         {isWhiteboardMode ? (
           <WhiteboardCanvas
             key={currentSlide}
-            slideContent={slideContent}
-            slideTitle={currentSlideData.title}
+            slide={currentSlideData}
             onSave={(snapshot) => saveWhiteboardData(currentSlide, snapshot)}
             initialData={getWhiteboardData(currentSlide)}
           />
         ) : (
           <SlideViewer
-            slideContent={slideContent}
-            slideTitle={currentSlideData.title}
-            iframeKey={iframeKey}
+            slide={currentSlideData}
             isFullScreen={isPresentationMode}
             zoom={zoom}
           />
@@ -198,7 +178,7 @@ export const PresentationViewer = () => {
           <NotesPanel
             currentSlide={currentSlide}
             slideTitle={currentSlideData.title}
-            notes={currentSlideData.notes || ""}
+            notes={currentSlideData.teacher_notes || ""}
           />
         )}
 
@@ -206,7 +186,7 @@ export const PresentationViewer = () => {
         {isPresentationMode && (
           <FloatingNavigation
             currentSlide={currentSlide}
-            totalSlides={currentPack.meta.totalSlides}
+            totalSlides={currentPack.meta.slides.length}
             onPrevious={goToPrevSlide}
             onNext={goToNextSlide}
             onExit={exitPresentationMode}

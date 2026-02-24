@@ -8,65 +8,22 @@ use tauri_plugin_store::StoreExt;
 // Types matching TypeScript interfaces
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct LessonPackSlide {
-    pub id: u32,
-    pub file: String,
-    pub title: String,
-    pub description: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub notes: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct LessonPackResource {
-    pub r#type: String,
-    pub file: Option<String>,
-    pub path: Option<String>,
-    pub description: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct LessonPackFeatures {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub math_jax: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub interactive_visuals: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub split_layout: Option<bool>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct LessonPackMeta {
-    pub name: String,
-    pub version: String,
-    pub creator: String,
-    pub description: String,
+    pub session_number: u32,
+    pub lesson_type: String, // Enum in TS, String here
+    pub title: String,
+    pub subject: String,
+    pub grade_level: String,
+    pub total_duration_minutes: u32,
+    pub slides: Vec<serde_json::Value>, // Generic JSON for discriminated union
+    pub resources: Vec<String>,
+    pub cover_image_url: Option<String>,
+    pub ai_rationale: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub subject: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub topic: Option<String>,
-    pub creation_date: String,
-    pub last_modified: String,
-    pub total_slides: u32,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub estimated_duration: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub grade_level: Option<String>,
-    pub slides: Vec<LessonPackSlide>,
-    pub resources: Vec<LessonPackResource>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub features: Option<LessonPackFeatures>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tags: Option<Vec<String>>,
-    pub pack_format: String,
-    pub pack_format_version: String,
+    pub author: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct LessonPack {
     pub meta: LessonPackMeta,
     pub extracted_path: String,
@@ -74,7 +31,6 @@ pub struct LessonPack {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
 pub struct RecentLesson {
     pub path: String,
     pub name: String,
@@ -84,7 +40,6 @@ pub struct RecentLesson {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct OpenFileResult {
     pub success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -213,18 +168,16 @@ pub fn verify_meta(extracted_path: &str) -> Result<VerifyMetaResult> {
             // Validate required fields
             let mut errors = Vec::new();
 
-            if meta.name.is_empty() {
-                errors.push("Name is required".to_string());
+            if meta.title.is_empty() {
+                errors.push("Title is required".to_string());
             }
-            if meta.version.is_empty() {
-                errors.push("Version is required".to_string());
+            if meta.subject.is_empty() {
+                errors.push("Subject is required".to_string());
             }
             if meta.slides.is_empty() {
                 errors.push("At least one slide is required".to_string());
             }
-            if meta.pack_format != "aimepack" {
-                errors.push("Invalid pack format".to_string());
-            }
+            // Add more specific validation logic here if needed
 
             if errors.is_empty() {
                 Ok(VerifyMetaResult {

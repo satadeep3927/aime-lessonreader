@@ -168,13 +168,12 @@ export const HomeScreen = () => {
                     {lesson.meta?.subject || "—"}
                   </div>
                   <div className="col-span-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    {lesson.meta?.totalSlides || "—"}
+                    {lesson.meta?.slides?.length || "—"}
                   </div>
                   <div className="col-span-1 text-sm text-zinc-600 dark:text-zinc-400 truncate">
-                    {lesson.meta?.estimatedDuration?.replace(
-                      /minutes?/,
-                      "min",
-                    ) || "—"}
+                    {lesson.meta?.total_duration_minutes
+                      ? `${lesson.meta.total_duration_minutes} min`
+                      : "—"}
                   </div>
                 </button>
               ))}
