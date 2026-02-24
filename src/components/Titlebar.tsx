@@ -839,28 +839,17 @@ export function Titlebar() {
                     Lesson Name
                   </Label>
                   <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                    {currentPack?.meta.name || "N/A"}
+                    {currentPack?.meta.title || "N/A"}
                   </p>
                 </div>
 
-                {currentPack?.meta.description && (
+                {currentPack?.meta.author && (
                   <div className="space-y-1">
                     <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Description
+                      Author
                     </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.description}
-                    </p>
-                  </div>
-                )}
-
-                {currentPack?.meta.creator && (
-                  <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Creator
-                    </Label>
-                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.creator}
+                      {currentPack.meta.author}
                     </p>
                   </div>
                 )}
@@ -876,35 +865,24 @@ export function Titlebar() {
                   </div>
                 )}
 
-                {currentPack?.meta.topic && (
-                  <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Topic
-                    </Label>
-                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.topic}
-                    </p>
-                  </div>
-                )}
-
-                {currentPack?.meta.gradeLevel && (
+                {currentPack?.meta.grade_level && (
                   <div className="space-y-1">
                     <Label className="text-xs text-zinc-500 dark:text-zinc-400">
                       Grade Level
                     </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.gradeLevel}
+                      {currentPack.meta.grade_level}
                     </p>
                   </div>
                 )}
 
-                {currentPack?.meta.estimatedDuration && (
+                {(currentPack?.meta.total_duration_minutes ?? 0) > 0 && (
                   <div className="space-y-1">
                     <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Estimated Duration
+                      Duration
                     </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.estimatedDuration}
+                      {currentPack?.meta.total_duration_minutes} minutes
                     </p>
                   </div>
                 )}
@@ -914,78 +892,29 @@ export function Titlebar() {
                     Total Slides
                   </Label>
                   <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                    {currentPack?.meta.totalSlides ||
-                      currentPack?.meta.slides.length ||
-                      0}
+                    {currentPack?.meta.slides.length || 0}
                   </p>
                 </div>
 
-                {currentPack?.meta.version && (
+                {currentPack?.meta.lesson_type && (
                   <div className="space-y-1">
                     <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Version
+                      Lesson Type
                     </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.version}
+                      {currentPack.meta.lesson_type}
                     </p>
                   </div>
                 )}
 
-                {currentPack?.meta.packFormat && (
+                {currentPack?.meta.ai_rationale && (
                   <div className="space-y-1">
                     <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Pack Format
+                      AI Rationale
                     </Label>
                     <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {currentPack.meta.packFormat} v
-                      {currentPack.meta.packFormatVersion || "1.0"}
+                      {currentPack.meta.ai_rationale}
                     </p>
-                  </div>
-                )}
-
-                {currentPack?.meta.creationDate && (
-                  <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Created
-                    </Label>
-                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {new Date(
-                        currentPack.meta.creationDate,
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-
-                {currentPack?.meta.lastModified && (
-                  <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Last Modified
-                    </Label>
-                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {new Date(
-                        currentPack.meta.lastModified,
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-
-                {currentPack?.meta.tags && currentPack.meta.tags.length > 0 && (
-                  <div className="space-y-1">
-                    <Label className="text-xs text-zinc-500 dark:text-zinc-400">
-                      Tags
-                    </Label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {currentPack.meta.tags.map(
-                        (tag: string, index: number) => (
-                          <span
-                            key={index}
-                            className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ),
-                      )}
-                    </div>
                   </div>
                 )}
 
@@ -994,7 +923,7 @@ export function Titlebar() {
                     File Location
                   </Label>
                   <p className="text-xs text-zinc-700 dark:text-zinc-300 break-all font-mono bg-zinc-100 dark:bg-zinc-800 p-2 rounded">
-                    {currentPack?.extractedPath || "N/A"}
+                    {currentPack?.extracted_path || "N/A"}
                   </p>
                 </div>
               </div>
@@ -1015,7 +944,7 @@ export function Titlebar() {
               Table of Contents
             </DialogTitle>
             <DialogDescription>
-              {currentPack?.meta.name} - {currentPack?.meta.slides.length}{" "}
+              {currentPack?.meta.title} - {currentPack?.meta.slides.length}{" "}
               slides
             </DialogDescription>
           </DialogHeader>
@@ -1023,7 +952,7 @@ export function Titlebar() {
             <div className="space-y-1">
               {currentPack?.meta.slides.map((slide, index) => (
                 <button
-                  key={slide.id}
+                  key={slide.slide_number}
                   onClick={() => handleJumpToSlide(index)}
                   className={`w-full text-left p-3 rounded-lg transition-colors ${
                     index === currentSlide
@@ -1051,17 +980,15 @@ export function Titlebar() {
                       >
                         {slide.title}
                       </div>
-                      {slide.description && (
-                        <div
-                          className={`text-sm mt-1 ${
-                            index === currentSlide
-                              ? "text-blue-700 dark:text-blue-300"
-                              : "text-zinc-600 dark:text-zinc-400"
-                          }`}
-                        >
-                          {slide.description}
-                        </div>
-                      )}
+                      <div
+                        className={`text-sm mt-1 ${
+                          index === currentSlide
+                            ? "text-blue-700 dark:text-blue-300"
+                            : "text-zinc-600 dark:text-zinc-400"
+                        }`}
+                      >
+                        {(slide as any).slide_type} &middot; {slide.duration_minutes} min
+                      </div>
                     </div>
                   </div>
                 </button>

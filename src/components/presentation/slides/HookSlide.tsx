@@ -17,8 +17,8 @@ export const HookSlide = ({ slide }: HookSlideProps) => {
         {/* Decorative blobs — only shown when no image */}
         {!slide.image_url && (
           <>
-            <div className="absolute top-[-80px] right-[-80px] w-80 h-80 rounded-full bg-purple-200/50 blur-3xl pointer-events-none" />
-            <div className="absolute bottom-[-60px] left-[-60px] w-64 h-64 rounded-full bg-fuchsia-200/50 blur-3xl pointer-events-none" />
+            <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-purple-200/50 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-15 -left-15 w-64 h-64 rounded-full bg-fuchsia-200/50 blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-violet-200/40 blur-2xl pointer-events-none" />
           </>
         )}

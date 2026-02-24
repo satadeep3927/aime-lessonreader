@@ -8,6 +8,7 @@ import {
   ArrowShapeArrowheadEndStyle,
   DefaultColorStyle,
   DefaultSizeStyle,
+  GeoShapeGeoStyle,
 } from "tldraw";
 import "tldraw/tldraw.css";
 import { WhiteboardToolbar } from "./whiteboard/WhiteboardToolbar";
@@ -76,12 +77,7 @@ export const WhiteboardCanvas = ({
     const geoTools = ["rectangle", "ellipse", "triangle", "diamond"];
     if (geoTools.includes(tool)) {
       editorRef.current.setCurrentTool("geo");
-      editorRef.current.updateInstanceState({
-        stylesForNextShape: {
-          ...editorRef.current.getInstanceState().stylesForNextShape,
-          geo: tool as any,
-        },
-      });
+      editorRef.current.setStyleForNextShapes(GeoShapeGeoStyle, tool as any);
     } else {
       editorRef.current.setCurrentTool(tool);
     }
