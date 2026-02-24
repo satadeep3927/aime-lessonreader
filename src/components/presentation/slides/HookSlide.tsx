@@ -1,6 +1,5 @@
 import { HookSlide as HookSlideType } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
-import { HelpCircle } from "lucide-react";
 
 interface HookSlideProps {
   slide: HookSlideType;
@@ -8,33 +7,64 @@ interface HookSlideProps {
 
 export const HookSlide = ({ slide }: HookSlideProps) => {
   return (
-    <SlideContainer>
-      <div className="h-full flex flex-col gap-8">
-        <div className="flex items-center gap-4 pb-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-          <div className="p-2.5 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
-            <HelpCircle className="w-8 h-8" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {slide.title}
-          </h2>
-        </div>
+    <SlideContainer className="relative flex">
+      {/* Left: content */}
+      <div
+        className={`relative z-10 flex flex-col justify-center px-16 py-12 bg-linear-to-br from-violet-50 via-purple-50 to-fuchsia-50 ${
+          slide.image_url ? "w-1/2" : "w-full items-center text-center"
+        }`}
+      >
+        {/* Decorative blobs — only shown when no image */}
+        {!slide.image_url && (
+          <>
+            <div className="absolute top-[-80px] right-[-80px] w-80 h-80 rounded-full bg-purple-200/50 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-[-60px] left-[-60px] w-64 h-64 rounded-full bg-fuchsia-200/50 blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-violet-200/40 blur-2xl pointer-events-none" />
+          </>
+        )}
 
-        <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto space-y-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight animate-fade-in-up">
-            {slide.question}
-          </h2>
+        {/* Decorative accent */}
+        <div className="w-12 h-1.5 bg-purple-500 rounded-full mb-8" />
 
-          {slide.image_url && (
-            <div className="relative w-full max-h-[50vh] rounded-xl overflow-hidden shadow-lg border border-zinc-200 dark:border-zinc-700 animate-scale-in">
-              <img
-                src={slide.image_url}
-                className="w-full h-full object-contain bg-zinc-50 dark:bg-zinc-800"
-                alt="Thinking prompt"
-              />
-            </div>
-          )}
+        {/* Slide label */}
+        <p className="text-xs font-black uppercase tracking-[0.25em] text-purple-400 mb-4">
+          Think About It
+        </p>
+
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-zinc-400 mb-5 leading-snug">
+          {slide.title}
+        </h2>
+
+        {/* Question — the hero text */}
+        <p
+          className={`font-black text-zinc-900 leading-tight tracking-tight ${
+            slide.image_url ? "text-4xl" : "text-5xl max-w-3xl"
+          }`}
+        >
+          {slide.question}
+        </p>
+
+        {/* Bottom decorative circles */}
+        <div
+          className={`absolute bottom-8 flex gap-2 opacity-30 ${slide.image_url ? "left-16" : "left-1/2 -translate-x-1/2"}`}
+        >
+          <div className="w-3 h-3 rounded-full bg-purple-400" />
+          <div className="w-3 h-3 rounded-full bg-fuchsia-400" />
+          <div className="w-3 h-3 rounded-full bg-violet-400" />
         </div>
       </div>
+
+      {/* Right: full-height image */}
+      {slide.image_url && (
+        <div className="w-1/2 h-full shrink-0">
+          <img
+            src={slide.image_url}
+            alt="Thinking prompt"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
     </SlideContainer>
   );
 };

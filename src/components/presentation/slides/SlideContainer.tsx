@@ -11,8 +11,8 @@ export const SlideContainer = ({
   className,
 }: SlideContainerProps) => {
   return (
-    <div className="w-full h-full flex items-center justify-center p-8 overflow-hidden bg-white dark:bg-zinc-900 select-none">
-      <div className={cn("w-full h-full relative", className)}>{children}</div>
+    <div className={cn("w-full h-full overflow-hidden select-none", className)}>
+      {children}
     </div>
   );
 };

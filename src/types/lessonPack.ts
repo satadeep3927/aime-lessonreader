@@ -211,24 +211,25 @@ export interface LessonPackOutput {
 }
 
 export interface LessonPack {
-  extractedPath: string;
+  extracted_path: string;
+  original_path: string;
   meta: LessonPackOutput;
 }
 
 export interface OpenFileResult {
-  status: "success" | "error";
-  data: LessonPack | null;
+  success: boolean;
+  lesson_pack?: LessonPack;
   error?: string;
 }
 
 export interface RecentLesson {
   path: string;
   name: string;
-  lastOpened: string;
+  last_opened: number;
   meta?: LessonPackOutput;
 }
 
 export interface VerifyMetaResult {
-  isValid: boolean;
+  valid: boolean;
   errors?: string[];
 }

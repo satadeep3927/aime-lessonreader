@@ -1,7 +1,6 @@
 import { TeachSlide as TeachSlideType } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
 import { MarkdownRenderer } from "../../MarkdownRenderer";
-import { BookOpen, ListChecks } from "lucide-react";
 
 interface TeachSlideProps {
   slide: TeachSlideType;
@@ -9,58 +8,70 @@ interface TeachSlideProps {
 
 export const TeachSlide = ({ slide }: TeachSlideProps) => {
   return (
-    <SlideContainer>
-      <div className="h-full flex flex-col gap-8">
-        <div className="flex items-center gap-4 pb-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-          <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
-            <BookOpen className="w-8 h-8" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+    <SlideContainer className="relative flex">
+      {/* Subtle background when no image */}
+      {!slide.image_url && (
+        <>
+          <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-indigo-100/50 blur-3xl pointer-events-none" />
+        </>
+      )}
+
+      {/* Left: content */}
+      <div
+        className={`relative z-10 flex flex-col justify-center px-12 py-10 gap-6 bg-linear-to-br from-slate-50 via-blue-50/40 to-white ${
+          slide.image_url ? "w-1/2" : "w-full"
+        }`}
+      >
+        {/* Header */}
+        <div className="shrink-0">
+          <div className="w-10 h-1 bg-blue-500 rounded-full mb-4" />
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-2">
+            Lesson Content
+          </p>
+          <h2 className="text-3xl font-black text-zinc-900 leading-tight">
             {slide.title}
           </h2>
         </div>
 
-        <div className="flex-1 min-h-0 relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full">
-            <div className="overflow-y-auto pr-4 custom-scrollbar">
-              <MarkdownRenderer
-                content={slide.content}
-                className="text-xl leading-relaxed text-gray-800 dark:text-zinc-200"
-              />
-            </div>
+        {/* Content */}
+        <div className="overflow-y-auto">
+          <MarkdownRenderer
+            content={slide.content}
+            className="text-xl leading-relaxed text-zinc-700 w-full"
+          />
+        </div>
 
-            <div className="flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
-              {slide.image_url && (
-                <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 shrink-0">
-                  <img
-                    src={slide.image_url}
-                    alt="Slide visual"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              )}
-
-              {slide.key_terms && slide.key_terms.length > 0 && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-xl border border-yellow-100 dark:border-yellow-900/30 shrink-0">
-                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-500 mb-3 flex items-center gap-2">
-                    <ListChecks className="w-5 h-5" /> Key Terms
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {slide.key_terms.map((term, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 bg-white dark:bg-zinc-800 rounded-md text-sm font-medium shadow-sm border border-yellow-100 dark:border-zinc-700 text-gray-700 dark:text-zinc-300"
-                      >
-                        {term}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+        {/* Key terms */}
+        {slide.key_terms && slide.key_terms.length > 0 && (
+          <div className="shrink-0 pt-4 border-t border-blue-100">
+            <p className="text-xs font-black uppercase tracking-widest text-zinc-400 mb-3">
+              Key Terms
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {slide.key_terms.map((term, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1.5 bg-blue-50 rounded-lg text-sm font-semibold text-blue-700 border border-blue-100"
+                >
+                  {term}
+                </span>
+              ))}
             </div>
           </div>
-        </div>
+        )}
       </div>
+
+      {/* Right: full-height image */}
+      {slide.image_url && (
+        <div className="w-1/2 h-full shrink-0">
+          <img
+            src={slide.image_url}
+            alt="Slide visual"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
     </SlideContainer>
   );
 };

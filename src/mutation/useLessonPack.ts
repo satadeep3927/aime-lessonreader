@@ -20,13 +20,13 @@ export const useOpenLessonPack = () => {
       return lessonPackService.openLessonPack(selectedPath);
     },
     onSuccess: async (result: OpenFileResult) => {
-      if (result.success && result.lessonPack) {
+      if (result.success && result.lesson_pack) {
         // Add to recent lessons
         const recentLesson: RecentLesson = {
-          path: result.lessonPack.originalPath,
-          name: result.lessonPack.meta.name,
-          lastOpened: Date.now(),
-          meta: result.lessonPack.meta,
+          path: result.lesson_pack.original_path,
+          name: result.lesson_pack.meta.title,
+          last_opened: Date.now(),
+          meta: result.lesson_pack.meta,
         };
 
         await lessonPackService.addToRecent(recentLesson);

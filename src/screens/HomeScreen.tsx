@@ -55,11 +55,11 @@ export const HomeScreen = () => {
   useEffect(() => {
     if (
       openLessonPack.isSuccess &&
-      openLessonPack.data.success &&
-      openLessonPack.data.lessonPack
+      openLessonPack.data?.success &&
+      openLessonPack.data?.lesson_pack
     ) {
       clearWhiteboardData();
-      setCurrentPack(openLessonPack.data.lessonPack);
+      setCurrentPack(openLessonPack.data.lesson_pack);
       setCurrentSlide(0);
       navigate("/viewer");
     }

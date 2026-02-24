@@ -1,9 +1,8 @@
 import { WorkedExampleSlide as SlideType } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
 import { MarkdownRenderer } from "../../MarkdownRenderer";
-import { PenTool } from "lucide-react";
+import { ChevronRight, ChevronsRight, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 interface WorkedExampleSlideProps {
   slide: SlideType;
@@ -11,115 +10,124 @@ interface WorkedExampleSlideProps {
 
 export const WorkedExampleSlide = ({ slide }: WorkedExampleSlideProps) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const done = currentStep >= slide.steps.length;
 
   return (
-    <SlideContainer>
-      <div className="h-full flex flex-col gap-8">
-        <div className="flex items-center gap-4 pb-4 border-b border-zinc-200 dark:border-zinc-800 shrink-0">
-          <div className="p-2.5 bg-amber-100 dark:bg-amber-900/30 rounded-xl text-amber-600 dark:text-amber-400">
-            <PenTool className="w-8 h-8" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+    <SlideContainer className="relative flex">
+      {/* Left: problem */}
+      <div className="w-2/5 h-full flex flex-col justify-center px-10 py-10 gap-6 bg-linear-to-br from-slate-900 via-zinc-800 to-slate-900">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-zinc-400 mb-3">
+            Worked Example
+          </p>
+          <h2 className="text-2xl font-black text-white leading-tight mb-6">
             {slide.title}
           </h2>
+          <div className="h-px bg-zinc-700 mb-6" />
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">
+            Problem
+          </p>
+          <MarkdownRenderer
+            content={slide.problem}
+            className="text-lg font-medium text-zinc-200 leading-relaxed"
+          />
         </div>
 
-        <div className="flex-1 min-h-0 relative grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Problem Column */}
-          <div className="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl shadow-sm border border-zinc-200 dark:border-zinc-700 h-fit lg:sticky lg:top-0">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-6 flex items-center gap-2">
-              Problem Statement
-            </h3>
-            <MarkdownRenderer
-              content={slide.problem}
-              className="text-2xl font-medium leading-relaxed"
+        {/* Step counter */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {slide.steps.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i < currentStep ? "w-6 bg-blue-400" : "w-1.5 bg-zinc-700"
+              }`}
             />
+          ))}
+        </div>
+      </div>
+
+      {/* Right: steps */}
+      <div className="w-3/5 h-full flex flex-col bg-linear-to-br from-slate-50 via-blue-50/30 to-white">
+        {/* Header */}
+        <div className="flex items-center justify-between px-10 pt-8 pb-4 border-b border-zinc-200 shrink-0">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-400">
+            Step-by-Step Solution
+          </p>
+          <div className="flex gap-2">
+            {!done && (
+              <button
+                onClick={() =>
+                  setCurrentStep((p) => Math.min(p + 1, slide.steps.length))
+                }
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold transition-colors"
+              >
+                <ChevronRight className="w-3.5 h-3.5" /> Next Step
+              </button>
+            )}
+            {!done && (
+              <button
+                onClick={() => setCurrentStep(slide.steps.length)}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg border border-zinc-300 hover:bg-zinc-100 text-zinc-600 text-xs font-bold transition-colors"
+              >
+                <ChevronsRight className="w-3.5 h-3.5" /> Reveal All
+              </button>
+            )}
           </div>
+        </div>
 
-          {/* Steps Column */}
-          <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar pb-12">
-            <div className="flex items-center justify-between sticky top-0 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xs py-4 z-10 border-b border-dashed border-zinc-200 dark:border-zinc-800 mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-                Step-by-Step Solution
-              </h3>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCurrentStep((prev) =>
-                      Math.min(prev + 1, slide.steps.length),
-                    )
-                  }
-                  disabled={currentStep >= slide.steps.length}
-                >
-                  Next Step
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentStep(slide.steps.length)}
-                >
-                  Reveal All
-                </Button>
-              </div>
-            </div>
-
-            {slide.steps.map((step, i) => (
-              <div
-                key={i}
-                className={`flex gap-5 p-6 rounded-2xl border transition-all duration-500 ${
+        {/* Steps list */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-10 py-6 space-y-3">
+          {slide.steps.map((step, i) => (
+            <div
+              key={i}
+              className={`flex gap-4 p-5 rounded-2xl border transition-all duration-400 ${
+                i < currentStep
+                  ? "bg-white border-zinc-200 shadow-sm opacity-100"
+                  : "bg-white/60 border-zinc-200 opacity-60 pointer-events-none select-none"
+              }`}
+            >
+              <span
+                className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-black text-xs ${
                   i < currentStep
-                    ? "bg-zinc-50 dark:bg-zinc-800/30 border-zinc-200 dark:border-zinc-700 opacity-100 transform translate-x-0"
-                    : "opacity-30 border-transparent blur-sm transform translate-x-4 pointer-events-none"
+                    ? "bg-blue-500 text-white"
+                    : "bg-zinc-200 text-zinc-400"
                 }`}
               >
-                <span
-                  className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border ${
-                    i < currentStep
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-zinc-100 text-zinc-400 border-zinc-200"
-                  }`}
-                >
-                  {i + 1}
-                </span>
-                <div className="pt-0.5 flex-1">
-                  <MarkdownRenderer content={step} className="text-lg" />
-                </div>
-              </div>
-            ))}
+                {i + 1}
+              </span>
+              <MarkdownRenderer
+                content={step}
+                className="text-base font-semibold text-zinc-800 pt-0.5"
+              />
+            </div>
+          ))}
 
-            {currentStep >= slide.steps.length && (
-              <div className="mt-8 p-8 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/30 animate-fade-in-up">
-                <h4 className="text-sm font-bold uppercase tracking-widest text-blue-800 dark:text-blue-300 mb-4">
+          {/* Final answer */}
+          {done && (
+            <div className="p-6 bg-green-50 rounded-2xl border border-green-200">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <p className="text-xs font-black uppercase tracking-widest text-green-600">
                   Final Answer
-                </h4>
-                <MarkdownRenderer
-                  content={slide.final_answer}
-                  className="text-2xl font-bold text-blue-900 dark:text-blue-100"
-                />
-                {slide.check && (
-                  <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800/50">
-                    <p className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-1">
-                      Check:
-                    </p>
-                    <MarkdownRenderer
-                      content={slide.check}
-                      className="text-base text-blue-800/80 dark:text-blue-200/80"
-                    />
-                  </div>
-                )}
+                </p>
               </div>
-            )}
-
-            {currentStep < slide.steps.length && (
-              <div className="py-12 text-center">
-                <Button onClick={() => setCurrentStep((prev) => prev + 1)}>
-                  Reveal Next Step
-                </Button>
-              </div>
-            )}
-          </div>
+              <MarkdownRenderer
+                content={slide.final_answer}
+                className="text-xl font-bold text-green-900"
+              />
+              {slide.check && (
+                <div className="mt-4 pt-4 border-t border-green-200">
+                  <p className="text-xs font-bold text-green-600 mb-1">
+                    Check:
+                  </p>
+                  <MarkdownRenderer
+                    content={slide.check}
+                    className="text-sm text-green-800"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </SlideContainer>
