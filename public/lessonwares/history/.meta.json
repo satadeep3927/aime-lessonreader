@@ -1,0 +1,248 @@
+{
+  "session_number": 1,
+  "lesson_type": "INTRODUCTION",
+  "title": "Uncovering Main Ideas in Ancient Civilizations Texts",
+  "subject": "Science",
+  "grade_level": "Grade 7",
+  "total_duration_minutes": 45,
+  "author": "Aime Lesson Creator",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Uncovering Main Ideas in Ancient Civilizations",
+      "teacher_notes": "Welcome students warmly and introduce today’s lesson by highlighting the importance of reading historical texts about early civilizations, such as the Indus Valley in India. Remind students that by the end, they will be able to find the main idea and supporting details, making history easier to understand. Mention we'll use real examples from Indian history. Ask students if anyone has ever wondered how historians know what matters most in a big story.",
+      "duration_minutes": 2,
+      "teacher_only": false,
+      "micro_objective_ids": [],
+      "sen_support": "Use slower speech, repeat objectives, write each on the board clearly. Use thumbs up/thumbs down to check if students understand the goals.",
+      "image_url": "/assets/default.png",
+      "slide_type": "TITLE",
+      "subject": "Science",
+      "grade_level": "Grade 7",
+      "objectives_preview": [
+        "Identify the central idea in a historical text",
+        "Find supporting details in passages about early civilizations",
+        "Summarize a text using your own words",
+        "Tell apart main and extra details in a story"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "What Matters Most?",
+      "teacher_notes": "Read the question aloud and pause for at least 10 seconds. Cold-call a mix of students, including some who rarely volunteer. Listen for curiosity and approaches (e.g., looking for big clues, comparing details). Reassure all answers are welcome — the point is to get them wondering. Bridge to next slide: \"Today, you’ll learn strategies that archaeologists and historians use, just like this!\"",
+      "duration_minutes": 3,
+      "teacher_only": false,
+      "micro_objective_ids": [],
+      "sen_support": "Draw or show a simple picture of a jar to help visualize. Restate the question: 'What would you look at first? What would matter most about the jar?'",
+      "image_url": "/assets/default.png",
+      "slide_type": "HOOK",
+      "question": "If you found an old jar with mysterious writing near your home, how would you figure out what’s important in its story?"
+    },
+    {
+      "slide_number": 3,
+      "title": "Getting Ready to Read",
+      "teacher_notes": "Ask each question aloud. If students struggle, prompt pairs to discuss for 1 minute or provide simple definitions. If many students don't recall, offer a 2-minute recap: show a quick map/image of Indus Valley, define civilization together. For 'main idea,' provide a short, familiar story and have them guess.",
+      "duration_minutes": 5,
+      "teacher_only": false,
+      "micro_objective_ids": [796],
+      "sen_support": "Allow peer discussion, display definitions and simple pictures on the board. Use word banks for key terms: 'civilization,' 'main idea.'",
+      "image_url": "/assets/default.png",
+      "slide_type": "PRIOR_KNOWLEDGE",
+      "questions": [
+        "What is a civilization? Can you name one from India?",
+        "What is a fact you remember about the Indus Valley civilization?",
+        "What does 'main idea' mean in a story?"
+      ],
+      "answers": [
+        "A civilization is an advanced group of people living together; the Indus Valley is an example.",
+        "For example: The Indus Valley civilization had planned cities like Mohenjo-daro.",
+        "The main idea is what the story or passage is mostly about."
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Finding the Central Idea",
+      "teacher_notes": "Project the points and read them. Emphasize the difference between central idea and details. Ask students to look at a short paragraph and find which sentence feels most important. Highlight how titles/headings help. Ask one student to read aloud. Write 'Central idea:' and 'Details:' on the board.",
+      "duration_minutes": 7,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 798],
+      "sen_support": "Underline or highlight key phrases on board. Repeat the main message. Display flashcards with vocabulary and pictures (e.g., Mohenjo-daro street plan).",
+      "image_url": "/assets/default.png",
+      "slide_type": "TEACH",
+      "content": "- **Central idea** = The most important message in a text\n- **Supporting details** = Facts or examples that help explain the central idea\n- Read the first and last sentences: often they give clues\n- Ask: What is the passage really about? What happens most?\n- Example: In a story about Mohenjo-daro, the main idea could be how cities were organized.",
+      "key_terms": [
+        "central idea",
+        "supporting details",
+        "Mohenjo-daro",
+        "Indus Valley"
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Main Idea in Action",
+      "teacher_notes": "Reveal each step slowly. Point to sentences as you underline/highlight. Misconception to flag: picking interesting detail (like 'drainage') as the main idea. Emphasize the 'big picture' vs. interesting facts.",
+      "duration_minutes": 6,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 797],
+      "sen_support": "Read the passage aloud, first as a group and then individually for those who need more time. Use color to mark main idea (green) and details (yellow).",
+      "image_url": "/assets/default.png",
+      "slide_type": "WORKED_EXAMPLE",
+      "problem": "Read this passage:\n\n'Mohenjo-daro was one of the largest cities of the Indus Valley Civilization. Its streets formed a grid pattern, and the city had advanced drainage systems.'\n\nWhat is the central idea? What are the details?",
+      "steps": [
+        "Read the whole passage once.",
+        "Ask: What is the passage mainly about? (Mohenjo-daro's features)",
+        "Underline the part that seems most important.",
+        "Highlight details: grid streets, drainage systems."
+      ],
+      "final_answer": "Central idea: Mohenjo-daro was a large, advanced city.\nSupporting details: Grid pattern streets, advanced drainage systems.",
+      "check": "Ask: Do the details explain or describe the main idea?"
+    },
+    {
+      "slide_number": 6,
+      "title": "Summarizing a Passage",
+      "teacher_notes": "For each step, ask students what they think should go in the summary. Point out if anyone adds extra information or misses important ideas. Discuss why summaries use fewer words.",
+      "duration_minutes": 7,
+      "teacher_only": false,
+      "micro_objective_ids": [797, 798],
+      "sen_support": "Break the passage into sentence strips, provide a word bank (e.g., seals, traders, writing), and let students match sentences with main idea/supporting detail cards.",
+      "image_url": "/assets/default.png",
+      "slide_type": "WORKED_EXAMPLE",
+      "problem": "Passage:\n\n'Traders from the Indus Valley used seals to mark their goods. These seals had animal symbols and writing, making it easy to identify items.'\n\nSummarize this text in your own words.",
+      "steps": [
+        "Read the passage aloud.",
+        "Identify the central idea: What is the passage about? (Use of seals by traders)",
+        "Spot details: Seals had animal symbols and writing; helped to identify goods.",
+        "Summarize: Put the main idea and most important details into one short sentence."
+      ],
+      "final_answer": "Indus Valley traders marked their goods with seals showing animals and writing.",
+      "check": "Does the summary include the most important information?"
+    },
+    {
+      "slide_number": 7,
+      "title": "Practice with a New Text",
+      "teacher_notes": "Have students suggest central idea and details out loud for each problem. Write answers as students share. If mistakes occur, re-read sentences together. Let SEN students underline or highlight. Praise correct identification.",
+      "duration_minutes": 5,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 797],
+      "sen_support": "Allow students to work in pairs, provide sentence frames ('The main idea is...'), and offer color-coded highlighters.",
+      "image_url": "/assets/default.png",
+      "slide_type": "GUIDED_PRACTICE",
+      "problems": [
+        "The farmers of the Indus Valley stored extra grain in large buildings called granaries.",
+        "Some houses in Harappa had wells, so families had clean water inside their homes."
+      ],
+      "answers": [
+        "Central idea: Farmers stored extra grain in granaries. Supporting detail: Large buildings called granaries.",
+        "Central idea: Some Harappa homes had wells. Supporting detail: Clean water inside homes."
+      ]
+    },
+    {
+      "slide_number": 8,
+      "title": "Try It On Your Own",
+      "teacher_notes": "Assign the Level 1 task to all, circulate and offer extra scaffolding for those who need it. Encourage Level 2 for confident students and Level 3 for quick finishers. Allot 3 min for Level 0/1, 3 min for Level 2, and 2 min for Level 3. Look for summaries that keep the central idea without too much extra info.",
+      "duration_minutes": 8,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 797, 798],
+      "sen_support": "Sit SEN students in pairs/groups, read passages with them if necessary, give highlighters and word banks ('used for,' 'made from,' 'traded'), and prompt with guiding questions when stuck.",
+      "image_url": null,
+      "slide_type": "STUDENT_TASK",
+      "level_0": [
+        "Read: 'The Great Bath in Mohenjo-daro was used for special ceremonies.'\n- Underline the sentence that tells what the bath was used for.",
+        "What is the main idea? (Circle one: 'Mohenjo-daro had a bath' / 'The bath was used for ceremonies')"
+      ],
+      "level_1": [
+        "Read: 'Pottery from the Indus Valley was made using clay and decorated with patterns.' Identify: What is the central idea?",
+        "List one supporting detail."
+      ],
+      "level_2": [
+        "Read: 'Many cities in the Indus Valley had wide, straight streets, which helped people move around easily.'\n- Summarize this in your own words."
+      ],
+      "level_3": [
+        "Read: 'Merchants traveled between the Indus Valley and distant regions to trade beads, metals, and cloth.'\n- Identify the central idea and two supporting details, then write a single-sentence summary."
+      ],
+      "answers": {
+        "0a": "The bath was used for special ceremonies",
+        "0b": "The bath was used for ceremonies",
+        "1a": "Pottery from the Indus Valley was made from clay and decorated",
+        "1b": "Made using clay or decorated with patterns",
+        "2a": "Indus Valley cities had wide streets so people could move easily.",
+        "3a": "Central idea: Merchants traded with distant regions. Details: Beads, metals, cloth. Summary: Merchants in the Indus Valley traded goods like beads, metals, and cloth with distant places."
+      }
+    },
+    {
+      "slide_number": 9,
+      "title": "Common Mistakes to Avoid",
+      "teacher_notes": "Discuss each misconception openly. Ask: 'Why might someone make this mistake?' Encourage not to worry about errors—everyone is learning. For SEN, give examples of correct and incorrect answers to compare.",
+      "duration_minutes": 2,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 797, 798],
+      "sen_support": "Use examples side-by-side. Let students highlight main ideas vs. fun details. Read and paraphrase together.",
+      "image_url": null,
+      "slide_type": "MISCONCEPTION",
+      "items": [
+        {
+          "mistake": "Choosing a fun detail (e.g., 'grid streets') as the main idea.",
+          "correction": "Identify the overall topic or big message as the main idea.",
+          "explanation": "Students may pick what stands out to them instead of the bigger picture."
+        },
+        {
+          "mistake": "Writing the summary using the passage's exact words.",
+          "correction": "Paraphrase: express the main idea using your own language.",
+          "explanation": "It's tempting to copy because it feels safer or easier."
+        },
+        {
+          "mistake": "Listing every detail instead of choosing the most important ones.",
+          "correction": "Select only the details that explain or support the central idea.",
+          "explanation": "Students want to include everything so nothing is missed."
+        }
+      ]
+    },
+    {
+      "slide_number": 10,
+      "title": "Key Takeaways",
+      "teacher_notes": "Read the takeaways aloud and invite a few students to recall an example from today. Remind everyone to look for main ideas in other subjects too. Collect student worksheets for review and leave time for exit ticket.",
+      "duration_minutes": 3,
+      "teacher_only": false,
+      "micro_objective_ids": [],
+      "sen_support": "Ask students to give a thumbs up if they feel confident, thumbs sideways if unsure. Summarize each point again in simple sentences.",
+      "image_url": null,
+      "slide_type": "SUMMARY",
+      "key_takeaways": [
+        "The central idea tells what a passage is mostly about.",
+        "Supporting details give examples or facts about the main idea.",
+        "You can summarize by using your own words.",
+        "Don’t let interesting details confuse you—focus on the big message!"
+      ],
+      "next_lesson_preview": null
+    },
+    {
+      "slide_number": 11,
+      "title": "Show What You Know!",
+      "teacher_notes": "Read both questions out loud, allow 1 minute for each. Collect tickets as students exit, quickly scan for trends. Any confusion on the main idea means this must be revisited. For SEN students, prompt verbally and let them answer orally or draw a picture for Q2.",
+      "duration_minutes": 2,
+      "teacher_only": false,
+      "micro_objective_ids": [796, 797],
+      "sen_support": "Allow oral answers or drawings as exit tickets. Rephrase questions as needed and offer sentence starters.",
+      "image_url": null,
+      "slide_type": "EXIT_TICKET",
+      "questions": [
+        "What is the main idea of this sentence: 'Farmers built canals to water their fields in the Indus Valley'?",
+        "Write a short summary of: 'Houses in the ancient cities had flat roofs and many rooms.'"
+      ],
+      "answers": [
+        "Farmers built canals for irrigation (watering fields).",
+        "Many ancient houses had flat roofs and several rooms."
+      ],
+      "threshold_note": "If more than 25% get Q1 wrong, start next lesson with a mini-reteach on finding main ideas using local examples."
+    }
+  ],
+  "resources": [
+    "NCERT Class 7 History textbook: Chapter on Indus Valley",
+    "Printed handouts of Indus Valley short passages",
+    "Coloured highlighters for main idea and detail marking",
+    "Sample artefact images",
+    "Word bank cards for summarizing"
+  ],
+  "cover_image_url": "/assets/default.png",
+  "ai_rationale": "The lesson uses multiple modalities to build foundational skills in understanding historical texts, important for further content learning. Timings are adjusted for careful introduction, live modeling, scaffolded practice, and SEN support, with increased worked example time. Regional examples anchor the content in familiar Indian historical contexts. Main idea, summary, and detail distinctions are woven throughout, and misconception checks ensure misconceptions do not persist."
+}
