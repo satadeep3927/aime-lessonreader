@@ -141,8 +141,11 @@ async fn close_splashscreen(
     let pending = state.0.lock().ok().and_then(|g| g.clone());
 
     if let Some(path) = pending {
-        // Small delay to let the React tree finish mounting before the event.
-        tokio::time::sleep(std::time::Duration::from_millis(400)).await;
+        // Wait for the React tree (HomeScreen) to mount and register its
+        // "launch-file-opened" listener.  The main window was hidden until
+        // just now, so the WebView may need a moment to become event-ready.
+        // 2 s is safe here — the splash already covers the visual wait.
+        tokio::time::sleep(std::time::Duration::from_millis(2000)).await;
         let _ = main.emit("launch-file-opened", path);
     }
 
@@ -346,14 +349,24 @@ pub fn run() {
         .expect("error while building tauri application")
         .run(|app, event| {
             if let tauri::RunEvent::Opened { urls } = event {
-                // Store the path so close_splashscreen can emit it once React is ready.
                 if let Some(path) = pick_lesson_path_from_urls(&urls) {
-                    if let Some(state) = app.try_state::<LaunchFile>() {
+                    // If the main window is already visible, React is mounted — emit directly.
+                    // Otherwise store the path for close_splashscreen to emit once React is ready.
+                    let main_visible = app
+                        .get_webview_window("main")
+                        .and_then(|w| w.is_visible().ok())
+                        .unwrap_or(false);
+
+                    if main_visible {
+                        if let Some(main) = app.get_webview_window("main") {
+                            let _ = main.emit("launch-file-opened", path);
+                        }
+                    } else if let Some(state) = app.try_state::<LaunchFile>() {
                         if let Ok(mut file) = state.0.lock() {
                             *file = Some(path);
                         }
                     }
                 }
             }
-            });
+        });
 }
