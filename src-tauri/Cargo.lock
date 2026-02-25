@@ -42,6 +42,7 @@ dependencies = [
  "tauri-plugin-opener",
  "tauri-plugin-os",
  "tauri-plugin-store",
+ "url",
  "zip",
 ]
 

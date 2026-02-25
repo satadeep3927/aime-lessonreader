@@ -1,12 +1,31 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use tauri::menu::{MenuBuilder, MenuItemKind, SubmenuBuilder};
 use tauri::{Emitter, Manager, State};
+use std::path::Path;
 use std::sync::Mutex;
 
 mod lesson_pack;
 use lesson_pack::*;
 
 struct LaunchFile(Mutex<Option<String>>);
+
+fn normalize_launch_arg(raw: &str) -> Option<String> {
+    let trimmed = raw.trim().trim_matches('"').trim_matches('\'');
+
+    if trimmed.is_empty() || trimmed.starts_with('-') {
+        return None;
+    }
+
+    if let Ok(url) = url::Url::parse(trimmed) {
+        if url.scheme() == "file" {
+            if let Ok(path) = url.to_file_path() {
+                return Some(path.to_string_lossy().to_string());
+            }
+        }
+    }
+
+    Some(trimmed.to_string())
+}
 
 fn set_menu_item_enabled(app: &tauri::AppHandle, item_id: &str, enabled: bool) {
     let Some(menu) = app.menu() else {
@@ -227,19 +246,40 @@ pub fn run() {
             
             // In release, the first argument is typically the file path if opened via association
             if args.len() > 1 {
-                // Try case-insensitive extension check first
+                // Try case-insensitive extension match first
                 for arg in args.iter().skip(1) {
-                    if arg.to_lowercase().ends_with(".aimepack") {
-                        launch_path = Some(arg.clone());
-                        break;
+                    if let Some(candidate) = normalize_launch_arg(arg) {
+                        let lower = candidate.to_lowercase();
+                        if (lower.ends_with(".aimepack") || lower.ends_with(".aimepac"))
+                            && Path::new(&candidate).exists()
+                        {
+                            launch_path = Some(candidate);
+                            break;
+                        }
                     }
                 }
-                
-                // Fallback: take the first non-flag argument
+
+                // Fallback: take first valid non-flag path argument
                 if launch_path.is_none() {
-                     if let Some(arg) = args.iter().skip(1).find(|a| !a.starts_with("-")) {
-                         launch_path = Some(arg.clone());
-                     }
+                    for arg in args.iter().skip(1) {
+                        if let Some(candidate) = normalize_launch_arg(arg) {
+                            if Path::new(&candidate).exists() {
+                                launch_path = Some(candidate);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Last resort: keep first normalized non-flag arg even if path currently doesn't exist
+                if launch_path.is_none() {
+                    if let Some(candidate) = args
+                        .iter()
+                        .skip(1)
+                        .find_map(|arg| normalize_launch_arg(arg))
+                    {
+                        launch_path = Some(candidate);
+                    }
                 }
             }
 
