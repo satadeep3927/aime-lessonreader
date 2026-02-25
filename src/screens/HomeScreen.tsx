@@ -20,29 +20,41 @@ export const HomeScreen = () => {
 
   // Check for launch file on mount
   useEffect(() => {
-    const checkLaunch = async () => {
-      try {
-        const path = await lessonPackService.checkLaunchFile();
-        console.log("Launch check path:", path);
-        if (path) {
-          openLessonPack.mutate(path);
-        }
-      } catch (error) {
-        console.error("Failed to check launch file:", error);
+    let isDisposed = false;
+    let unlisten: (() => void) | null = null;
+
+    const openLaunchPath = (path: string | null) => {
+      if (!isDisposed && path) {
+        openLessonPack.mutate(path);
       }
     };
-    checkLaunch();
-  }, []); // Run once on mount
 
-  useEffect(() => {
-    const unlistenPromise = listen<string>("launch-file-opened", ({ payload }) => {
-      if (payload) {
-        openLessonPack.mutate(payload);
+    const setupLaunchHandling = async () => {
+      try {
+        unlisten = await listen<string>("launch-file-opened", ({ payload }) => {
+          openLaunchPath(payload);
+        });
+
+        const initialPath = await lessonPackService.checkLaunchFile();
+        openLaunchPath(initialPath);
+
+        setTimeout(async () => {
+          if (isDisposed) return;
+          const delayedPath = await lessonPackService.checkLaunchFile();
+          openLaunchPath(delayedPath);
+        }, 1200);
+      } catch (error) {
+        console.error("Failed to handle launch file:", error);
       }
-    });
+    };
+
+    setupLaunchHandling();
 
     return () => {
-      unlistenPromise.then((unlisten) => unlisten());
+      isDisposed = true;
+      if (unlisten) {
+        unlisten();
+      }
     };
   }, [openLessonPack]);
 

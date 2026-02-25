@@ -36,7 +36,7 @@ fn pick_lesson_path_from_urls(urls: &[url::Url]) -> Option<String> {
         if let Ok(path) = url.to_file_path() {
             let path_str = path.to_string_lossy().to_string();
             let lower = path_str.to_lowercase();
-            if (lower.ends_with(".aimepack") || lower.ends_with(".aimepac"))
+            if lower.ends_with(".aimepack")
                 && Path::new(&path_str).exists()
             {
                 return Some(path_str);
@@ -270,7 +270,7 @@ pub fn run() {
                 for arg in args.iter().skip(1) {
                     if let Some(candidate) = normalize_launch_arg(arg) {
                         let lower = candidate.to_lowercase();
-                        if (lower.ends_with(".aimepack") || lower.ends_with(".aimepac"))
+                        if lower.ends_with(".aimepack")
                             && Path::new(&candidate).exists()
                         {
                             launch_path = Some(candidate);
@@ -279,28 +279,6 @@ pub fn run() {
                     }
                 }
 
-                // Fallback: take first valid non-flag path argument
-                if launch_path.is_none() {
-                    for arg in args.iter().skip(1) {
-                        if let Some(candidate) = normalize_launch_arg(arg) {
-                            if Path::new(&candidate).exists() {
-                                launch_path = Some(candidate);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Last resort: keep first normalized non-flag arg even if path currently doesn't exist
-                if launch_path.is_none() {
-                    if let Some(candidate) = args
-                        .iter()
-                        .skip(1)
-                        .find_map(|arg| normalize_launch_arg(arg))
-                    {
-                        launch_path = Some(candidate);
-                    }
-                }
             }
 
             app.manage(LaunchFile(Mutex::new(launch_path)));
@@ -353,9 +331,10 @@ pub fn run() {
         .run(|app, event| {
             if let tauri::RunEvent::Opened { urls } = event {
                 if let Some(path) = pick_lesson_path_from_urls(&urls) {
-                    let state = app.state::<LaunchFile>();
-                    if let Ok(mut file) = state.0.lock() {
-                        *file = Some(path.clone());
+                    if let Some(state) = app.try_state::<LaunchFile>() {
+                        if let Ok(mut file) = state.0.lock() {
+                            *file = Some(path.clone());
+                        }
                     }
 
                     if let Some(main) = app.get_webview_window("main") {
