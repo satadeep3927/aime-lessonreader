@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
 import { confirm as tauriConfirm } from "@tauri-apps/plugin-dialog";
+import { listen } from "@tauri-apps/api/event";
 
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
@@ -32,6 +33,18 @@ export const HomeScreen = () => {
     };
     checkLaunch();
   }, []); // Run once on mount
+
+  useEffect(() => {
+    const unlistenPromise = listen<string>("launch-file-opened", ({ payload }) => {
+      if (payload) {
+        openLessonPack.mutate(payload);
+      }
+    });
+
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+    };
+  }, [openLessonPack]);
 
   // Set greeting based on time of day
   useEffect(() => {

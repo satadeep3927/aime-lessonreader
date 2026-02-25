@@ -63,7 +63,8 @@
     "fileAssociations": [
       {
         "ext": [
-          "aimepack"
+          "aimepack",
+          "aimepac"
         ],
         "name": "AIME Lesson Pack",
         "description": "AIME Lesson Reader Pack",

@@ -22,7 +22,7 @@ export const lessonPackService = {
       filters: [
         {
           name: "AIME Lesson Pack",
-          extensions: ["aimepack"],
+          extensions: ["aimepack", "aimepac"],
         },
       ],
     });

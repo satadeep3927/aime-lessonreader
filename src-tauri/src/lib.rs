@@ -27,6 +27,26 @@ fn normalize_launch_arg(raw: &str) -> Option<String> {
     Some(trimmed.to_string())
 }
 
+fn pick_lesson_path_from_urls(urls: &[url::Url]) -> Option<String> {
+    for url in urls {
+        if url.scheme() != "file" {
+            continue;
+        }
+
+        if let Ok(path) = url.to_file_path() {
+            let path_str = path.to_string_lossy().to_string();
+            let lower = path_str.to_lowercase();
+            if (lower.ends_with(".aimepack") || lower.ends_with(".aimepac"))
+                && Path::new(&path_str).exists()
+            {
+                return Some(path_str);
+            }
+        }
+    }
+
+    None
+}
+
 fn set_menu_item_enabled(app: &tauri::AppHandle, item_id: &str, enabled: bool) {
     let Some(menu) = app.menu() else {
         return;
@@ -328,6 +348,21 @@ pub fn run() {
             create_new_window,
             update_menu_state
         ])
-        .run(tauri::generate_context!())
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            if let tauri::RunEvent::Opened { urls } = event {
+                if let Some(path) = pick_lesson_path_from_urls(urls) {
+                    let state = app.state::<LaunchFile>();
+                    if let Ok(mut file) = state.0.lock() {
+                        *file = Some(path.clone());
+                    }
+
+                    if let Some(main) = app.get_webview_window("main") {
+                        let _ = main.emit("launch-file-opened", path);
+                    }
+                }
+            }
+        })
         .expect("error while running tauri application");
 }
