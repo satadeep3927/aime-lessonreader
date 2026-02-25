@@ -30,7 +30,9 @@ export const HomeScreen = () => {
 
     let unlistenFn: (() => void) | null = null;
 
-    listen<string>("launch-file-opened", ({ payload }) => tryOpen(payload)).then(
+    listen<string>("launch-file-opened", ({ payload }) => {
+      tryOpen(payload);
+    }).then(
       (ul) => {
         unlistenFn = ul;
       },
@@ -39,7 +41,7 @@ export const HomeScreen = () => {
     // Fallback: path may already be stored if RunEvent::Opened fired early.
     lessonPackService
       .checkLaunchFile()
-      .then(tryOpen)
+      .then((v) => { tryOpen(v); })
       .catch(() => {});
 
     return () => {

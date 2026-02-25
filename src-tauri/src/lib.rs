@@ -2,12 +2,16 @@
 use tauri::menu::{MenuBuilder, MenuItemKind, SubmenuBuilder};
 use tauri::{Emitter, Manager, State};
 use std::path::Path;
-use std::sync::Mutex;
 
 mod lesson_pack;
 use lesson_pack::*;
 
-struct LaunchFile(Mutex<Option<String>>);
+// Module-level storage so RunEvent::Opened can store the path
+// before the setup hook registers any managed state.
+static PENDING_LAUNCH: std::sync::Mutex<Option<String>> = std::sync::Mutex::new(None);
+
+// Kept for backwards compatibility with check_launch_file command signature
+struct LaunchFile;
 
 fn normalize_launch_arg(raw: &str) -> Option<String> {
     let trimmed = raw.trim().trim_matches('"').trim_matches('\'');
@@ -123,7 +127,7 @@ fn greet(name: &str) -> String {
 #[tauri::command]
 async fn close_splashscreen(
     window: tauri::Window,
-    state: State<'_, LaunchFile>,
+    _state: State<'_, LaunchFile>,
 ) -> Result<(), String> {
     // Close splash screen
     if let Some(splash) = window.get_webview_window("splash") {
@@ -138,7 +142,7 @@ async fn close_splashscreen(
 
     // Once the main window is visible and React is running, emit any pending
     // launch-file path so HomeScreen can open it reliably.
-    let pending = state.0.lock().ok().and_then(|g| g.clone());
+    let pending = PENDING_LAUNCH.lock().ok().and_then(|mut g| g.take());
 
     if let Some(path) = pending {
         // Wait for the React tree (HomeScreen) to mount and register its
@@ -163,9 +167,9 @@ async fn open_lesson_pack(
 }
 
 #[tauri::command]
-async fn check_launch_file(state: State<'_, LaunchFile>) -> Result<Option<String>, String> {
-    let mut file = state.0.lock().map_err(|_| "Failed to lock mutex")?;
-    Ok(file.take())
+async fn check_launch_file(_state: State<'_, LaunchFile>) -> Result<Option<String>, String> {
+    let path = PENDING_LAUNCH.lock().ok().and_then(|mut g| g.take());
+    Ok(path)
 }
 
 #[tauri::command]
@@ -282,10 +286,9 @@ pub fn run() {
 
             let args: Vec<String> = std::env::args().collect();
             let mut launch_path = None;
-            
+
             // In release, the first argument is typically the file path if opened via association
             if args.len() > 1 {
-                // Try case-insensitive extension match first
                 for arg in args.iter().skip(1) {
                     if let Some(candidate) = normalize_launch_arg(arg) {
                         let lower = candidate.to_lowercase();
@@ -297,10 +300,15 @@ pub fn run() {
                         }
                     }
                 }
-
             }
 
-            app.manage(LaunchFile(Mutex::new(launch_path)));
+            // Seed the static only if args provided a path (cold launch via CLI/Finder pass-through)
+            if let Some(ref p) = launch_path {
+                if let Ok(mut g) = PENDING_LAUNCH.lock() {
+                    *g = Some(p.clone());
+                }
+            }
+            app.manage(LaunchFile);
             Ok(())
         })
         .plugin(tauri_plugin_fs::init())
@@ -351,7 +359,7 @@ pub fn run() {
             if let tauri::RunEvent::Opened { urls } = event {
                 if let Some(path) = pick_lesson_path_from_urls(&urls) {
                     // If the main window is already visible, React is mounted — emit directly.
-                    // Otherwise store the path for close_splashscreen to emit once React is ready.
+                    // Otherwise store in the static for close_splashscreen to pick up.
                     let main_visible = app
                         .get_webview_window("main")
                         .and_then(|w| w.is_visible().ok())
@@ -361,9 +369,9 @@ pub fn run() {
                         if let Some(main) = app.get_webview_window("main") {
                             let _ = main.emit("launch-file-opened", path);
                         }
-                    } else if let Some(state) = app.try_state::<LaunchFile>() {
-                        if let Ok(mut file) = state.0.lock() {
-                            *file = Some(path);
+                    } else {
+                        if let Ok(mut g) = PENDING_LAUNCH.lock() {
+                            *g = Some(path);
                         }
                     }
                 }
