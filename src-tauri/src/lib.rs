@@ -31,6 +31,7 @@ fn normalize_launch_arg(raw: &str) -> Option<String> {
     Some(trimmed.to_string())
 }
 
+#[cfg(target_os = "macos")]
 fn pick_lesson_path_from_urls(urls: &[url::Url]) -> Option<String> {
     for url in urls {
         if url.scheme() != "file" {
@@ -355,26 +356,32 @@ pub fn run() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|app, event| {
-            if let tauri::RunEvent::Opened { urls } = event {
-                if let Some(path) = pick_lesson_path_from_urls(&urls) {
-                    // If the main window is already visible, React is mounted — emit directly.
-                    // Otherwise store in the static for close_splashscreen to pick up.
-                    let main_visible = app
-                        .get_webview_window("main")
-                        .and_then(|w| w.is_visible().ok())
-                        .unwrap_or(false);
+        .run(|_app, event| {
+            #[cfg(target_os = "macos")]
+            {
+                let app = _app;
+                if let tauri::RunEvent::Opened { urls } = event {
+                    if let Some(path) = pick_lesson_path_from_urls(&urls) {
+                        // If the main window is already visible, React is mounted — emit directly.
+                        // Otherwise store in the static for close_splashscreen to pick up.
+                        let main_visible = app
+                            .get_webview_window("main")
+                            .and_then(|w| w.is_visible().ok())
+                            .unwrap_or(false);
 
-                    if main_visible {
-                        if let Some(main) = app.get_webview_window("main") {
-                            let _ = main.emit("launch-file-opened", path);
-                        }
-                    } else {
-                        if let Ok(mut g) = PENDING_LAUNCH.lock() {
-                            *g = Some(path);
+                        if main_visible {
+                            if let Some(main) = app.get_webview_window("main") {
+                                let _ = main.emit("launch-file-opened", path);
+                            }
+                        } else {
+                            if let Ok(mut g) = PENDING_LAUNCH.lock() {
+                                *g = Some(path);
+                            }
                         }
                     }
                 }
             }
+            #[cfg(not(target_os = "macos"))]
+            let _ = event;
         });
 }
