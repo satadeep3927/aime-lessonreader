@@ -20,7 +20,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-white dark:bg-zinc-950">
-      <Titlebar />
+      <Titlebar hideCustomBar />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/viewer" element={<PresentationViewer />} />

@@ -1,11 +1,83 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri::{Manager, State};
+use tauri::menu::{MenuBuilder, MenuItemKind, SubmenuBuilder};
+use tauri::{Emitter, Manager, State};
 use std::sync::Mutex;
 
 mod lesson_pack;
 use lesson_pack::*;
 
 struct LaunchFile(Mutex<Option<String>>);
+
+fn set_menu_item_enabled(app: &tauri::AppHandle, item_id: &str, enabled: bool) {
+    let Some(menu) = app.menu() else {
+        return;
+    };
+    let Some(item) = menu.get(item_id) else {
+        return;
+    };
+
+    match item {
+        MenuItemKind::MenuItem(item) => {
+            let _ = item.set_enabled(enabled);
+        }
+        MenuItemKind::Check(item) => {
+            let _ = item.set_enabled(enabled);
+        }
+        MenuItemKind::Icon(item) => {
+            let _ = item.set_enabled(enabled);
+        }
+        MenuItemKind::Submenu(item) => {
+            let _ = item.set_enabled(enabled);
+        }
+        MenuItemKind::Predefined(_) => {}
+    }
+}
+
+fn update_native_menu_state(
+    app: &tauri::AppHandle,
+    has_lesson: bool,
+    is_viewer_page: bool,
+) {
+    let lesson_bound_items = ["file.close_lesson", "file.properties"];
+    let viewer_bound_items = [
+        "view.fit_to_window",
+        "view.actual_size",
+        "view.zoom_in",
+        "view.zoom_out",
+        "view.presentation_mode",
+        "view.toggle_sidebar",
+        "view.toggle_notes",
+        "view.toggle_whiteboard",
+        "navigate.next",
+        "navigate.prev",
+        "navigate.first",
+        "navigate.last",
+        "navigate.goto",
+        "navigate.toc",
+    ];
+
+    for item_id in lesson_bound_items {
+        set_menu_item_enabled(app, item_id, has_lesson);
+    }
+
+    for item_id in viewer_bound_items {
+        set_menu_item_enabled(app, item_id, is_viewer_page);
+    }
+}
+
+fn emit_menu_action(app: &tauri::AppHandle, action: &str) {
+    if let Some(main) = app.get_webview_window("main") {
+        let _ = main.emit("native-menu-action", action.to_string());
+    }
+}
+
+fn create_new_window_sync() -> Result<(), String> {
+    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    std::process::Command::new(exe)
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -78,10 +150,16 @@ async fn cleanup_lesson_pack(extracted_path: String) -> Result<(), String> {
 
 #[tauri::command]
 async fn create_new_window() -> Result<(), String> {
-    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-    std::process::Command::new(exe)
-        .spawn()
-        .map_err(|e| e.to_string())?;
+    create_new_window_sync()
+}
+
+#[tauri::command]
+async fn update_menu_state(
+    app: tauri::AppHandle,
+    has_lesson: bool,
+    is_viewer_page: bool,
+) -> Result<(), String> {
+    update_native_menu_state(&app, has_lesson, is_viewer_page);
     Ok(())
 }
 
@@ -89,6 +167,61 @@ async fn create_new_window() -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            let home_menu = SubmenuBuilder::new(app, "Home")
+                .text("home.go_home", "Go to Home")
+                .text("home.settings", "Settings")
+                .build()?;
+
+            let file_menu = SubmenuBuilder::new(app, "File")
+                .text("file.new_window", "New Window")
+                .text("file.open_lesson", "Open Lesson...")
+                .separator()
+                .text("file.close_lesson", "Close Lesson")
+                .text("file.properties", "Properties")
+                .separator()
+                .text("file.exit", "Exit")
+                .build()?;
+
+            let view_menu = SubmenuBuilder::new(app, "View")
+                .text("view.fit_to_window", "Fit to Window")
+                .text("view.actual_size", "Actual Size")
+                .text("view.zoom_in", "Zoom In")
+                .text("view.zoom_out", "Zoom Out")
+                .separator()
+                .text("view.full_screen", "Full Screen")
+                .text("view.presentation_mode", "Presentation Mode")
+                .separator()
+                .text("view.toggle_sidebar", "Toggle Sidebar")
+                .text("view.toggle_notes", "Toggle Notes Panel")
+                .text("view.toggle_whiteboard", "Toggle Whiteboard Mode")
+                .separator()
+                .text("view.light_mode", "Light Mode")
+                .text("view.dark_mode", "Dark Mode")
+                .build()?;
+
+            let navigate_menu = SubmenuBuilder::new(app, "Navigate")
+                .text("navigate.next", "Next Slide")
+                .text("navigate.prev", "Previous Slide")
+                .text("navigate.first", "First Slide")
+                .text("navigate.last", "Last Slide")
+                .separator()
+                .text("navigate.goto", "Go to Slide...")
+                .text("navigate.toc", "Table of Contents")
+                .build()?;
+
+            let help_menu = SubmenuBuilder::new(app, "Help")
+                .text("help.user_guide", "User Guide")
+                .text("help.keyboard_shortcuts", "Keyboard Shortcuts")
+                .separator()
+                .text("help.about", "About Lesson Reader")
+                .build()?;
+
+            let menu = MenuBuilder::new(app)
+                .items(&[&home_menu, &file_menu, &view_menu, &navigate_menu, &help_menu])
+                .build()?;
+            app.set_menu(menu)?;
+            update_native_menu_state(app.handle(), false, false);
+
             let args: Vec<String> = std::env::args().collect();
             let mut launch_path = None;
             
@@ -118,6 +251,29 @@ pub fn run() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .on_menu_event(|app, event| match event.id().as_ref() {
+            "file.new_window" => {
+                let _ = create_new_window_sync();
+            }
+            "file.exit" => {
+                app.exit(0);
+            }
+            "view.full_screen" => {
+                if let Some(main) = app.get_webview_window("main") {
+                    if let Ok(is_fullscreen) = main.is_fullscreen() {
+                        let _ = main.set_fullscreen(!is_fullscreen);
+                    }
+                }
+            }
+            "view.presentation_mode" => {
+                if let Some(main) = app.get_webview_window("main") {
+                    let _ = main.set_fullscreen(true);
+                }
+            }
+            action => {
+                emit_menu_action(app, action);
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             close_splashscreen,
@@ -129,7 +285,8 @@ pub fn run() {
             remove_from_recent,
             clear_recent,
             cleanup_lesson_pack,
-            create_new_window
+            create_new_window,
+            update_menu_state
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

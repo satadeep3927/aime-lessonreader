@@ -6,6 +6,7 @@ import { BookOpen, Clock, FolderOpen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
+import { confirm as tauriConfirm } from "@tauri-apps/plugin-dialog";
 
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
@@ -76,8 +77,18 @@ export const HomeScreen = () => {
     openLessonPack.mutate(filePath);
   };
 
-  const handleClearRecent = () => {
-    if (confirm("Are you sure you want to clear all recent lessons?")) {
+  const handleClearRecent = async () => {
+    const shouldClear = await tauriConfirm(
+      "Are you sure you want to clear all recent lessons?",
+      {
+        title: "Clear Recent Lessons",
+        kind: "warning",
+        okLabel: "Clear",
+        cancelLabel: "Cancel",
+      },
+    );
+
+    if (shouldClear) {
       clearRecent.mutate();
     }
   };

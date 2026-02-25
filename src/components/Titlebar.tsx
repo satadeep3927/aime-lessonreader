@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
 import {
@@ -44,7 +45,11 @@ import logoImage from "@/assets/images/logo-taskbar.png";
 
 const appWindow = getCurrentWindow();
 
-export function Titlebar() {
+interface TitlebarProps {
+  hideCustomBar?: boolean;
+}
+
+export function Titlebar({ hideCustomBar = false }: TitlebarProps) {
   const [isMaximized, setIsMaximized] = useState(false);
   const [currentPlatform, setCurrentPlatform] = useState<string>("");
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -98,6 +103,107 @@ export function Titlebar() {
       unlistenResized.then((unlisten) => unlisten());
     };
   }, []);
+
+  useEffect(() => {
+    const unlistenNativeMenu = listen<string>(
+      "native-menu-action",
+      ({ payload }) => {
+        switch (payload) {
+          case "home.go_home":
+            handleGoHome();
+            break;
+          case "home.settings":
+            handleSettings();
+            break;
+          case "file.open_lesson":
+            handleOpenLesson();
+            break;
+          case "file.close_lesson":
+            handleCloseLesson();
+            break;
+          case "file.properties":
+            handleProperties();
+            break;
+          case "view.fit_to_window":
+          case "view.actual_size":
+            handleResetZoom();
+            break;
+          case "view.zoom_in":
+            handleZoomIn();
+            break;
+          case "view.zoom_out":
+            handleZoomOut();
+            break;
+          case "view.presentation_mode":
+            void handlePresentationMode();
+            break;
+          case "view.toggle_sidebar":
+            handleToggleSidebar();
+            break;
+          case "view.toggle_notes":
+            handleToggleNotesPanel();
+            break;
+          case "view.toggle_whiteboard":
+            toggleWhiteboardMode();
+            break;
+          case "view.light_mode":
+            handleLightMode();
+            break;
+          case "view.dark_mode":
+            handleDarkMode();
+            break;
+          case "navigate.next":
+            handleNextSlide();
+            break;
+          case "navigate.prev":
+            handlePrevSlide();
+            break;
+          case "navigate.first":
+            handleFirstSlide();
+            break;
+          case "navigate.last":
+            handleLastSlide();
+            break;
+          case "navigate.goto":
+            handleGoToSlide();
+            break;
+          case "navigate.toc":
+            handleTableOfContents();
+            break;
+          case "help.user_guide":
+            handleUserGuide();
+            break;
+          case "help.keyboard_shortcuts":
+            handleKeyboardShortcuts();
+            break;
+          case "help.about":
+            handleAbout();
+            break;
+        }
+      },
+    );
+
+    return () => {
+      unlistenNativeMenu.then((unlisten) => unlisten());
+    };
+  }, [
+    currentPack,
+    currentSlide,
+    isViewerPage,
+    isSidebarCollapsed,
+    isNotesPanelVisible,
+    isWhiteboardMode,
+    slideNumber,
+  ]);
+
+  useEffect(() => {
+    invoke("update_menu_state", {
+      has_lesson: !!currentPack,
+      is_viewer_page: isViewerPage,
+    }).catch((error) => {
+      console.error("Failed to update native menu state:", error);
+    });
+  }, [currentPack, isViewerPage]);
 
   const handleMinimize = () => {
     appWindow.minimize();
@@ -259,15 +365,17 @@ export function Titlebar() {
   const isWindows = currentPlatform === "windows";
 
   return (
-    <div
-      className={`flex items-center select-none h-9 ${
-        isMac
-          ? "bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800"
-          : isWindows
-            ? "bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
-            : "bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-700"
-      }`}
-    >
+    <>
+      {!hideCustomBar && (
+        <div
+          className={`flex items-center select-none h-9 ${
+            isMac
+              ? "bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800"
+              : isWindows
+                ? "bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800"
+                : "bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-700"
+          }`}
+        >
       {/* Logo on the left */}
       <div className="flex items-center pl-3 pr-2">
         <img src={logoImage} alt="AIME Logo" className="h-5 w-5" />
@@ -435,8 +543,8 @@ export function Titlebar() {
       </div>
 
       {/* Windows/Linux window controls on the right */}
-      {!isMac && (
-        <div className="flex items-center h-full">
+          {!isMac && (
+            <div className="flex items-center h-full">
           <button
             onClick={handleMinimize}
             className={`h-full px-4 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors ${
@@ -474,6 +582,8 @@ export function Titlebar() {
           >
             <X className="w-4 h-4" />
           </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -998,6 +1108,6 @@ export function Titlebar() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
