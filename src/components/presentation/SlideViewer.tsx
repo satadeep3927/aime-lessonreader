@@ -1,4 +1,5 @@
 // src/components/presentation/SlideViewer.tsx
+import { useRef, useState, useEffect } from "react";
 import { AnySlide } from "@/types/lessonPack";
 import { CoverSlide } from "./slides/CoverSlide";
 import { TeachSlide } from "./slides/TeachSlide";
@@ -31,7 +32,7 @@ interface SlideViewerProps {
 
 export const SlideViewer = ({
   slide,
-  isFullScreen = false,
+  isFullScreen: _isFullScreen = false, // handled automatically by ResizeObserver
   zoom = 100,
   embedded = false,
 }: SlideViewerProps) => {
@@ -84,9 +85,27 @@ export const SlideViewer = ({
     }
   };
 
-  const scale = () => {
-    return isFullScreen ? "scale(1)" : `scale(${zoom / 100})`;
-  };
+  // Fixed virtual resolution — the slide always renders at this size.
+  // A ResizeObserver scales the whole thing to fit the container, so
+  // the layout is 100% stable regardless of window size.
+  const SLIDE_W = 1280;
+  const SLIDE_H = 720;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [autoScale, setAutoScale] = useState(1);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      setAutoScale(Math.min(width / SLIDE_W, height / SLIDE_H));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const finalScale = autoScale * (zoom / 100);
 
   if (embedded) {
     return (
@@ -99,14 +118,32 @@ export const SlideViewer = ({
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center overflow-hidden bg-[#f3f3f3] dark:bg-zinc-950">
+    <div
+      ref={containerRef}
+      className="flex-1 flex items-center justify-center overflow-hidden bg-[#f3f3f3] dark:bg-zinc-950"
+    >
+      {/* Wrapper sized to the visual footprint of the scaled slide so flex centering works */}
       <div
-        key={slide.slide_number}
-        className="h-full aspect-video max-w-full bg-white transition-transform duration-200 origin-center overflow-hidden relative shadow-2xl"
-        style={{ transform: scale() }}
+        style={{
+          width: SLIDE_W * finalScale,
+          height: SLIDE_H * finalScale,
+          position: "relative",
+          flexShrink: 0,
+        }}
       >
-        {/* 1.25× font scale: inner div is 80% the container, scaled back up 1.25× from top-left */}
-        <div style={{ width: "80%", height: "80%", transform: "scale(1.25)", transformOrigin: "top left" }}>
+        <div
+          key={slide.slide_number}
+          className="bg-white overflow-hidden relative shadow-2xl"
+          style={{
+            width: SLIDE_W,
+            height: SLIDE_H,
+            transform: `scale(${finalScale})`,
+            transformOrigin: "top left",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        >
           {renderSlideContent()}
         </div>
       </div>

@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 import type { LessonPack } from "@/types/lessonPack";
 
 interface LessonPackContextType {
@@ -28,9 +34,12 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
     }));
   }, []);
 
-  const getWhiteboardData = useCallback((slideIndex: number) => {
-    return whiteboardData[slideIndex] || null;
-  }, [whiteboardData]);
+  const getWhiteboardData = useCallback(
+    (slideIndex: number) => {
+      return whiteboardData[slideIndex] || null;
+    },
+    [whiteboardData],
+  );
 
   const clearWhiteboardData = useCallback(() => {
     setWhiteboardData({});

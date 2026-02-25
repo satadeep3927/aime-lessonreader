@@ -987,7 +987,8 @@ export function Titlebar() {
                             : "text-zinc-600 dark:text-zinc-400"
                         }`}
                       >
-                        {(slide as any).slide_type} &middot; {slide.duration_minutes} min
+                        {(slide as any).slide_type} &middot;{" "}
+                        {slide.duration_minutes} min
                       </div>
                     </div>
                   </div>
