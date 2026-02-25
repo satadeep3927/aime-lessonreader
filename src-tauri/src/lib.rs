@@ -352,7 +352,7 @@ pub fn run() {
         .expect("error while building tauri application")
         .run(|app, event| {
             if let tauri::RunEvent::Opened { urls } = event {
-                if let Some(path) = pick_lesson_path_from_urls(urls) {
+                if let Some(path) = pick_lesson_path_from_urls(&urls) {
                     let state = app.state::<LaunchFile>();
                     if let Ok(mut file) = state.0.lock() {
                         *file = Some(path.clone());
@@ -363,6 +363,5 @@ pub fn run() {
                     }
                 }
             }
-        })
-        .expect("error while running tauri application");
+            });
 }
