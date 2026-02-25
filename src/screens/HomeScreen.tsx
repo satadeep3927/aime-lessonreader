@@ -18,45 +18,35 @@ export const HomeScreen = () => {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Good morning");
 
-  // Check for launch file on mount
+  // Handle file-association launch.
+  // close_splashscreen emits "launch-file-opened" after React is ready;
+  // we also do a one-time checkLaunchFile() as a fallback for cold-launch races.
   useEffect(() => {
-    let isDisposed = false;
-    let unlisten: (() => void) | null = null;
+    let disposed = false;
 
-    const openLaunchPath = (path: string | null) => {
-      if (!isDisposed && path) {
-        openLessonPack.mutate(path);
-      }
+    const tryOpen = (path: string | null | undefined) => {
+      if (!disposed && path) openLessonPack.mutate(path);
     };
 
-    const setupLaunchHandling = async () => {
-      try {
-        unlisten = await listen<string>("launch-file-opened", ({ payload }) => {
-          openLaunchPath(payload);
-        });
+    let unlistenFn: (() => void) | null = null;
 
-        const initialPath = await lessonPackService.checkLaunchFile();
-        openLaunchPath(initialPath);
+    listen<string>("launch-file-opened", ({ payload }) => tryOpen(payload)).then(
+      (ul) => {
+        unlistenFn = ul;
+      },
+    );
 
-        setTimeout(async () => {
-          if (isDisposed) return;
-          const delayedPath = await lessonPackService.checkLaunchFile();
-          openLaunchPath(delayedPath);
-        }, 1200);
-      } catch (error) {
-        console.error("Failed to handle launch file:", error);
-      }
-    };
-
-    setupLaunchHandling();
+    // Fallback: path may already be stored if RunEvent::Opened fired early.
+    lessonPackService
+      .checkLaunchFile()
+      .then(tryOpen)
+      .catch(() => {});
 
     return () => {
-      isDisposed = true;
-      if (unlisten) {
-        unlisten();
-      }
+      disposed = true;
+      unlistenFn?.();
     };
-  }, [openLessonPack]);
+  }, []);
 
   // Set greeting based on time of day
   useEffect(() => {
@@ -145,7 +135,13 @@ export const HomeScreen = () => {
 
           {openLessonPack.isError && (
             <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-sm text-red-800 dark:text-red-300">
-              {openLessonPack.error.message}
+              <strong>Error:</strong> {openLessonPack.error.message}
+            </div>
+          )}
+          {openLessonPack.isSuccess && !openLessonPack.data?.success && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-sm text-red-800 dark:text-red-300">
+              <strong>Failed to open lesson:</strong>{" "}
+              {openLessonPack.data?.error ?? "Unknown error"}
             </div>
           )}
         </div>

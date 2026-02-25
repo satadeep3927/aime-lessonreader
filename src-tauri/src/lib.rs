@@ -35,10 +35,7 @@ fn pick_lesson_path_from_urls(urls: &[url::Url]) -> Option<String> {
 
         if let Ok(path) = url.to_file_path() {
             let path_str = path.to_string_lossy().to_string();
-            let lower = path_str.to_lowercase();
-            if lower.ends_with(".aimepack")
-                && Path::new(&path_str).exists()
-            {
+            if path_str.to_lowercase().ends_with(".aimepack") {
                 return Some(path_str);
             }
         }
@@ -124,13 +121,32 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn close_splashscreen(window: tauri::Window) {
+async fn close_splashscreen(
+    window: tauri::Window,
+    state: State<'_, LaunchFile>,
+) -> Result<(), String> {
     // Close splash screen
     if let Some(splash) = window.get_webview_window("splash") {
-        splash.close().unwrap();
+        let _ = splash.close();
     }
+
     // Show main window
-    window.get_webview_window("main").unwrap().show().unwrap();
+    let main = window
+        .get_webview_window("main")
+        .ok_or_else(|| "main window not found".to_string())?;
+    main.show().map_err(|e| e.to_string())?;
+
+    // Once the main window is visible and React is running, emit any pending
+    // launch-file path so HomeScreen can open it reliably.
+    let pending = state.0.lock().ok().and_then(|g| g.clone());
+
+    if let Some(path) = pending {
+        // Small delay to let the React tree finish mounting before the event.
+        tokio::time::sleep(std::time::Duration::from_millis(400)).await;
+        let _ = main.emit("launch-file-opened", path);
+    }
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -330,15 +346,12 @@ pub fn run() {
         .expect("error while building tauri application")
         .run(|app, event| {
             if let tauri::RunEvent::Opened { urls } = event {
+                // Store the path so close_splashscreen can emit it once React is ready.
                 if let Some(path) = pick_lesson_path_from_urls(&urls) {
                     if let Some(state) = app.try_state::<LaunchFile>() {
                         if let Ok(mut file) = state.0.lock() {
-                            *file = Some(path.clone());
+                            *file = Some(path);
                         }
-                    }
-
-                    if let Some(main) = app.get_webview_window("main") {
-                        let _ = main.emit("launch-file-opened", path);
                     }
                 }
             }
