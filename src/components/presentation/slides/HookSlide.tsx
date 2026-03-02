@@ -1,21 +1,24 @@
 import { HookSlide as HookSlideType } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
+import { resolveImagePath } from "@/lib/utils";
 
 interface HookSlideProps {
   slide: HookSlideType;
+  extractedPath: string;
 }
 
-export const HookSlide = ({ slide }: HookSlideProps) => {
+export const HookSlide = ({ slide, extractedPath }: HookSlideProps) => {
+  const resolvedImageUrl = resolveImagePath(slide.image_url, extractedPath);
   return (
     <SlideContainer className="relative flex">
       {/* Left: content */}
       <div
         className={`relative z-10 flex flex-col justify-center px-16 py-12 bg-linear-to-br from-violet-50 via-purple-50 to-fuchsia-50 ${
-          slide.image_url ? "w-1/2" : "w-full items-center text-center"
+          resolvedImageUrl ? "w-1/2" : "w-full items-center text-center"
         }`}
       >
         {/* Decorative blobs — only shown when no image */}
-        {!slide.image_url && (
+        {!resolvedImageUrl && (
           <>
             <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-purple-200/50 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-15 -left-15 w-64 h-64 rounded-full bg-fuchsia-200/50 blur-3xl pointer-events-none" />
@@ -39,7 +42,7 @@ export const HookSlide = ({ slide }: HookSlideProps) => {
         {/* Question — the hero text */}
         <p
           className={`font-black text-zinc-900 leading-tight tracking-tight ${
-            slide.image_url ? "text-4xl" : "text-5xl max-w-3xl"
+            resolvedImageUrl ? "text-4xl" : "text-5xl max-w-3xl"
           }`}
         >
           {slide.question}
@@ -47,7 +50,7 @@ export const HookSlide = ({ slide }: HookSlideProps) => {
 
         {/* Bottom decorative circles */}
         <div
-          className={`absolute bottom-8 flex gap-2 opacity-30 ${slide.image_url ? "left-16" : "left-1/2 -translate-x-1/2"}`}
+          className={`absolute bottom-8 flex gap-2 opacity-30 ${resolvedImageUrl ? "left-16" : "left-1/2 -translate-x-1/2"}`}
         >
           <div className="w-3 h-3 rounded-full bg-purple-400" />
           <div className="w-3 h-3 rounded-full bg-fuchsia-400" />
@@ -56,10 +59,10 @@ export const HookSlide = ({ slide }: HookSlideProps) => {
       </div>
 
       {/* Right: full-height image */}
-      {slide.image_url && (
+      {resolvedImageUrl && (
         <div className="w-1/2 h-full shrink-0">
           <img
-            src={slide.image_url}
+            src={resolvedImageUrl}
             alt="Thinking prompt"
             className="w-full h-full object-cover"
           />

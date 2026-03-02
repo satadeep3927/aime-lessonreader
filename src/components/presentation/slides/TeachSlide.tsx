@@ -1,16 +1,19 @@
 import { TeachSlide as TeachSlideType } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
 import { MarkdownRenderer } from "../../MarkdownRenderer";
+import { resolveImagePath } from "@/lib/utils";
 
 interface TeachSlideProps {
   slide: TeachSlideType;
+  extractedPath: string;
 }
 
-export const TeachSlide = ({ slide }: TeachSlideProps) => {
+export const TeachSlide = ({ slide, extractedPath }: TeachSlideProps) => {
+  const resolvedImageUrl = resolveImagePath(slide.image_url, extractedPath);
   return (
     <SlideContainer className="relative flex">
       {/* Subtle background when no image */}
-      {!slide.image_url && (
+      {!resolvedImageUrl && (
         <>
           <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-blue-100/60 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-indigo-100/50 blur-3xl pointer-events-none" />
@@ -20,7 +23,7 @@ export const TeachSlide = ({ slide }: TeachSlideProps) => {
       {/* Left: content */}
       <div
         className={`relative z-10 flex flex-col justify-center px-12 py-10 gap-6 bg-linear-to-br from-slate-50 via-blue-50/40 to-white ${
-          slide.image_url ? "w-1/2" : "w-full"
+          resolvedImageUrl ? "w-1/2" : "w-full"
         }`}
       >
         {/* Header */}
@@ -63,10 +66,10 @@ export const TeachSlide = ({ slide }: TeachSlideProps) => {
       </div>
 
       {/* Right: full-height image */}
-      {slide.image_url && (
+      {resolvedImageUrl && (
         <div className="w-1/2 h-full shrink-0">
           <img
-            src={slide.image_url}
+            src={resolvedImageUrl}
             alt="Slide visual"
             className="w-full h-full object-cover"
           />

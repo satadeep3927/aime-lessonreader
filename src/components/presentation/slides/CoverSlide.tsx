@@ -1,24 +1,27 @@
 import { TitleSlide } from "@/types/lessonPack";
 import { SlideContainer } from "./SlideContainer";
 import { CheckCircle2 } from "lucide-react";
+import { resolveImagePath } from "@/lib/utils";
 
 interface TitleSlideProps {
   slide: TitleSlide;
+  extractedPath: string;
 }
 
-export const CoverSlide = ({ slide }: TitleSlideProps) => {
+export const CoverSlide = ({ slide, extractedPath }: TitleSlideProps) => {
+  const resolvedImageUrl = resolveImagePath(slide.image_url, extractedPath);
   return (
     <SlideContainer className="relative">
       {/* Background: image fills the whole slide or gradient fallback */}
       <div className="absolute inset-0">
-        {slide.image_url ? (
+        {resolvedImageUrl ? (
           <>
             <img
-              src={slide.image_url}
+              src={resolvedImageUrl}
               alt=""
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover blur-md"
             />
-            <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-indigo-50" />
+            <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-indigo-50 opacity-60" />
           </>
         ) : (
           <div className="w-full h-full bg-linear-to-br from-blue-50 via-white to-indigo-50" />

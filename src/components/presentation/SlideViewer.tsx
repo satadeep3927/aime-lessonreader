@@ -1,6 +1,7 @@
 // src/components/presentation/SlideViewer.tsx
 import { useRef, useState, useEffect } from "react";
 import { AnySlide } from "@/types/lessonPack";
+import { useLessonPack } from "@/context/LessonPackContext";
 import { CoverSlide } from "./slides/CoverSlide";
 import { TeachSlide } from "./slides/TeachSlide";
 import { HookSlide } from "./slides/HookSlide";
@@ -36,15 +37,18 @@ export const SlideViewer = ({
   zoom = 100,
   embedded = false,
 }: SlideViewerProps) => {
+  const { currentPack } = useLessonPack();
+  const extractedPath = currentPack?.extracted_path || "";
+
   // Helper to render content based on slide type
   const renderSlideContent = () => {
     switch (slide.slide_type) {
       case "TITLE":
-        return <CoverSlide slide={slide} />;
+        return <CoverSlide slide={slide} extractedPath={extractedPath} />;
       case "TEACH":
-        return <TeachSlide slide={slide} />;
+        return <TeachSlide slide={slide} extractedPath={extractedPath} />;
       case "HOOK":
-        return <HookSlide slide={slide} />;
+        return <HookSlide slide={slide} extractedPath={extractedPath} />;
       case "WORKED_EXAMPLE":
         return <WorkedExampleSlide slide={slide} />;
       case "LEARNING_OBJECTIVES":
