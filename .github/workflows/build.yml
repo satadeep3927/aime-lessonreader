@@ -24,11 +24,6 @@ jobs:
             artifact: macos-arm
             bundles: dmg,app
             target: aarch64-apple-darwin
-          - os: macos-13
-            name: macOS Intel
-            artifact: macos-x64
-            bundles: dmg,app
-            target: x86_64-apple-darwin
           - os: ubuntu-22.04
             name: Linux x64
             artifact: linux
@@ -103,15 +98,6 @@ jobs:
           path: |
             src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
             src-tauri/target/aarch64-apple-darwin/release/bundle/macos/*.app
-
-      - name: Upload artifacts (macOS x64)
-        if: matrix.artifact == 'macos-x64'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: |
-            src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
-            src-tauri/target/x86_64-apple-darwin/release/bundle/macos/*.app
 
       - name: Upload artifacts (Linux)
         if: matrix.os == 'ubuntu-22.04'
