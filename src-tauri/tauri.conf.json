@@ -66,6 +66,9 @@
     "resources": ["resources/aimepack.xml"],
     "linux": {
       "deb": {
+        "files": {
+          "resources/aimepack.xml": "/usr/share/mime/packages/aimepack.xml"
+        },
         "postInstallScript": "resources/post-install.sh"
       }
     },

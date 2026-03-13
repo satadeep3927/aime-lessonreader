@@ -2,10 +2,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    // Force X11 on Linux under Wayland so that decorations:false is respected
-    // (Wayland ignores it; ChromeOS Crostini always has XWayland available)
+    // Force X11 on Linux so that decorations:false is respected.
+    // ChromeOS Crostini uses Wayland (Sommelier) but does not set WAYLAND_DISPLAY,
+    // so checking that var is unreliable. Always prefer X11 unless the user
+    // has explicitly set GDK_BACKEND themselves.
     #[cfg(target_os = "linux")]
-    if std::env::var("WAYLAND_DISPLAY").is_ok() && std::env::var("GDK_BACKEND").is_err() {
+    if std::env::var("GDK_BACKEND").is_err() {
         unsafe { std::env::set_var("GDK_BACKEND", "x11"); }
     }
 
