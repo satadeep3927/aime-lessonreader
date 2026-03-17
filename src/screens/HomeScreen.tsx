@@ -31,16 +31,16 @@ export const HomeScreen = () => {
 
     listen<string>("launch-file-opened", ({ payload }) => {
       tryOpen(payload);
-    }).then(
-      (ul) => {
-        unlistenFn = ul;
-      },
-    );
+    }).then((ul) => {
+      unlistenFn = ul;
+    });
 
     // Fallback: path may already be stored if RunEvent::Opened fired early.
     lessonPackService
       .checkLaunchFile()
-      .then((v) => { tryOpen(v); })
+      .then((v) => {
+        tryOpen(v);
+      })
       .catch(() => {});
 
     return () => {
@@ -78,12 +78,7 @@ export const HomeScreen = () => {
       setCurrentPack(openLessonPack.data.lesson_pack);
       navigate("/viewer");
     }
-  }, [
-    openLessonPack.isSuccess,
-    openLessonPack.data,
-    setCurrentPack,
-    navigate,
-  ]);
+  }, [openLessonPack.isSuccess, openLessonPack.data, setCurrentPack, navigate]);
 
   const handleOpenRecent = (filePath: string) => {
     openLessonPack.mutate(filePath);
