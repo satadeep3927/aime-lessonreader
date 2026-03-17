@@ -32,6 +32,10 @@
     "fs:allow-read-text-file",
     "core:window:allow-set-fullscreen",
     {
+      "identifier": "http:allow-fetch",
+      "allow": [{ "url": "https://staging-api.aime52.ai/**" }]
+    },
+    {
       "identifier": "fs:scope-temp",
       "allow": [
         {

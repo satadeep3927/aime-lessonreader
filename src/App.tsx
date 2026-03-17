@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { HomeScreen } from "@/screens/HomeScreen";
 import { PresentationViewer } from "@/screens/PresentationViewer";
+import { LoginScreen } from "@/screens/LoginScreen";
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -18,10 +19,11 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-white dark:bg-zinc-950">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-white">
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/viewer" element={<PresentationViewer />} />
+        <Route path="/login" element={<LoginScreen />} />
       </Routes>
     </div>
   );

@@ -1,21 +1,67 @@
 import { useLessonPack } from "@/context/LessonPackContext";
+import { useAuth } from "@/context/AuthContext";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { useClearRecent, useOpenLessonPack } from "@/mutation/useLessonPack";
+import { useLogout } from "@/mutation/useAuth";
 import { useRecentLessons } from "@/query/useLessonPack";
-import { BookOpen, Clock, FolderOpen, Trash2 } from "lucide-react";
+import { useLessonIntents } from "@/query/useLessonIntents";
+import {
+  BookOpen,
+  Calendar,
+  Clock,
+  FolderOpen,
+  LogIn,
+  LogOut,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
 import { confirm as tauriConfirm } from "@tauri-apps/plugin-dialog";
 import { listen } from "@tauri-apps/api/event";
+import type { LessonIntentFilters, LessonIntentStatus } from "@/types/api";
+
+const STATUS_OPTIONS: { label: string; value: LessonIntentStatus | "" }[] = [
+  { label: "All", value: "" },
+  { label: "Planned", value: "planned" },
+  { label: "Content Generated", value: "content_generated" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Skipped", value: "skipped" },
+];
 
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
   const clearRecent = useClearRecent();
   const { data: recentLessons, isLoading: loadingRecent } = useRecentLessons();
   const { setCurrentPack } = useLessonPack();
+  const { isAuthenticated, user } = useAuth();
+  const { mutate: logout } = useLogout();
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Good morning");
+  const [intentFilters, setIntentFilters] = useState<LessonIntentFilters>({});
+  const [statusFilter, setStatusFilter] = useState<LessonIntentStatus | "">("content_generated");
+  const [searchFilter, setSearchFilter] = useState("");
+
+  const { data: lessonIntents, isLoading: loadingIntents } = useLessonIntents(
+    intentFilters,
+  );
+
+  // Sync status filter into query params
+  useEffect(() => {
+    setIntentFilters((prev) => ({
+      ...prev,
+      status: statusFilter || undefined,
+    }));
+  }, [statusFilter]);
+
+  const filteredIntents = lessonIntents?.filter((intent) => {
+    if (!searchFilter.trim()) return true;
+    const q = searchFilter.toLowerCase();
+    return (
+      intent.title.toLowerCase().includes(q) ||
+      intent.class_name?.toLowerCase().includes(q)
+    );
+  });
 
   // Handle file-association launch.
   // close_splashscreen emits "launch-file-opened" after React is ready;
@@ -104,10 +150,34 @@ export const HomeScreen = () => {
     <div className="flex-1 overflow-auto bg-zinc-50 dark:bg-zinc-900">
       <div className="mx-auto px-12 py-8 max-w-350">
         {/* Greeting Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-light text-zinc-800 dark:text-zinc-100 mb-1">
-            {greeting}
-          </h1>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-light text-zinc-800 dark:text-zinc-100 mb-1">
+              {isAuthenticated && user ? `${greeting}, ${user.name.split(" ")[0]}` : greeting}
+            </h1>
+            {isAuthenticated && user && (
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{user.email}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign out
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign in
+              </button>
+            )}
+          </div>
         </div>
 
         {/* New Section - Template Cards */}
@@ -137,6 +207,117 @@ export const HomeScreen = () => {
             </div>
           )}
         </div>
+
+        {/* Scheduled Lessons section — only when authenticated */}
+        {isAuthenticated && (
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-100 flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Scheduled Lessons
+              </h2>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  placeholder="Search…"
+                  className="text-sm px-3 py-1.5 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                <select
+                  value={statusFilter}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as LessonIntentStatus | "")
+                  }
+                  className="text-sm px-3 py-1.5 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {STATUS_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {loadingIntents ? (
+              <div className="text-zinc-500 dark:text-zinc-400 text-sm">Loading…</div>
+            ) : filteredIntents && filteredIntents.length > 0 ? (
+              <div className="space-y-2">
+                <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
+                  <div className="col-span-5">Title</div>
+                  <div className="col-span-2">Class</div>
+                  <div className="col-span-2">Date</div>
+                  <div className="col-span-2">Status</div>
+                  <div className="col-span-1">Session</div>
+                </div>
+                {filteredIntents.map((intent) => (
+                  <div
+                    key={intent.id}
+                    className="w-full grid grid-cols-12 gap-4 px-4 py-3 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-left items-center"
+                  >
+                    <div className="col-span-5 flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded bg-linear-to-br from-violet-500 to-violet-600 flex items-center justify-center shrink-0">
+                        <BookOpen className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100 truncate text-sm">
+                        {intent.title}
+                      </span>
+                    </div>
+                    <div className="col-span-2 text-sm text-zinc-600 dark:text-zinc-400 truncate">
+                      {intent.class_name ?? "—"}
+                    </div>
+                    <div className="col-span-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      {intent.scheduled_date
+                        ? new Date(intent.scheduled_date).toLocaleDateString()
+                        : "—"}
+                    </div>
+                    <div className="col-span-2">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          intent.status === "delivered"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : intent.status === "content_generated"
+                              ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                              : intent.status === "skipped"
+                                ? "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                                : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                        }`}
+                      >
+                        {intent.status.replace("_", " ")}
+                      </span>
+                    </div>
+                    <div className="col-span-1 text-sm text-zinc-600 dark:text-zinc-400">
+                      #{intent.session_number}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <Calendar className="w-10 h-10 text-zinc-300 dark:text-zinc-600 mx-auto mb-2" />
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm">No scheduled lessons found</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Sign-in nudge for unauthenticated users */}
+        {!isAuthenticated && (
+          <div className="mb-12 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">See your scheduled lessons</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Sign in to sync with your AIME account</p>
+            </div>
+            <button
+              onClick={() => navigate("/login")}
+              className="flex items-center gap-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-1.5 rounded transition-colors font-medium"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign in
+            </button>
+          </div>
+        )}
 
         {/* Recent Section */}
         <div>

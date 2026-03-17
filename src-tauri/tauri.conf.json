@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "AIME Lesson Reader",
+  "productName": "AIME Lesson Studio",
   "version": "0.1.0",
-  "identifier": "com.aime52.lessonreader",
+  "identifier": "com.aime52.lessonstudio",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "splash",
-        "title": "AIME Lesson Reader",
+        "title": "AIME Lesson Studio",
         "width": 800,
         "height": 500,
         "center": true,
@@ -27,7 +27,7 @@
       },
       {
         "label": "main",
-        "title": "AIME Lesson Reader",
+        "title": "AIME Lesson Studio",
         "width": 1200,
         "height": 800,
         "center": true,
@@ -74,8 +74,8 @@
         "ext": [
           "aimepack"
         ],
-        "name": "AIME Lesson Pack",
-        "description": "AIME Lesson Reader Pack",
+        "name": "AIME Lesson Studio Pack",
+        "description": "AIME Lesson Studio Pack",
         "role": "Viewer",
         "mimeType": "application/x-aimepack"
       }
