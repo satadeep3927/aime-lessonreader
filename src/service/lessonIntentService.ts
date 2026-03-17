@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import type { LessonIntentFilters, LessonIntentRead } from "@/types/api";
+import type { LessonIntentFilters, LessonIntentRead, LessonPackEnsureResponse } from "@/types/api";
 
 export const lessonIntentService = {
   async getLessonIntents(
@@ -30,6 +30,11 @@ export const lessonIntentService = {
       "/api/v1/lesson-intents",
       { params },
     );
+    return data;
+  },
+
+  async getLessonPack(intentId: string): Promise<import("@/types/api").LessonPackEnsureResponse> {
+    const { data } = await apiClient.get(`/api/v1/lesson-intents/${intentId}/pack`);
     return data;
   },
 };

@@ -3,6 +3,7 @@ import type {
   RecentLesson,
   VerifyMetaResult,
 } from "@/types/lessonPack";
+import type { DownloadedLesson } from "@/types/api";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 
@@ -85,5 +86,25 @@ export const lessonPackService = {
    */
   async cleanupLessonPack(extractedPath: string): Promise<void> {
     await invoke("cleanup_lesson_pack", { extractedPath });
+  },
+
+  /**
+   * Download .aimepack from S3 URL to local app data dir
+   * Returns the local file path
+   */
+  async downloadAimepack(url: string, intentId: string): Promise<string> {
+    return await invoke<string>("download_aimepack", { url, intentId });
+  },
+
+  async getDownloadedLessons(): Promise<DownloadedLesson[]> {
+    return await invoke<DownloadedLesson[]>("get_downloaded_lessons");
+  },
+
+  async addDownloadedLesson(lesson: DownloadedLesson): Promise<void> {
+    await invoke("add_downloaded_lesson", { lesson });
+  },
+
+  async removeDownloadedLesson(intentId: string): Promise<void> {
+    await invoke("remove_downloaded_lesson", { intentId });
   },
 };

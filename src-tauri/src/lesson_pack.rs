@@ -277,3 +277,86 @@ pub fn cleanup_lesson_pack(extracted_path: &str) -> Result<()> {
     }
     Ok(())
 }
+
+// ─── Downloaded Lessons ───────────────────────────────────────────────────────
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct DownloadedLesson {
+    pub intent_id: String,
+    pub title: String,
+    pub local_path: String,
+    pub downloaded_at: i64,
+    pub cover_image_url: Option<String>,
+    pub class_name: Option<String>,
+    pub lesson_type: Option<String>,
+    pub session_number: u32,
+    pub week_number: Option<u32>,
+    pub scheduled_date: Option<String>,
+    pub status: String,
+    pub description: Option<String>,
+}
+
+/// Download .aimepack from S3 URL and save to app data dir
+pub async fn download_aimepack(url: String, intent_id: String, app: AppHandle) -> Result<String> {
+    let response = reqwest::get(&url).await?;
+    let bytes = response.bytes().await?;
+
+    let app_dir = app.path().app_data_dir()?;
+    let lessons_dir = app_dir.join("downloaded_lessons");
+    fs::create_dir_all(&lessons_dir)?;
+
+    let file_path = lessons_dir.join(format!("{}.aimepack", intent_id));
+    fs::write(&file_path, &bytes)?;
+
+    Ok(file_path.to_string_lossy().to_string())
+}
+
+/// Get all downloaded lessons from store
+pub async fn get_downloaded_lessons(app: AppHandle) -> Result<Vec<DownloadedLesson>> {
+    let store = app.store("downloaded.json")?;
+    match store.get("downloadedLessons") {
+        Some(value) => {
+            let lessons: Vec<DownloadedLesson> =
+                serde_json::from_value(value.clone()).unwrap_or_default();
+            Ok(lessons)
+        }
+        None => Ok(Vec::new()),
+    }
+}
+
+/// Add or update downloaded lesson record
+pub async fn add_downloaded_lesson(lesson: DownloadedLesson, app: AppHandle) -> Result<()> {
+    let store = app.store("downloaded.json")?;
+
+    let mut lessons = match store.get("downloadedLessons") {
+        Some(value) => {
+            serde_json::from_value::<Vec<DownloadedLesson>>(value.clone()).unwrap_or_default()
+        }
+        None => Vec::new(),
+    };
+
+    // Replace if already exists, otherwise insert at front
+    lessons.retain(|l| l.intent_id != lesson.intent_id);
+    lessons.insert(0, lesson);
+
+    store.set("downloadedLessons".to_string(), serde_json::to_value(&lessons)?);
+    store.save()?;
+    Ok(())
+}
+
+/// Remove downloaded lesson record (does not delete the file)
+pub async fn remove_downloaded_lesson(intent_id: String, app: AppHandle) -> Result<()> {
+    let store = app.store("downloaded.json")?;
+
+    let mut lessons = match store.get("downloadedLessons") {
+        Some(value) => {
+            serde_json::from_value::<Vec<DownloadedLesson>>(value.clone()).unwrap_or_default()
+        }
+        None => return Ok(()),
+    };
+
+    lessons.retain(|l| l.intent_id != intent_id);
+    store.set("downloadedLessons".to_string(), serde_json::to_value(&lessons)?);
+    store.save()?;
+    Ok(())
+}

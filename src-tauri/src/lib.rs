@@ -152,6 +152,34 @@ async fn create_new_window() -> Result<(), String> {
     create_new_window_sync()
 }
 
+#[tauri::command]
+async fn download_aimepack(url: String, intent_id: String, app: tauri::AppHandle) -> Result<String, String> {
+    lesson_pack::download_aimepack(url, intent_id, app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_downloaded_lessons(app: tauri::AppHandle) -> Result<Vec<lesson_pack::DownloadedLesson>, String> {
+    lesson_pack::get_downloaded_lessons(app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn add_downloaded_lesson(lesson: lesson_pack::DownloadedLesson, app: tauri::AppHandle) -> Result<(), String> {
+    lesson_pack::add_downloaded_lesson(lesson, app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn remove_downloaded_lesson(intent_id: String, app: tauri::AppHandle) -> Result<(), String> {
+    lesson_pack::remove_downloaded_lesson(intent_id, app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -200,7 +228,11 @@ pub fn run() {
             remove_from_recent,
             clear_recent,
             cleanup_lesson_pack,
-            create_new_window
+            create_new_window,
+            download_aimepack,
+            get_downloaded_lessons,
+            add_downloaded_lesson,
+            remove_downloaded_lesson
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
