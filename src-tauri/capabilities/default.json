@@ -31,8 +31,13 @@
     "fs:default",
     "fs:allow-read-text-file",
     "core:window:allow-set-fullscreen",
+    "http:default",
     {
       "identifier": "http:allow-fetch",
+      "allow": [{ "url": "https://staging-api.aime52.ai/**" }]
+    },
+    {
+      "identifier": "http:allow-fetch-send",
       "allow": [{ "url": "https://staging-api.aime52.ai/**" }]
     },
     {

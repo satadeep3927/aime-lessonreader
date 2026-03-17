@@ -66,3 +66,27 @@ export interface LessonIntentFilters {
   skip?: number;
   limit?: number;
 }
+
+// ─── Classes ─────────────────────────────────────────────────────────────────
+
+export interface ClassRead {
+  id: number;
+  name: string;
+  subject_id: number;
+  subject_name: string | null;
+}
+
+// ─── Subjects ────────────────────────────────────────────────────────────────
+
+export interface SubjectRead {
+  id: number;
+  name: string;
+}
+
+// ─── Academic Terms ───────────────────────────────────────────────────────────
+
+export interface AcademicTermRead {
+  id: number;
+  name: string;
+  academic_year: string;
+}
