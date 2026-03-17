@@ -1,6 +1,4 @@
 import { LessonPackProvider } from "@/context/LessonPackContext";
-import { PresentationProvider } from "@/context/PresentationContext";
-import { SettingsProvider } from "@/context/SettingsContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ReactDOM from "react-dom/client";
@@ -36,13 +34,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <ThemeProvider>
-        <SettingsProvider>
-          <PresentationProvider>
-            <LessonPackProvider>
-              <App />
-            </LessonPackProvider>
-          </PresentationProvider>
-        </SettingsProvider>
+        <LessonPackProvider>
+          <App />
+        </LessonPackProvider>
       </ThemeProvider>
     </BrowserRouter>
   </QueryClientProvider>,

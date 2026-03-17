@@ -13,8 +13,7 @@ export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
   const clearRecent = useClearRecent();
   const { data: recentLessons, isLoading: loadingRecent } = useRecentLessons();
-  const { setCurrentPack, setCurrentSlide, clearWhiteboardData } =
-    useLessonPack();
+  const { setCurrentPack } = useLessonPack();
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Good morning");
 
@@ -76,18 +75,14 @@ export const HomeScreen = () => {
       openLessonPack.data?.success &&
       openLessonPack.data?.lesson_pack
     ) {
-      clearWhiteboardData();
       setCurrentPack(openLessonPack.data.lesson_pack);
-      setCurrentSlide(0);
       navigate("/viewer");
     }
   }, [
     openLessonPack.isSuccess,
     openLessonPack.data,
     setCurrentPack,
-    setCurrentSlide,
     navigate,
-    clearWhiteboardData,
   ]);
 
   const handleOpenRecent = (filePath: string) => {

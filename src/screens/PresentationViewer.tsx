@@ -1,204 +1,49 @@
 import { useLessonPack } from "@/context/LessonPackContext";
-import { usePresentation } from "@/context/PresentationContext";
-import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
-import { SlideNavigation } from "@/components/presentation/SlideNavigation";
-import { SlideSidebar } from "@/components/presentation/SlideSidebar";
-import { SlideViewer } from "@/components/presentation/SlideViewer";
-import { FloatingNavigation } from "@/components/presentation/FloatingNavigation";
-import { NotesPanel } from "@/components/presentation/NotesPanel";
-import { WhiteboardCanvas } from "@/components/presentation/WhiteboardCanvas";
+import {
+  BlockSuiteCanvas,
+  FloatingNavigation,
+  LessonProvider,
+  LessonWindow,
+  NotesPanel,
+  PresentButton,
+  SlideNavigation,
+  SlideSidebar,
+  SlideViewer,
+} from "@aime.ai/renderer-react";
+import "@aime.ai/renderer-react/style.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export const PresentationViewer = () => {
-  const {
-    currentPack,
-    currentSlide,
-    setCurrentSlide,
-    saveWhiteboardData,
-    getWhiteboardData,
-  } = useLessonPack();
-  const {
-    isPresentationMode,
-    setIsPresentationMode,
-    isSidebarCollapsed,
-    setIsSidebarCollapsed,
-    isNotesPanelVisible,
-    isWhiteboardMode,
-    toggleWhiteboardMode,
-    zoom,
-  } = usePresentation();
+  const { currentPack } = useLessonPack();
   const navigate = useNavigate();
 
-  // Redirect if no pack is loaded
   useEffect(() => {
     if (!currentPack) {
       navigate("/");
     }
   }, [currentPack, navigate]);
 
-  // Navigation functions
-  const goToNextSlide = () => {
-    if (currentPack && currentSlide < currentPack.meta.slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  const goToPrevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  const togglePresentationMode = async () => {
-    const appWindow = getCurrentWindow();
-
-    if (!isPresentationMode) {
-      // Enter fullscreen
-      await appWindow.setFullscreen(true);
-      setIsPresentationMode(true);
-      setIsSidebarCollapsed(true);
-    } else {
-      // Exit fullscreen
-      await appWindow.setFullscreen(false);
-      setIsPresentationMode(false);
-      setIsSidebarCollapsed(false);
-    }
-  };
-
-  const exitPresentationMode = async () => {
-    const appWindow = getCurrentWindow();
-    await appWindow.setFullscreen(false);
-    setIsPresentationMode(false);
-    setIsSidebarCollapsed(false);
-  };
-
-  const toggleFullScreen = async () => {
-    const appWindow = getCurrentWindow();
-    const isFullscreen = await appWindow.isFullscreen();
-    await appWindow.setFullscreen(!isFullscreen);
-  };
-
-  // Keyboard navigation
-  useKeyboardShortcut([
-    {
-      key: "ArrowLeft",
-      callback: () => goToPrevSlide(),
-    },
-    {
-      key: "ArrowRight",
-      callback: () => goToNextSlide(),
-    },
-    {
-      key: "Home",
-      callback: () => setCurrentSlide(0),
-    },
-    {
-      key: "End",
-      callback: () =>
-        setCurrentSlide((currentPack?.meta.slides.length || 1) - 1),
-    },
-    {
-      key: "Escape",
-      callback: () =>
-        isPresentationMode ? exitPresentationMode() : navigate("/"),
-    },
-    {
-      key: "F5",
-      callback: () => togglePresentationMode(),
-    },
-    {
-      key: "F11",
-      callback: () => toggleFullScreen(),
-    },
-    {
-      key: "w",
-      callback: () => toggleWhiteboardMode(),
-    },
-  ]);
-
   if (!currentPack) {
     return null;
   }
 
-  const currentSlideData = currentPack.meta.slides[currentSlide];
+  console.log("Loaded lesson pack:", currentPack);
 
   return (
     <div className="flex-1 flex overflow-hidden relative">
-      {/* Sidebar - collapsible */}
-      {!isSidebarCollapsed && (
-        <SlideSidebar
-          lessonName={currentPack.meta.title}
-          totalSlides={currentPack.meta.slides.length}
-          slides={currentPack.meta.slides}
-          currentSlide={currentSlide}
-          onSlideClick={goToSlide}
-          onBackToHome={() => navigate("/")}
-        />
-      )}
-
-      <div className="flex-1 flex flex-col w-[calc(100%-288px)]">
-        {/* Top navigation - hidden in presentation mode */}
-        {!isPresentationMode && (
-          <SlideNavigation
-            currentSlide={currentSlide}
-            totalSlides={currentPack.meta.slides.length}
-            currentSlideTitle={currentSlideData.title}
-            onPrevious={goToPrevSlide}
-            onNext={goToNextSlide}
-            canGoPrevious={currentSlide > 0}
-            canGoNext={currentSlide < currentPack.meta.slides.length - 1}
-            onPresentationMode={togglePresentationMode}
-          />
-        )}
-
-        {/* Conditional rendering: Whiteboard or regular slide viewer */}
-        {isWhiteboardMode ? (
-          <WhiteboardCanvas
-            key={currentSlide}
-            slide={currentSlideData}
-            onSave={(snapshot) => saveWhiteboardData(currentSlide, snapshot)}
-            initialData={getWhiteboardData(currentSlide)}
-          />
-        ) : (
-          <SlideViewer
-            slide={currentSlideData}
-            isFullScreen={isPresentationMode}
-            zoom={zoom}
-          />
-        )}
-
-        {/* Notes Panel - shown when enabled and not in presentation mode */}
-        {!isPresentationMode && isNotesPanelVisible && (
-          <NotesPanel
-            currentSlide={currentSlide}
-            slideTitle={currentSlideData.title}
-            notes={currentSlideData.teacher_notes || ""}
-          />
-        )}
-
-        {/* Floating navigation - shown in presentation mode */}
-        {isPresentationMode && (
-          <FloatingNavigation
-            currentSlide={currentSlide}
-            totalSlides={currentPack.meta.slides.length}
-            onPrevious={goToPrevSlide}
-            onNext={goToNextSlide}
-            onExit={exitPresentationMode}
-            canGoPrevious={currentSlide > 0}
-            canGoNext={currentSlide < currentPack.meta.slides.length - 1}
-            isSidebarCollapsed={isSidebarCollapsed}
-            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            isWhiteboardMode={isWhiteboardMode}
-            onToggleWhiteboard={toggleWhiteboardMode}
-          />
-        )}
-      </div>
+      <LessonProvider pack={currentPack.meta}>
+        <SlideNavigation>
+          <PresentButton />
+        </SlideNavigation>
+        <LessonWindow>
+          <SlideSidebar onBack={() => navigate("/")} />
+          <SlideViewer />
+          <BlockSuiteCanvas />
+        </LessonWindow>
+        <FloatingNavigation />
+        <NotesPanel />
+      </LessonProvider>
     </div>
   );
 };
