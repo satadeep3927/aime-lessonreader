@@ -39,7 +39,7 @@ export const LoginScreen = () => {
     isError && error instanceof Error ? error.message : null;
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 px-4">
+    <div className="flex-1 flex items-center justify-center bg-zinc-50  px-4">
       <div className="w-full max-w-sm space-y-8">
         {/* Logo + heading */}
         <div className="text-center space-y-2">
@@ -48,10 +48,10 @@ export const LoginScreen = () => {
               <BookOpen className="w-6 h-6 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-2xl font-semibold text-zinc-900 ">
             Sign in
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-zinc-500 ">
             Sign in to access your scheduled lessons
           </p>
         </div>
@@ -98,7 +98,7 @@ export const LoginScreen = () => {
             />
 
             {errorMessage && (
-              <p className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded px-3 py-2">
+              <p className="text-xs text-red-600  bg-red-50  border border-red-200  rounded px-3 py-2">
                 {errorMessage}
               </p>
             )}
@@ -121,7 +121,7 @@ export const LoginScreen = () => {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="text-sm text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+            className="text-sm text-zinc-400  hover:text-zinc-600  transition-colors"
           >
             Continue without signing in
           </button>

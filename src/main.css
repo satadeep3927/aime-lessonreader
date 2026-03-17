@@ -46,6 +46,7 @@
 }
 
 :root {
+  color-scheme: only light;
   --radius: 0.425rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -92,6 +93,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    color-scheme: light;
   }
 }
