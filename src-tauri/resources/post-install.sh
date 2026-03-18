@@ -20,6 +20,24 @@ if ! _have_webkit; then
   echo "  sudo apt-get install libwebkit2gtk-4.1-0"
 fi
 
+# ── Ensure OpenGL ES / Mesa libraries are present ────────────────────────────
+# Required by WebKitGTK for GPU-accelerated rendering (libGLESv2.so.2).
+# Missing on fresh Crostini containers; fall back to software rendering Mesa.
+_have_gles() {
+  dpkg -l libgles2-mesa 2>/dev/null | grep -q '^ii' && return 0
+  dpkg -l libgles2      2>/dev/null | grep -q '^ii' && return 0
+  return 1
+}
+
+if ! _have_gles; then
+  echo "[AIME] libGLESv2 not found – attempting to install Mesa GLES..."
+  apt-get update -qq 2>/dev/null || true
+  apt-get install -y --no-install-recommends libgles2-mesa libgl1-mesa-dri libgbm1 2>/dev/null || \
+  apt-get install -y --no-install-recommends libgles2 libgl1-mesa-dri libgbm1 2>/dev/null || \
+  echo "[AIME] WARNING: Could not install GLES libraries automatically. If the app crashes, run:"
+  echo "  sudo apt-get install libgles2-mesa libgl1-mesa-dri"
+fi
+
 # ── MIME type registration ─────────────────────────────────────────────────────
 mkdir -p /usr/share/mime/packages
 cat > /usr/share/mime/packages/aimepack.xml << 'EOF'
