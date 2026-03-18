@@ -4,3 +4,4 @@ export * from "./useLessonIntents";
 export * from "./useClasses";
 export * from "./useSubjects";
 export * from "./useAcademicTerms";
+export * from "./useDownloadedLessons";

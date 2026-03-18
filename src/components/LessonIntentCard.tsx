@@ -1,5 +1,6 @@
 import type { LessonIntentRead, LessonIntentStatus } from "@/types/api";
 import { SafeImage } from "@/components/SafeImage";
+import { useDownloadAndOpen } from "@/mutation/useDownloadAndOpen";
 import { BookOpen, Calendar, Hash, Users } from "lucide-react";
 
 const STATUS_STYLES: Record<LessonIntentStatus, string> = {
@@ -18,10 +19,12 @@ const STATUS_LABELS: Record<LessonIntentStatus, string> = {
 
 interface LessonIntentCardProps {
   intent: LessonIntentRead;
-  onOpen?: (intent: LessonIntentRead) => void;
 }
 
-export const LessonIntentCard = ({ intent, onOpen }: LessonIntentCardProps) => (
+export function LessonIntentCard({ intent }: LessonIntentCardProps) {
+  const downloadAndOpen = useDownloadAndOpen();
+
+  return (
   <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden flex flex-col shadow-xs hover:shadow-md transition-shadow">
     {/* Cover */}
     <div className="relative h-40 bg-zinc-100">
@@ -93,14 +96,21 @@ export const LessonIntentCard = ({ intent, onOpen }: LessonIntentCardProps) => (
 
       <div className="flex-1" />
 
-      {onOpen && (
-        <button
-          onClick={() => onOpen(intent)}
-          className="w-full mt-1 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
-        >
-          View details
-        </button>
+      {downloadAndOpen.isError && (
+        <p className="text-xs text-red-600 mb-1 text-center">
+          {downloadAndOpen.error instanceof Error
+            ? downloadAndOpen.error.message
+            : "Download failed"}
+        </p>
       )}
+      <button
+        onClick={() => downloadAndOpen.mutate(intent)}
+        disabled={downloadAndOpen.isPending}
+        className="w-full mt-1 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-60 transition-colors"
+      >
+        {downloadAndOpen.isPending ? "Downloading…" : "Download & Open"}
+      </button>
     </div>
   </div>
-);
+  );
+}

@@ -13,7 +13,7 @@ export const useDownloadAndOpen = () => {
   return useMutation({
     mutationFn: async (intent: LessonIntentRead) => {
       // 1. Get pack info from API
-      const packInfo = await lessonIntentService.getIntentPack(intent.id);
+      const packInfo = await lessonIntentService.getLessonPack(intent.id);
 
       if (packInfo.status !== "completed" || !packInfo.lesson_pack?.file_url) {
         const msg =

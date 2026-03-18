@@ -8,27 +8,129 @@ import { useLessonIntents } from "@/query/useLessonIntents";
 import { useClasses } from "@/query/useClasses";
 import { useSubjects } from "@/query/useSubjects";
 import { useAcademicTerms } from "@/query/useAcademicTerms";
+import { useDownloadedLessons } from "@/query/useDownloadedLessons";
 import { LessonIntentCard } from "@/components/LessonIntentCard";
 import { RecentLessonRow } from "@/components/RecentLessonRow";
 import {
+  BookOpen,
   Calendar,
   ChevronLeft,
   ChevronRight,
   Clock,
   FolderOpen,
+  HardDrive,
+  Hash,
   LogIn,
   LogOut,
   Search,
   Trash2,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
 import { confirm as tauriConfirm } from "@tauri-apps/plugin-dialog";
 import { listen } from "@tauri-apps/api/event";
-import type { LessonIntentRead } from "@/types/api";
+import { SafeImage } from "@/components/SafeImage";
+import type { DownloadedLesson } from "@/types/api";
 
-type Tab = "scheduled" | "recent";
+type Tab = "scheduled" | "recent" | "downloaded";
+
+const STATUS_LABELS: Record<string, string> = {
+  planned: "Planned",
+  content_generated: "Content Ready",
+  delivered: "Delivered",
+  skipped: "Skipped",
+};
+const STATUS_STYLES: Record<string, string> = {
+  planned: "bg-amber-100 text-amber-700",
+  content_generated: "bg-primary/10 text-primary",
+  delivered: "bg-green-100 text-green-700",
+  skipped: "bg-zinc-100 text-zinc-500",
+};
+
+function DownloadedLessonCard({
+  lesson,
+  onOpen,
+  isOpening,
+}: {
+  lesson: DownloadedLesson;
+  onOpen: (path: string) => void;
+  isOpening: boolean;
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden flex flex-col shadow-xs hover:shadow-md transition-shadow">
+      <div className="relative h-40 bg-zinc-100">
+        {lesson.cover_image_url ? (
+          <SafeImage
+            src={lesson.cover_image_url}
+            alt={lesson.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <BookOpen className="w-10 h-10 text-zinc-300" />
+          </div>
+        )}
+      </div>
+      <div className="p-4 flex flex-col flex-1 gap-2.5">
+        <div className="flex flex-wrap gap-1.5">
+          {lesson.lesson_type && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-600">
+              {lesson.lesson_type}
+            </span>
+          )}
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[lesson.status] ?? "bg-zinc-100 text-zinc-600"}`}
+          >
+            {STATUS_LABELS[lesson.status] ?? lesson.status}
+          </span>
+        </div>
+        <h3 className="font-semibold text-zinc-900 text-sm leading-snug line-clamp-2">
+          {lesson.title}
+        </h3>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
+          <span className="flex items-center gap-1">
+            <Hash className="w-3 h-3" />
+            Session {lesson.session_number}
+          </span>
+          {lesson.week_number != null && (
+            <span>Week {lesson.week_number}</span>
+          )}
+          {lesson.scheduled_date && (
+            <span className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {new Date(lesson.scheduled_date).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          )}
+          {lesson.class_name && (
+            <span className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              {lesson.class_name}
+            </span>
+          )}
+        </div>
+        {lesson.description && (
+          <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+            {lesson.description}
+          </p>
+        )}
+        <div className="flex-1" />
+        <button
+          onClick={() => onOpen(lesson.local_path)}
+          disabled={isOpening}
+          className="w-full mt-1 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-60 transition-colors"
+        >
+          {isOpening ? "Opening…" : "Open"}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const PAGE_SIZE = 20;
 
@@ -67,6 +169,8 @@ export const HomeScreen = () => {
 
   const { data: lessonIntents, isLoading: loadingIntents } =
     useLessonIntents(intentFilters);
+  const { data: downloadedLessons, isLoading: loadingDownloaded } =
+    useDownloadedLessons();
 
   // Client-side title/class search (no API support for free-text)
   const filteredIntents = lessonIntents?.filter((intent) => {
@@ -154,12 +258,12 @@ export const HomeScreen = () => {
     if (ok) clearRecent.mutate();
   };
 
-  // placeholder — future: open lesson from intent
-  const handleIntentOpen = (_intent: LessonIntentRead) => {};
-
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     ...(isAuthenticated
-      ? [{ id: "scheduled" as Tab, label: "Scheduled", icon: <Calendar className="w-4 h-4" /> }]
+      ? [
+          { id: "scheduled" as Tab, label: "Scheduled", icon: <Calendar className="w-4 h-4" /> },
+          { id: "downloaded" as Tab, label: "Downloaded", icon: <HardDrive className="w-4 h-4" /> },
+        ]
       : []),
     { id: "recent", label: "Recent", icon: <Clock className="w-4 h-4" /> },
   ];
@@ -350,7 +454,6 @@ export const HomeScreen = () => {
                     <LessonIntentCard
                       key={intent.id}
                       intent={intent}
-                      onOpen={handleIntentOpen}
                     />
                   ))}
                 </div>
@@ -416,6 +519,34 @@ export const HomeScreen = () => {
                 <p className="text-zinc-500">No recent lessons</p>
                 <p className="text-sm text-zinc-400 mt-1">
                   Open a lesson pack to get started
+                </p>
+              </div>
+            )}
+          </>
+        )}
+        {/* Downloaded tab */}
+        {activeTab === "downloaded" && (
+          <>
+            {loadingDownloaded ? (
+              <div className="text-zinc-500 text-sm">Loading…</div>
+            ) : downloadedLessons && downloadedLessons.length > 0 ? (
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                {downloadedLessons.map((lesson) => (
+                  <DownloadedLessonCard
+                    key={lesson.intent_id}
+                    lesson={lesson}
+                    onOpen={(path) => openLessonPack.mutate(path)}
+                    isOpening={openLessonPack.isPending}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <HardDrive className="w-10 h-10 text-zinc-300 mx-auto mb-2" />
+                <p className="text-zinc-500 text-sm">No downloaded lessons</p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Use "Download &amp; Open" on a scheduled lesson to save it
+                  offline
                 </p>
               </div>
             )}

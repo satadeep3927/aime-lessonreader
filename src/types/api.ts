@@ -102,30 +102,6 @@ export interface DownloadedLesson {
   title: string;
   local_path: string;
   downloaded_at: number;
-  intent: LessonIntentRead;
-}
-
-// ─── Lesson Pack (Server) ───────────────────────────────────────────────────
-
-export interface LessonPackServerRead {
-  id: string;
-  intent_id: string;
-  file_url: string;
-  version: number;
-}
-
-export interface LessonPackEnsureResponse {
-  status: "completed" | "generating" | "starting" | "failed";
-  lesson_pack: LessonPackServerRead | null;
-}
-
-// ─── Downloaded Lessons ──────────────────────────────────────────────────────
-
-export interface DownloadedLesson {
-  intent_id: string;
-  title: string;
-  local_path: string;
-  downloaded_at: number;
   cover_image_url: string | null;
   class_name: string | null;
   lesson_type: string | null;
