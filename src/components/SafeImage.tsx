@@ -11,7 +11,6 @@ export const SafeImage = ({
   src,
   alt,
   className,
-  fallback,
 }: SafeImageProps) => {
   const [errored, setErrored] = useState(false);
 

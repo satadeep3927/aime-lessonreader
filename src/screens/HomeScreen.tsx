@@ -1,7 +1,7 @@
 import { useLessonPack } from "@/context/LessonPackContext";
 import { useAuth } from "@/context/AuthContext";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
-import { useClearRecent, useOpenLessonPack } from "@/mutation/useLessonPack";
+import { useClearRecent, useOpenLessonPack, useClearDownloads } from "@/mutation/useLessonPack";
 import { useLogout } from "@/mutation/useAuth";
 import { useRecentLessons } from "@/query/useLessonPack";
 import { useLessonIntents } from "@/query/useLessonIntents";
@@ -142,6 +142,7 @@ const PAGE_SIZE = 20;
 export const HomeScreen = () => {
   const openLessonPack = useOpenLessonPack();
   const clearRecent = useClearRecent();
+  const clearDownloads = useClearDownloads();
   const { data: recentLessons, isLoading: loadingRecent } = useRecentLessons();
   const { setCurrentPack } = useLessonPack();
   const { isAuthenticated, user } = useAuth();
@@ -260,6 +261,16 @@ export const HomeScreen = () => {
       cancelLabel: t.cancel,
     });
     if (ok) clearRecent.mutate();
+  };
+
+  const handleClearDownloads = async () => {
+    const ok = await tauriConfirm(t.clearDownloadsConfirm, {
+      title: t.clearDownloadsTitle,
+      kind: "warning",
+      okLabel: t.clearDownloadsOk,
+      cancelLabel: t.cancel,
+    });
+    if (ok) clearDownloads.mutate();
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -455,6 +466,19 @@ export const HomeScreen = () => {
               >
                 <Trash2 className="w-4 h-4" />
                 {t.clearRecent}
+              </button>
+            )}
+
+          {activeTab === "downloaded" &&
+            downloadedLessons &&
+            downloadedLessons.length > 0 && (
+              <button
+                onClick={handleClearDownloads}
+                disabled={clearDownloads.isPending}
+                className="flex items-center gap-1.5 pb-1 px-3 py-1.5 text-sm text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                {t.clearDownloads}
               </button>
             )}
         </div>

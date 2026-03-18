@@ -65,7 +65,7 @@ jobs:
             libglib2.0-dev
 
       - name: Install frontend dependencies
-        run: npm install
+        run: npm install --force
 
       - name: Build (with target)
         if: matrix.target != ''

@@ -294,6 +294,47 @@ pub fn save_canvas_data(extracted_path: &str, canvas_data: serde_json::Value) ->
     Ok(())
 }
 
+/// Merge arbitrary key-value pairs into `.meta.json` atomically.
+/// `patches` must be a JSON object; each key is inserted / overwritten.
+pub fn patch_meta(extracted_path: &str, patches: serde_json::Value) -> Result<()> {
+    let meta_path = Path::new(extracted_path).join(".meta.json");
+    let tmp_path  = Path::new(extracted_path).join(".meta.json.tmp");
+
+    let raw = fs::read_to_string(&meta_path)
+        .context("Failed to read .meta.json")?;
+    let mut obj: serde_json::Value = serde_json::from_str(&raw)
+        .context("Failed to parse .meta.json")?;
+
+    let map = obj.as_object_mut()
+        .ok_or_else(|| anyhow::anyhow!(".meta.json root is not a JSON object"))?;
+
+    if let Some(patch_map) = patches.as_object() {
+        for (k, v) in patch_map {
+            map.insert(k.clone(), v.clone());
+        }
+    }
+
+    let serialised = serde_json::to_string_pretty(&obj)
+        .context("Failed to serialise .meta.json")?;
+    fs::write(&tmp_path, &serialised)
+        .context("Failed to write .meta.json.tmp")?;
+    fs::rename(&tmp_path, &meta_path)
+        .context("Failed to rename .meta.json.tmp → .meta.json")?;
+
+    Ok(())
+}
+
+/// Merge `patches` into `.meta.json` **and** re-zip the directory back into
+/// `zip_path`, so the change is permanently baked into the `.aimepack` file.
+pub fn patch_and_rezip(
+    extracted_path: &str,
+    zip_path: &str,
+    patches: serde_json::Value,
+) -> Result<()> {
+    patch_meta(extracted_path, patches)?;
+    rezip_directory(Path::new(extracted_path), Path::new(zip_path))
+}
+
 /// Recursively zip the contents of `dir_path` into `zip_path` atomically.
 /// Skips any `.tmp` files left over from previous atomic writes.
 fn rezip_directory(dir_path: &Path, zip_path: &Path) -> Result<()> {
@@ -438,6 +479,34 @@ pub async fn add_downloaded_lesson(lesson: DownloadedLesson, app: AppHandle) -> 
     lessons.insert(0, lesson);
 
     store.set("downloadedLessons".to_string(), serde_json::to_value(&lessons)?);
+    store.save()?;
+    Ok(())
+}
+
+/// Clear all downloaded lessons — wipes the store and deletes every .aimepack file.
+pub async fn clear_downloads(app: AppHandle) -> Result<()> {
+    let store = app.store("downloaded.json")?;
+
+    // Collect file paths before clearing
+    let lessons: Vec<DownloadedLesson> = match store.get("downloadedLessons") {
+        Some(value) => serde_json::from_value(value.clone()).unwrap_or_default(),
+        None => Vec::new(),
+    };
+
+    // Delete each .aimepack file from disk (best-effort; ignore individual errors)
+    for lesson in &lessons {
+        let _ = fs::remove_file(&lesson.local_path);
+    }
+
+    // Also try to remove the downloaded_lessons directory if empty
+    if let Ok(app_dir) = app.path().app_data_dir() {
+        let lessons_dir = app_dir.join("downloaded_lessons");
+        let _ = fs::remove_dir(&lessons_dir); // only succeeds if already empty
+    }
+
+    // Wipe the store record
+    let empty: Vec<DownloadedLesson> = Vec::new();
+    store.set("downloadedLessons".to_string(), serde_json::to_value(&empty)?);
     store.save()?;
     Ok(())
 }

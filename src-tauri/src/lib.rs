@@ -198,6 +198,28 @@ async fn remove_downloaded_lesson(intent_id: String, app: tauri::AppHandle) -> R
         .map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn clear_downloads(app: tauri::AppHandle) -> Result<(), String> {
+    lesson_pack::clear_downloads(app)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn patch_meta(extracted_path: String, patches: serde_json::Value) -> Result<(), String> {
+    lesson_pack::patch_meta(&extracted_path, patches).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn patch_and_rezip(
+    extracted_path: String,
+    zip_path: String,
+    patches: serde_json::Value,
+) -> Result<(), String> {
+    lesson_pack::patch_and_rezip(&extracted_path, &zip_path, patches)
+        .map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -252,7 +274,10 @@ pub fn run() {
             add_downloaded_lesson,
             remove_downloaded_lesson,
             save_canvas_data,
-            save_lesson_pack
+            save_lesson_pack,
+            patch_meta,
+            patch_and_rezip,
+            clear_downloads
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

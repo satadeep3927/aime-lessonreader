@@ -5,6 +5,26 @@ All notable changes to AIME Lesson Studio will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0 "Baobab"] - 2026-03-18 — First Major Release
+
+> *Dedicated to Africa and Cameroon — named after the Baobab, the ancient Tree of Life that has sheltered communities across the continent for thousands of years.*
+
+### Added
+
+- **Whiteboard powered by `@aime.ai/renderer-react`** — whiteboard canvas is now driven by the dedicated renderer package, unlocking richer annotations and a consistent rendering pipeline across platforms
+- **Canvas persistence** — whiteboard drawings are saved directly inside the `.aimepack` file so annotations survive between sessions and travel with the lesson
+- **Cloud Integration** — teachers can log in, browse the catalogue, download lesson packs, and mark a lesson as complete entirely within AIME Lesson Studio; the full workflow from discovery to reflection never requires leaving the app
+- **Complete Lesson sheet** — right-side sheet lets teachers review learning objectives (all pre-checked), choose a reflection depth (quick / standard / deep), answer open-ended prompts, and submit to the LMS in one action
+- **`lesson_intent_id` persistence** — intent ID is permanently baked into the `.aimepack` file via `patch_and_rezip` so all subsequent open paths retain the correct cloud context
+- **Clear Downloads** — one-click button in the Downloaded tab wipes all cached `.aimepack` files
+- **Splash screen refresh** — launch screen updated with imagery dedicated to Africa
+
+### Fixed
+
+- Sheet scroll overflow on short screens
+- All micro-objectives pre-checked by default when Complete Lesson sheet opens
+- TypeScript strict-mode build errors (`SafeImage`, `collapsible`, `lessonIntentService`)
+
 ## [0.1.0] - 2026-03-13
 
 ### Added

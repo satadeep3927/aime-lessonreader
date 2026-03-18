@@ -96,6 +96,38 @@ export const lessonPackService = {
     return await invoke<string>("download_aimepack", { url, intentId });
   },
 
+  /**
+   * Patch arbitrary fields into the extracted .meta.json file.
+   * Use this to persist data (e.g. lesson_intent_id) that is known at
+   * download time but not stored inside the .aimepack itself.
+   */
+  async patchMeta(
+    extractedPath: string,
+    patches: Record<string, unknown>,
+  ): Promise<void> {
+    await invoke("patch_meta", { extractedPath, patches });
+  },
+
+  /**
+   * Patch arbitrary fields into the extracted .meta.json AND re-zip the
+   * directory back into the original .aimepack file, so the change survives
+   * future opens.
+   */
+  async patchAndRezip(
+    extractedPath: string,
+    zipPath: string,
+    patches: Record<string, unknown>,
+  ): Promise<void> {
+    await invoke("patch_and_rezip", { extractedPath, zipPath, patches });
+  },
+
+  /**
+   * Delete all downloaded lesson files and clear the store.
+   */
+  async clearDownloads(): Promise<void> {
+    await invoke("clear_downloads");
+  },
+
   async getDownloadedLessons(): Promise<DownloadedLesson[]> {
     return await invoke<DownloadedLesson[]>("get_downloaded_lessons");
   },

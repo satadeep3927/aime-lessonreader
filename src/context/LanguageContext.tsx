@@ -52,6 +52,10 @@ export interface Translations {
   noRecentLessonsHint: string;
   noDownloadedLessons: string;
   noDownloadedLessonsHint: string;
+  clearDownloads: string;
+  clearDownloadsConfirm: string;
+  clearDownloadsTitle: string;
+  clearDownloadsOk: string;
   // Pagination
   previous: string;
   next: string;
@@ -133,6 +137,11 @@ const translations: Record<Language, Translations> = {
     noDownloadedLessons: "No downloaded lessons",
     noDownloadedLessonsHint:
       'Use "Download & Open" on a scheduled lesson to save it offline',
+    clearDownloads: "Clear downloads",
+    clearDownloadsConfirm:
+      "This will delete all downloaded lesson files and cannot be undone. Continue?",
+    clearDownloadsTitle: "Clear Downloads",
+    clearDownloadsOk: "Delete all",
     previous: "Previous",
     next: "Next",
     page: "Page",
@@ -213,8 +222,11 @@ const translations: Record<Language, Translations> = {
     noRecentLessonsHint: "Ouvrez un pack de leçons pour commencer",
     noDownloadedLessons: "Aucune leçon téléchargée",
     noDownloadedLessonsHint:
-      "Utilisez « Télécharger et ouvrir » sur une leçon planifiée pour la sauvegarder hors ligne",
-    previous: "Précédent",
+      "Utilisez « Télécharger et ouvrir » sur une leçon planifiée pour la sauvegarder hors ligne",    clearDownloads: "Effacer les téléchargements",
+    clearDownloadsConfirm:
+      "Cela supprimera tous les fichiers de leçons téléchargés et ne peut pas être annulé. Continuer ?",
+    clearDownloadsTitle: "Effacer les téléchargements",
+    clearDownloadsOk: "Tout supprimer",    previous: "Précédent",
     next: "Suivant",
     page: "Page",
     colName: "Nom",

@@ -106,9 +106,17 @@ export function CompleteLessonSheet({
       reflection.questions?.forEach((q) => {
         defaultAnswers[q.question_number.toString()] = "";
       });
+
+      const defaultObjectiveMap: Record<string, number[]> = {};
+      reflection.objectives?.forEach((obj) => {
+        defaultObjectiveMap[obj.id.toString()] = obj.micro_objectives.map(
+          (m) => m.id,
+        );
+      });
+
       form.reset({
         answers: defaultAnswers,
-        completed_objective_map: {},
+        completed_objective_map: defaultObjectiveMap,
         pushHomeworkToLms: false,
         pushAssessmentToLms: false,
         submissionDeadline: undefined,
@@ -150,7 +158,7 @@ export function CompleteLessonSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="sm:max-w-2xl w-full p-0 flex flex-col"
+        className="sm:max-w-2xl w-full p-0 flex flex-col h-full overflow-auto max-h-full"
       >
         <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
           <SheetTitle>{t.completeLessonTitle}</SheetTitle>
@@ -176,7 +184,7 @@ export function CompleteLessonSheet({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col flex-1 min-h-0"
+              className="flex flex-col flex-1 overflow-auto min-h-0"
             >
               <ScrollArea className="flex-1 px-6">
                 <div className="space-y-8 py-6">

@@ -1,4 +1,26 @@
 #!/bin/sh
+set -e
+
+# ── Ensure WebKitGTK is present ───────────────────────────────────────────────
+# Tauri 2 requires libwebkit2gtk-4.1-0 (Debian 12 / Ubuntu 22.04+).
+# Older Crostini / Debian 11 environments only have libwebkit2gtk-4.0-37.
+# This block attempts to install whichever variant is available.
+_have_webkit() {
+  dpkg -l libwebkit2gtk-4.1-0 2>/dev/null | grep -q '^ii' && return 0
+  dpkg -l libwebkit2gtk-4.0-37 2>/dev/null | grep -q '^ii' && return 0
+  return 1
+}
+
+if ! _have_webkit; then
+  echo "[AIME] WebKitGTK not found – attempting to install..."
+  apt-get update -qq 2>/dev/null || true
+  apt-get install -y --no-install-recommends libwebkit2gtk-4.1-0 2>/dev/null || \
+  apt-get install -y --no-install-recommends libwebkit2gtk-4.0-37 2>/dev/null || \
+  echo "[AIME] WARNING: Could not install WebKitGTK automatically. Please run:"
+  echo "  sudo apt-get install libwebkit2gtk-4.1-0"
+fi
+
+# ── MIME type registration ─────────────────────────────────────────────────────
 mkdir -p /usr/share/mime/packages
 cat > /usr/share/mime/packages/aimepack.xml << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>

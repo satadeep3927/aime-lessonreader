@@ -49,7 +49,26 @@ export const useDownloadAndOpen = () => {
       await lessonPackService.addDownloadedLesson(record);
 
       // 4. Open the downloaded file using existing Tauri command
-      return lessonPackService.openLessonPack(localPath);
+      const opened = await lessonPackService.openLessonPack(localPath);
+
+      // 5. Bake lesson_intent_id into the .aimepack file permanently by
+      //    patching the extracted .meta.json then re-zipping back. This means
+      //    every future open (Downloaded tab, recent list, file association)
+      //    will find lesson_intent_id already in the file — no side-channel needed.
+      if (opened.success && opened.lesson_pack) {
+        await lessonPackService.patchAndRezip(
+          opened.lesson_pack.extracted_path,
+          localPath,
+          { lesson_intent_id: intent.id },
+        );
+        // Reflect the patch in the current in-memory meta too
+        opened.lesson_pack.meta = {
+          ...opened.lesson_pack.meta,
+          lesson_intent_id: intent.id,
+        };
+      }
+
+      return opened;
     },
     onSuccess: (data) => {
       if (data?.success && data?.lesson_pack) {

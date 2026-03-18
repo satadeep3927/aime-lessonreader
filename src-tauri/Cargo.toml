@@ -1,6 +1,6 @@
 [package]
 name = "aime-lessonreader"
-version = "0.1.2"
+version = "1.0.0"
 description = "AIME Lesson Studio"
 authors = ["you"]
 edition = "2021"

@@ -82,6 +82,20 @@ export const useClearRecent = () => {
 };
 
 /**
+ * Mutation hook for clearing all downloaded lessons
+ */
+export const useClearDownloads = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => lessonPackService.clearDownloads(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["downloadedLessons"] });
+    },
+  });
+};
+
+/**
  * Mutation hook for cleanup
  */
 export const useCleanupLessonPack = () => {
