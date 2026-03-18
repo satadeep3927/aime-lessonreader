@@ -11,6 +11,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 interface LessonPackContextType {
   currentPack: LessonPack | null;
   setCurrentPack: (pack: LessonPack | null) => void;
+  updatePackMeta: (patch: Partial<LessonPack["meta"]>) => void;
 }
 
 const LessonPackContext = createContext<LessonPackContextType | undefined>(
@@ -40,8 +41,16 @@ export const LessonPackProvider = ({ children }: { children: ReactNode }) => {
     setCurrentPackRaw(pack ? resolveImageUrls(pack) : null);
   }, []);
 
+  const updatePackMeta = useCallback((patch: Partial<LessonPack["meta"]>) => {
+    setCurrentPackRaw((prev) =>
+      prev ? { ...prev, meta: { ...prev.meta, ...patch } } : prev,
+    );
+  }, []);
+
   return (
-    <LessonPackContext.Provider value={{ currentPack, setCurrentPack }}>
+    <LessonPackContext.Provider
+      value={{ currentPack, setCurrentPack, updatePackMeta }}
+    >
       {children}
     </LessonPackContext.Provider>
   );

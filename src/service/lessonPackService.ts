@@ -107,4 +107,23 @@ export const lessonPackService = {
   async removeDownloadedLesson(intentId: string): Promise<void> {
     await invoke("remove_downloaded_lesson", { intentId });
   },
+
+  async saveCanvasData(
+    extractedPath: string,
+    canvasData: unknown,
+  ): Promise<void> {
+    await invoke("save_canvas_data", { extractedPath, canvasData });
+  },
+
+  async saveLessonPack(
+    extractedPath: string,
+    originalPath: string,
+    canvasData: unknown,
+  ): Promise<void> {
+    await invoke("save_lesson_pack", {
+      extractedPath,
+      originalPath,
+      canvasData,
+    });
+  },
 };

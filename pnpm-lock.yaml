@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@aime.ai/renderer-react':
-        specifier: ^1.0.5
-        version: 1.0.5(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)
+        specifier: ^1.0.7
+        version: 1.0.7(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.4))
@@ -80,6 +80,9 @@ importers:
       remark-math:
         specifier: ^6.0.0
         version: 6.0.0
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -120,8 +123,8 @@ importers:
 
 packages:
 
-  '@aime.ai/renderer-react@1.0.5':
-    resolution: {integrity: sha512-4A+f3k/xAzfHFBLua66f1j7i2yQcNXjEdVPrZy/o7RbUXPCns9YdhyMOpTN+yaO3Jw9VFFXTp320369kKJjGnw==}
+  '@aime.ai/renderer-react@1.0.7':
+    resolution: {integrity: sha512-ZvPPby9DzxifR8P5dRZQ7KCmrP0tBTyuiCssrWzEd0myrAExhCQO2aoMkH+OTcakWiwakw0zxoSfpM5vpCrE0w==}
     peerDependencies:
       '@blocksuite/block-std': 0.19.5
       '@blocksuite/blocks': 0.19.5
@@ -3753,12 +3756,18 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
-  simple-xml-to-json@1.2.3:
-    resolution: {integrity: sha512-kWJDCr9EWtZ+/EYYM5MareWj2cRnZGF93YDNpH4jQiHB+hBIZnfPFSQiVMzZOdk+zXWqTZ/9fTeQNu2DqeiudA==}
+  simple-xml-to-json@1.2.4:
+    resolution: {integrity: sha512-3MY16e0ocMHL7N1ufpdObURGyX+lCo0T/A+y6VCwosLdH1HSda4QZl1Sdt/O+2qWp48WFi26XEp5rF0LoaL0Dg==}
     engines: {node: '>=20.12.2'}
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
+  sonner@2.0.7:
+    resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -4143,7 +4152,7 @@ packages:
 
 snapshots:
 
-  '@aime.ai/renderer-react@1.0.5(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)':
+  '@aime.ai/renderer-react@1.0.7(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)':
     dependencies:
       '@blocksuite/block-std': 0.19.5(yjs@13.6.30)
       '@blocksuite/blocks': 0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30)
@@ -4608,7 +4617,7 @@ snapshots:
       remark-parse: 11.0.0
       remark-stringify: 11.0.0
       shiki: 1.29.2
-      simple-xml-to-json: 1.2.3
+      simple-xml-to-json: 1.2.4
       unified: 11.0.5
       zod: 3.25.76
     transitivePeerDependencies:
@@ -8473,9 +8482,14 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
-  simple-xml-to-json@1.2.3: {}
+  simple-xml-to-json@1.2.4: {}
 
   sisteransi@1.0.5: {}
+
+  sonner@2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   source-map-js@1.2.1: {}
 

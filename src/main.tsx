@@ -17,7 +17,10 @@ window.fetch = (input, init?) => {
         ? input.href
         : (input as Request).url;
   if (url.startsWith(API_ORIGIN)) {
-    return tauriFetch(input as Parameters<typeof tauriFetch>[0], init) as unknown as Promise<Response>;
+    return tauriFetch(
+      input as Parameters<typeof tauriFetch>[0],
+      init,
+    ) as unknown as Promise<Response>;
   }
   return _nativeFetch(input, init);
 };

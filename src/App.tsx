@@ -4,6 +4,8 @@ import { PresentationViewer } from "@/screens/PresentationViewer";
 import { LoginScreen } from "@/screens/LoginScreen";
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { Toaster } from "sonner";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 function App() {
   useEffect(() => {
@@ -19,13 +21,16 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-white">
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/viewer" element={<PresentationViewer />} />
-        <Route path="/login" element={<LoginScreen />} />
-      </Routes>
-    </div>
+    <LanguageProvider>
+      <div className="flex flex-col h-screen w-screen overflow-hidden bg-white">
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/viewer" element={<PresentationViewer />} />
+          <Route path="/login" element={<LoginScreen />} />
+        </Routes>
+        <Toaster position="bottom-right" richColors closeButton />
+      </div>
+    </LanguageProvider>
   );
 }
 

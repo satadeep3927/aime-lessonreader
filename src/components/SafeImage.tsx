@@ -7,7 +7,12 @@ interface SafeImageProps {
   fallback?: React.ReactNode;
 }
 
-export const SafeImage = ({ src, alt, className, fallback }: SafeImageProps) => {
+export const SafeImage = ({
+  src,
+  alt,
+  className,
+  fallback,
+}: SafeImageProps) => {
   const [errored, setErrored] = useState(false);
 
   if (errored) {

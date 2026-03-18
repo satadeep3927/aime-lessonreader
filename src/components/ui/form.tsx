@@ -77,14 +77,7 @@ const FormControl = React.forwardRef<
 >(({ ...props }, ref) => {
   const { error } = useFormField();
   const { id } = React.useContext(FormItemContext);
-  return (
-    <div
-      ref={ref}
-      id={id}
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
+  return <div ref={ref} id={id} aria-invalid={!!error} {...props} />;
 });
 FormControl.displayName = "FormControl";
 

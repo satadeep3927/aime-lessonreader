@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Clock,
   FolderOpen,
+  Globe,
   HardDrive,
   Hash,
   LogIn,
@@ -27,6 +28,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
 import { confirm as tauriConfirm } from "@tauri-apps/plugin-dialog";
@@ -36,12 +38,6 @@ import type { DownloadedLesson } from "@/types/api";
 
 type Tab = "scheduled" | "recent" | "downloaded";
 
-const STATUS_LABELS: Record<string, string> = {
-  planned: "Planned",
-  content_generated: "Content Ready",
-  delivered: "Delivered",
-  skipped: "Skipped",
-};
 const STATUS_STYLES: Record<string, string> = {
   planned: "bg-amber-100 text-amber-700",
   content_generated: "bg-primary/10 text-primary",
@@ -58,6 +54,13 @@ function DownloadedLessonCard({
   onOpen: (path: string) => void;
   isOpening: boolean;
 }) {
+  const { t } = useLanguage();
+  const statusLabels: Record<string, string> = {
+    planned: t.statusPlanned,
+    content_generated: t.statusContentGenerated,
+    delivered: t.statusDelivered,
+    skipped: t.statusSkipped,
+  };
   return (
     <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden flex flex-col shadow-xs hover:shadow-md transition-shadow">
       <div className="relative h-40 bg-zinc-100">
@@ -83,7 +86,7 @@ function DownloadedLessonCard({
           <span
             className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[lesson.status] ?? "bg-zinc-100 text-zinc-600"}`}
           >
-            {STATUS_LABELS[lesson.status] ?? lesson.status}
+            {statusLabels[lesson.status] ?? lesson.status}
           </span>
         </div>
         <h3 className="font-semibold text-zinc-900 text-sm leading-snug line-clamp-2">
@@ -92,10 +95,12 @@ function DownloadedLessonCard({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500">
           <span className="flex items-center gap-1">
             <Hash className="w-3 h-3" />
-            Session {lesson.session_number}
+            {t.session} {lesson.session_number}
           </span>
           {lesson.week_number != null && (
-            <span>Week {lesson.week_number}</span>
+            <span>
+              {t.week} {lesson.week_number}
+            </span>
           )}
           {lesson.scheduled_date && (
             <span className="flex items-center gap-1">
@@ -125,7 +130,7 @@ function DownloadedLessonCard({
           disabled={isOpening}
           className="w-full mt-1 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-60 transition-colors"
         >
-          {isOpening ? "Opening…" : "Open"}
+          {isOpening ? t.openingLesson : t.open}
         </button>
       </div>
     </div>
@@ -142,8 +147,12 @@ export const HomeScreen = () => {
   const { isAuthenticated, user } = useAuth();
   const { mutate: logout } = useLogout();
   const navigate = useNavigate();
-  const [greeting, setGreeting] = useState("Good morning");
+  const { language, setLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("recent");
+
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? t.goodMorning : hour < 18 ? t.goodAfternoon : t.goodEvening;
 
   // API filter state
   const [classId, setClassId] = useState<number | "">("");
@@ -225,13 +234,6 @@ export const HomeScreen = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good morning");
-    else if (hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
-  }, []);
-
   useKeyboardShortcut([
     { key: "o", ctrl: true, callback: () => openLessonPack.mutate(undefined) },
   ]);
@@ -251,21 +253,31 @@ export const HomeScreen = () => {
     openLessonPack.mutate(filePath);
 
   const handleClearRecent = async () => {
-    const ok = await tauriConfirm(
-      "Are you sure you want to clear all recent lessons?",
-      { title: "Clear Recent Lessons", kind: "warning", okLabel: "Clear", cancelLabel: "Cancel" },
-    );
+    const ok = await tauriConfirm(t.clearRecentConfirm, {
+      title: t.clearRecentTitle,
+      kind: "warning",
+      okLabel: t.clearRecentOk,
+      cancelLabel: t.cancel,
+    });
     if (ok) clearRecent.mutate();
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     ...(isAuthenticated
       ? [
-          { id: "scheduled" as Tab, label: "Scheduled", icon: <Calendar className="w-4 h-4" /> },
-          { id: "downloaded" as Tab, label: "Downloaded", icon: <HardDrive className="w-4 h-4" /> },
+          {
+            id: "scheduled" as Tab,
+            label: t.tabScheduled,
+            icon: <Calendar className="w-4 h-4" />,
+          },
+          {
+            id: "downloaded" as Tab,
+            label: t.tabDownloaded,
+            icon: <HardDrive className="w-4 h-4" />,
+          },
         ]
       : []),
-    { id: "recent", label: "Recent", icon: <Clock className="w-4 h-4" /> },
+    { id: "recent", label: t.tabRecent, icon: <Clock className="w-4 h-4" /> },
   ];
 
   const selectCls =
@@ -286,12 +298,22 @@ export const HomeScreen = () => {
           </div>
           <div className="flex items-center gap-3 pt-1">
             <button
+              onClick={() => setLanguage(language === "en" ? "fr" : "en")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-sm font-medium text-zinc-600 hover:border-primary hover:text-primary transition-colors shadow-xs"
+              title={
+                language === "en" ? "Switch to French" : "Passer en anglais"
+              }
+            >
+              <Globe className="w-4 h-4" />
+              {language === "en" ? "FR" : "EN"}
+            </button>
+            <button
               onClick={() => openLessonPack.mutate(undefined)}
               disabled={openLessonPack.isPending}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-zinc-200 text-sm font-medium text-zinc-700 hover:border-primary hover:text-primary transition-colors shadow-xs"
             >
               <FolderOpen className="w-4 h-4" />
-              {openLessonPack.isPending ? "Opening…" : "Open lesson"}
+              {openLessonPack.isPending ? t.opening : t.openLesson}
             </button>
             {isAuthenticated ? (
               <button
@@ -299,7 +321,7 @@ export const HomeScreen = () => {
                 className="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                Sign out
+                {t.signOut}
               </button>
             ) : (
               <button
@@ -307,7 +329,7 @@ export const HomeScreen = () => {
                 className="flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors font-medium"
               >
                 <LogIn className="w-4 h-4" />
-                Sign in
+                {t.signIn}
               </button>
             )}
           </div>
@@ -331,18 +353,16 @@ export const HomeScreen = () => {
           <div className="mb-6 p-4 rounded-lg border border-zinc-200 bg-white flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-zinc-800">
-                See your scheduled lessons
+                {t.seeScheduledLessons}
               </p>
-              <p className="text-xs text-zinc-500 mt-0.5">
-                Sign in to sync with your AIME account
-              </p>
+              <p className="text-xs text-zinc-500 mt-0.5">{t.signInToSync}</p>
             </div>
             <button
               onClick={() => navigate("/login")}
               className="flex items-center gap-1.5 text-sm text-white bg-primary hover:bg-primary/90 px-4 py-1.5 rounded-lg transition-colors font-medium"
             >
               <LogIn className="w-4 h-4" />
-              Sign in
+              {t.signIn}
             </button>
           </div>
         )}
@@ -375,7 +395,7 @@ export const HomeScreen = () => {
                 onChange={(e) => handleClassChange(e.target.value)}
                 className={selectCls}
               >
-                <option value="">All classes</option>
+                <option value="">{t.allClasses}</option>
                 {classes?.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -389,7 +409,7 @@ export const HomeScreen = () => {
                 onChange={(e) => handleSubjectChange(e.target.value)}
                 className={selectCls}
               >
-                <option value="">All subjects</option>
+                <option value="">{t.allSubjects}</option>
                 {subjects?.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -403,7 +423,7 @@ export const HomeScreen = () => {
                 onChange={(e) => handleTermChange(e.target.value)}
                 className={selectCls}
               >
-                <option value="">All terms</option>
+                <option value="">{t.allTerms}</option>
                 {academicTerms?.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name} ({t.academic_year})
@@ -418,7 +438,7 @@ export const HomeScreen = () => {
                   type="text"
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
-                  placeholder="Search…"
+                  placeholder={t.searchPlaceholder}
                   className="text-sm pl-8 pr-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-primary w-40"
                 />
               </div>
@@ -434,7 +454,7 @@ export const HomeScreen = () => {
                 className="flex items-center gap-1.5 pb-1 px-3 py-1.5 text-sm text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
-                Clear
+                {t.clearRecent}
               </button>
             )}
         </div>
@@ -446,15 +466,12 @@ export const HomeScreen = () => {
         {activeTab === "scheduled" && (
           <>
             {loadingIntents ? (
-              <div className="text-zinc-500 text-sm">Loading…</div>
+              <div className="text-zinc-500 text-sm">{t.loading}</div>
             ) : filteredIntents && filteredIntents.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                   {filteredIntents.map((intent) => (
-                    <LessonIntentCard
-                      key={intent.id}
-                      intent={intent}
-                    />
+                    <LessonIntentCard key={intent.id} intent={intent} />
                   ))}
                 </div>
 
@@ -467,15 +484,17 @@ export const HomeScreen = () => {
                       className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-sm text-zinc-600 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      Previous
+                      {t.previous}
                     </button>
-                    <span className="text-sm text-zinc-500">Page {page}</span>
+                    <span className="text-sm text-zinc-500">
+                      {t.page} {page}
+                    </span>
                     <button
                       onClick={() => setPage((p) => p + 1)}
                       disabled={!hasNextPage}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-sm text-zinc-600 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     >
-                      Next
+                      {t.next}
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -484,9 +503,7 @@ export const HomeScreen = () => {
             ) : (
               <div className="text-center py-16">
                 <Calendar className="w-10 h-10 text-zinc-300 mx-auto mb-2" />
-                <p className="text-zinc-500 text-sm">
-                  No scheduled lessons found
-                </p>
+                <p className="text-zinc-500 text-sm">{t.noScheduledLessons}</p>
               </div>
             )}
           </>
@@ -496,14 +513,14 @@ export const HomeScreen = () => {
         {activeTab === "recent" && (
           <>
             {loadingRecent ? (
-              <div className="text-zinc-500 text-sm">Loading…</div>
+              <div className="text-zinc-500 text-sm">{t.loading}</div>
             ) : recentLessons && recentLessons.length > 0 ? (
               <div className="space-y-1">
                 <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-zinc-500 border-b border-zinc-200">
-                  <div className="col-span-6">Name</div>
-                  <div className="col-span-3">Subject</div>
-                  <div className="col-span-2">Slides</div>
-                  <div className="col-span-1">Duration</div>
+                  <div className="col-span-6">{t.colName}</div>
+                  <div className="col-span-3">{t.colSubject}</div>
+                  <div className="col-span-2">{t.colSlides}</div>
+                  <div className="col-span-1">{t.colDuration}</div>
                 </div>
                 {recentLessons.map((lesson) => (
                   <RecentLessonRow
@@ -516,9 +533,9 @@ export const HomeScreen = () => {
             ) : (
               <div className="text-center py-16">
                 <Clock className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
-                <p className="text-zinc-500">No recent lessons</p>
+                <p className="text-zinc-500">{t.noRecentLessons}</p>
                 <p className="text-sm text-zinc-400 mt-1">
-                  Open a lesson pack to get started
+                  {t.noRecentLessonsHint}
                 </p>
               </div>
             )}
@@ -528,7 +545,7 @@ export const HomeScreen = () => {
         {activeTab === "downloaded" && (
           <>
             {loadingDownloaded ? (
-              <div className="text-zinc-500 text-sm">Loading…</div>
+              <div className="text-zinc-500 text-sm">{t.loading}</div>
             ) : downloadedLessons && downloadedLessons.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {downloadedLessons.map((lesson) => (
@@ -543,10 +560,9 @@ export const HomeScreen = () => {
             ) : (
               <div className="text-center py-16">
                 <HardDrive className="w-10 h-10 text-zinc-300 mx-auto mb-2" />
-                <p className="text-zinc-500 text-sm">No downloaded lessons</p>
+                <p className="text-zinc-500 text-sm">{t.noDownloadedLessons}</p>
                 <p className="text-xs text-zinc-400 mt-1">
-                  Use "Download &amp; Open" on a scheduled lesson to save it
-                  offline
+                  {t.noDownloadedLessonsHint}
                 </p>
               </div>
             )}

@@ -88,7 +88,11 @@ export interface LessonPackServerRead {
   updated_at: string;
 }
 
-export type LessonPackEnsureStatus = "completed" | "generating" | "starting" | "failed";
+export type LessonPackEnsureStatus =
+  | "completed"
+  | "generating"
+  | "starting"
+  | "failed";
 
 export interface LessonPackEnsureResponse {
   status: LessonPackEnsureStatus;

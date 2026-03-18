@@ -37,8 +37,7 @@ export const LoginScreen = () => {
     login(values);
   };
 
-  const errorMessage =
-    isError && error instanceof Error ? error.message : null;
+  const errorMessage = isError && error instanceof Error ? error.message : null;
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-white">
@@ -67,7 +66,9 @@ export const LoginScreen = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-zinc-700">Email or username</FormLabel>
+                  <FormLabel className="text-zinc-700">
+                    Email or username
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="you@school.edu"
@@ -108,7 +109,11 @@ export const LoginScreen = () => {
               </p>
             )}
 
-            <Button type="submit" className="w-full h-10 mt-2" disabled={isPending}>
+            <Button
+              type="submit"
+              className="w-full h-10 mt-2"
+              disabled={isPending}
+            >
               {isPending ? (
                 "Signing in…"
               ) : (

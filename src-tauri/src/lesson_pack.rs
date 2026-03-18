@@ -1,31 +1,19 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::fs::{self, File};
+use std::io::Write;
 use std::path::Path;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
 
-// Types matching TypeScript interfaces
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct LessonPackMeta {
-    pub session_number: u32,
-    pub lesson_type: String, // Enum in TS, String here
-    pub title: String,
-    pub subject: String,
-    pub grade_level: String,
-    pub total_duration_minutes: u32,
-    pub slides: Vec<serde_json::Value>, // Generic JSON for discriminated union
-    pub resources: Vec<String>,
-    pub cover_image_url: Option<String>,
-    pub ai_rationale: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub author: Option<String>,
-}
+// Types matching TypeScript interfaces.
+// `meta` is kept as a raw JSON Value so that every field present in the
+// .meta.json file (including lesson_intent_id, id, status, etc.) is passed
+// through to the frontend without any silent field-stripping.
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LessonPack {
-    pub meta: LessonPackMeta,
+    pub meta: serde_json::Value,
     pub extracted_path: String,
     pub original_path: String,
 }
@@ -36,7 +24,7 @@ pub struct RecentLesson {
     pub name: String,
     pub last_opened: i64,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub meta: Option<LessonPackMeta>,
+    pub meta: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -52,7 +40,7 @@ pub struct OpenFileResult {
 pub struct VerifyMetaResult {
     pub valid: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub meta: Option<LessonPackMeta>,
+    pub meta: Option<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub errors: Option<Vec<String>>,
 }
@@ -163,21 +151,26 @@ pub fn verify_meta(extracted_path: &str) -> Result<VerifyMetaResult> {
 
     let meta_content = fs::read_to_string(&meta_path).context("Failed to read .meta.json")?;
 
-    match serde_json::from_str::<LessonPackMeta>(&meta_content) {
+    match serde_json::from_str::<serde_json::Value>(&meta_content) {
         Ok(meta) => {
             // Validate required fields
             let mut errors = Vec::new();
 
-            if meta.title.is_empty() {
-                errors.push("Title is required".to_string());
+            match meta.get("title").and_then(|v| v.as_str()) {
+                None | Some("") => errors.push("Title is required".to_string()),
+                _ => {}
             }
-            if meta.subject.is_empty() {
-                errors.push("Subject is required".to_string());
+            match meta.get("subject").and_then(|v| v.as_str()) {
+                None | Some("") => errors.push("Subject is required".to_string()),
+                _ => {}
             }
-            if meta.slides.is_empty() {
-                errors.push("At least one slide is required".to_string());
+            match meta.get("slides").and_then(|v| v.as_array()) {
+                None => errors.push("At least one slide is required".to_string()),
+                Some(slides) if slides.is_empty() => {
+                    errors.push("At least one slide is required".to_string())
+                }
+                _ => {}
             }
-            // Add more specific validation logic here if needed
 
             if errors.is_empty() {
                 Ok(VerifyMetaResult {
@@ -267,6 +260,111 @@ pub async fn clear_recent(app: AppHandle) -> Result<()> {
     store.set("recentLessons".to_string(), serde_json::to_value(&empty)?);
     store.save()?;
     Ok(())
+}
+
+/// Atomically write canvasData into the extracted .meta.json.
+/// Uses write-to-temp-then-rename so concurrent instances never see a partial file.
+pub fn save_canvas_data(extracted_path: &str, canvas_data: serde_json::Value) -> Result<()> {
+    let meta_path = Path::new(extracted_path).join(".meta.json");
+    let tmp_path  = Path::new(extracted_path).join(".meta.json.tmp");
+
+    // Read current content as a generic JSON object so unknown fields are preserved
+    let raw = fs::read_to_string(&meta_path)
+        .context("Failed to read .meta.json")?;
+    let mut obj: serde_json::Value = serde_json::from_str(&raw)
+        .context("Failed to parse .meta.json")?;
+
+    // Inject / overwrite canvasData
+    if let Some(map) = obj.as_object_mut() {
+        map.insert("canvasData".to_string(), canvas_data);
+    } else {
+        anyhow::bail!(".meta.json root is not a JSON object");
+    }
+
+    // Write to a sibling temp file first …
+    let serialised = serde_json::to_string_pretty(&obj)
+        .context("Failed to serialise .meta.json")?;
+    fs::write(&tmp_path, &serialised)
+        .context("Failed to write .meta.json.tmp")?;
+
+    // … then atomically replace the real file (same filesystem → single syscall)
+    fs::rename(&tmp_path, &meta_path)
+        .context("Failed to rename .meta.json.tmp → .meta.json")?;
+
+    Ok(())
+}
+
+/// Recursively zip the contents of `dir_path` into `zip_path` atomically.
+/// Skips any `.tmp` files left over from previous atomic writes.
+fn rezip_directory(dir_path: &Path, zip_path: &Path) -> Result<()> {
+    // Build a sibling temp path: "lesson.aimepack" → "lesson.aimepack.tmp"
+    let mut tmp_name = zip_path
+        .file_name()
+        .unwrap_or_default()
+        .to_os_string();
+    tmp_name.push(".tmp");
+    let tmp_path = zip_path.with_file_name(tmp_name);
+
+    {
+        let file = File::create(&tmp_path).context("Failed to create temp zip")?;
+        let mut zip = zip::ZipWriter::new(file);
+        let options = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Deflated);
+        zip_add_dir(&mut zip, dir_path, dir_path, options)?;
+        zip.finish().context("Failed to finalise zip")?;
+    }
+
+    fs::rename(&tmp_path, zip_path)
+        .context("Failed to rename temp zip → original .aimepack")?;
+
+    Ok(())
+}
+
+fn zip_add_dir<W: Write + std::io::Seek>(
+    zip: &mut zip::ZipWriter<W>,
+    base: &Path,
+    dir: &Path,
+    options: zip::write::SimpleFileOptions,
+) -> Result<()> {
+    for entry in fs::read_dir(dir).context("Failed to read dir for zipping")? {
+        let entry = entry?;
+        let path = entry.path();
+
+        // Skip temp files from atomic writes
+        if path
+            .extension()
+            .map_or(false, |e| e == "tmp")
+        {
+            continue;
+        }
+
+        // Normalise to forward slashes for cross-platform zip compatibility
+        let rel = path
+            .strip_prefix(base)?
+            .to_string_lossy()
+            .replace('\\', "/");
+
+        if path.is_dir() {
+            zip.add_directory(format!("{}/", rel), options)?;
+            zip_add_dir(zip, base, &path, options)?;
+        } else {
+            zip.start_file(&rel, options)?;
+            let mut f = File::open(&path)?;
+            std::io::copy(&mut f, zip)?;
+        }
+    }
+    Ok(())
+}
+
+/// Write canvasData to .meta.json then rezip the extracted dir back into the
+/// original .aimepack file — both steps are atomic on the same filesystem.
+pub fn save_lesson_pack(
+    extracted_path: &str,
+    original_path: &str,
+    canvas_data: serde_json::Value,
+) -> Result<()> {
+    save_canvas_data(extracted_path, canvas_data)?;
+    rezip_directory(Path::new(extracted_path), Path::new(original_path))
 }
 
 /// Cleanup extracted lesson pack
