@@ -28,6 +28,12 @@ jobs:
             name: Linux x64
             artifact: linux
             bundles: deb,rpm,appimage
+          - os: ubuntu-22.04
+            name: Linux ARM64
+            artifact: linux-arm64
+            bundles: deb
+            target: aarch64-unknown-linux-gnu
+            cross: true
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
@@ -52,8 +58,8 @@ jobs:
         with:
           workspaces: ./src-tauri -> target
 
-      - name: Install Linux dependencies
-        if: matrix.os == 'ubuntu-22.04'
+      - name: Install Linux dependencies (x64)
+        if: matrix.os == 'ubuntu-22.04' && matrix.cross != true
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -64,6 +70,46 @@ jobs:
             libgtk-3-dev \
             libglib2.0-dev
 
+      - name: Install Linux dependencies (ARM64 cross)
+        if: matrix.cross == true
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            libwebkit2gtk-4.1-dev:arm64 \
+            libappindicator3-dev:arm64 \
+            librsvg2-dev:arm64 \
+            patchelf \
+            libgtk-3-dev:arm64 \
+            libglib2.0-dev:arm64 2>/dev/null || \
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            patchelf
+          rustup target add aarch64-unknown-linux-gnu
+          # Configure Cargo cross-linker
+          mkdir -p ~/.cargo
+          cat >> ~/.cargo/config.toml << 'EOF'
+          [target.aarch64-unknown-linux-gnu]
+          linker = "aarch64-linux-gnu-gcc"
+          EOF
+          # Enable ARM64 dpkg architecture for cross-compiling deps
+          sudo dpkg --add-architecture arm64
+          sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
+          echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse' | sudo tee -a /etc/apt/sources.list
+          echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted universe multiverse' | sudo tee -a /etc/apt/sources.list
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev:arm64 \
+            libappindicator3-dev:arm64 \
+            librsvg2-dev:arm64 \
+            libgtk-3-dev:arm64 \
+            libglib2.0-dev:arm64 || true
+        env:
+          PKG_CONFIG_ALLOW_CROSS: 1
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+
       - name: Install frontend dependencies
         run: npm install --force
 
@@ -73,6 +119,9 @@ jobs:
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          PKG_CONFIG_ALLOW_CROSS: ${{ matrix.cross == true && '1' || '' }}
+          PKG_CONFIG_PATH: ${{ matrix.cross == true && '/usr/lib/aarch64-linux-gnu/pkgconfig' || '' }}
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: ${{ matrix.cross == true && 'aarch64-linux-gnu-gcc' || '' }}
 
       - name: Build (default target)
         if: matrix.target == ''
@@ -99,8 +148,8 @@ jobs:
             src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
             src-tauri/target/aarch64-apple-darwin/release/bundle/macos/*.app
 
-      - name: Upload artifacts (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+      - name: Upload artifacts (Linux x64)
+        if: matrix.artifact == 'linux'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
@@ -108,6 +157,13 @@ jobs:
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/rpm/*.rpm
             src-tauri/target/release/bundle/appimage/*.AppImage
+
+      - name: Upload artifacts (Linux ARM64)
+        if: matrix.artifact == 'linux-arm64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/deb/*.deb
 
   release:
     needs: build

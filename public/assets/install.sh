@@ -1,13 +1,15 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
 #  AIME Lesson Studio — Installer
-#  Supports: Debian / Ubuntu / ChromeOS Crostini (amd64)
+#  Supports: Debian / Ubuntu / ChromeOS Crostini (amd64 + arm64)
 #
 #  One-liner install:
 #    curl -sSL https://raw.githubusercontent.com/OWNER/REPO/main/public/assets/install.sh | sudo bash
 #
 #  Or with a local .deb:
 #    sudo bash install.sh /path/to/AIME.Lesson.Studio_1.0.0_amd64.deb
+#
+#  Supported architectures: amd64 (x86-64) and arm64 (AArch64 / ARM Chromebooks)
 # ─────────────────────────────────────────────────────────────────────────────
 
 set -e
@@ -28,6 +30,28 @@ info()    { echo -e "${CYAN}[AIME]${RESET} $*"; }
 success() { echo -e "${GREEN}[AIME]${RESET} $*"; }
 warn()    { echo -e "${YELLOW}[AIME]${RESET} $*"; }
 error()   { echo -e "${RED}[AIME] ERROR:${RESET} $*" >&2; }
+
+# ── Detect CPU architecture ───────────────────────────────────────────────────
+DPKG_ARCH="$(dpkg --print-architecture 2>/dev/null || true)"
+MACH="$(uname -m)"
+case "$MACH" in
+  x86_64)          ARCH="amd64" ;;
+  aarch64|arm64)   ARCH="arm64" ;;
+  armv7l|armhf)    ARCH="armhf" ;;
+  *)                ARCH="$DPKG_ARCH" ;;
+esac
+
+if [ -z "$ARCH" ]; then
+  error "Could not determine CPU architecture (uname -m = $MACH)."
+  exit 1
+fi
+
+if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
+  error "Unsupported architecture: $ARCH (only amd64 and arm64 are supported)."
+  exit 1
+fi
+
+info "Detected architecture: ${BOLD}${ARCH}${RESET}"
 
 # ── Root check ────────────────────────────────────────────────────────────────
 if [ "$EUID" -ne 0 ]; then
@@ -84,15 +108,22 @@ else
   if [ -z "$DEB_FILE" ]; then
     info "No local .deb found — fetching latest release from GitHub..."
     RELEASE_API="https://api.github.com/repos/${GITHUB_REPO}/releases/latest"
+
+    # Match .deb by architecture keyword in asset filename
+    case "$ARCH" in
+      arm64) ARCH_PATTERN='arm64\|aarch64' ;;
+      *)     ARCH_PATTERN='amd64\|x86_64'  ;;
+    esac
+
     DEB_URL=$(curl -sSL "$RELEASE_API" \
       | grep '"browser_download_url"' \
       | grep '\.deb"' \
-      | grep -i 'amd64\|x86_64' \
+      | grep -i "$ARCH_PATTERN" \
       | head -1 \
       | sed 's/.*"browser_download_url": "\(.*\)"/\1/')
 
     if [ -z "$DEB_URL" ]; then
-      error "Could not find a .deb in the latest GitHub release."
+      error "Could not find a ${ARCH} .deb in the latest GitHub release."
       echo  "       Check: https://github.com/${GITHUB_REPO}/releases/latest"
       echo  "       Or run: ${BOLD}sudo bash install.sh /path/to/package.deb${RESET}"
       exit 1
