@@ -1,10 +1,11 @@
 import { CompleteLessonSheet } from "@/components/CompleteLessonSheet";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { useLessonPack } from "@/context/LessonPackContext";
+import { useLessonPack, revertImageUrls } from "@/context/LessonPackContext";
 import { useOnline } from "@/hooks/useOnline";
 import { lessonPackService } from "@/service/lessonPackService";
 import {
+  type AnySlide,
   BlockSuiteCanvas,
   EditButton,
   EditView,
@@ -15,7 +16,7 @@ import {
   PresentButton,
   SlideNavigation,
   SlideSidebar,
-  SlideViewer
+  SlideViewer,
 } from "@aime.ai/renderer-react";
 import "@aime.ai/renderer-react/style.css";
 import { CheckCircle, WifiOff } from "lucide-react";
@@ -31,6 +32,7 @@ export const PresentationViewer = () => {
   const isOnline = useOnline();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [pendingCanvasData, setPendingCanvasData] = useState<unknown>(null);
+  const [pendingSlides, setPendingSlides] = useState<AnySlide[] | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -45,29 +47,33 @@ export const PresentationViewer = () => {
   }, []);
 
   const handleSaveChanges = useCallback(async () => {
-    if (!currentPack || pendingCanvasData === null) return;
+    if (!currentPack || (pendingCanvasData === null && pendingSlides === null)) return;
     setIsSaving(true);
     try {
       await lessonPackService.saveLessonPack(
         currentPack.extracted_path,
         currentPack.original_path,
-        pendingCanvasData,
+        pendingCanvasData ?? currentPack.meta.canvasData ?? [],
+        pendingSlides,
       );
       updatePackMeta({
-        canvasData:
-          pendingCanvasData instanceof Uint8Array
-            ? Array.from(pendingCanvasData)
-            : (pendingCanvasData as number[] | undefined),
+        ...(pendingCanvasData !== null && {
+          canvasData:
+            pendingCanvasData instanceof Uint8Array
+              ? Array.from(pendingCanvasData)
+              : (pendingCanvasData as number[] | undefined),
+        }),
+        ...(pendingSlides !== null && { slides: pendingSlides }),
       });
       setPendingCanvasData(null);
+      setPendingSlides(null);
       toast.success(t.lessonSaved);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t.failedToSave);
     } finally {
       setIsSaving(false);
     }
-  }, [currentPack, pendingCanvasData, updatePackMeta]);
-  console.log("CurrentPack meta:", currentPack?.meta);
+  }, [currentPack, pendingCanvasData, pendingSlides, updatePackMeta]);
   const canCompleteLesson =
     isOnline && isAuthenticated && !!currentPack?.meta.lesson_intent_id;
 
@@ -76,14 +82,24 @@ export const PresentationViewer = () => {
   }
 
   return (
-    <div className="flex-1 flex relative">
-      <LessonProvider pack={currentPack.meta} labels={t.lessonLabels}>
+    <div className="flex-1 flex relative [&_blockquote]:text-inherit">
+      <LessonProvider
+        editCallbacks={{
+          onSave(pack) {
+            setPendingSlides(
+              revertImageUrls(pack.slides, currentPack.extracted_path),
+            );
+          },
+        }}
+        pack={currentPack.meta}
+        labels={t.lessonLabels}
+      >
         <SlideNavigation>
           <PresentButton />
           <EditButton />
           <button
             onClick={handleSaveChanges}
-            disabled={pendingCanvasData === null || isSaving}
+            disabled={(pendingCanvasData === null && pendingSlides === null) || isSaving}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-primary text-white hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {isSaving ? t.saving : t.saveChanges}

@@ -14,6 +14,14 @@ export interface LessonLabels {
   exportLesson: string;
   completeLesson: string;
   back: string;
+  edit: string;
+  editDone: string;
+  editCancel: string;
+  editSlides: string;
+  allSlides: string;
+  dragToReorder: string;
+  clickToEdit: string;
+  slides: string;
 }
 
 export interface Translations {
@@ -191,6 +199,14 @@ const translations: Record<Language, Translations> = {
       exportLesson: "Export Lesson",
       completeLesson: "Complete Lesson",
       back: "Back",
+      edit: "Edit",
+      editDone: "Done",
+      editCancel: "Cancel",
+      editSlides: "Edit Slides",
+      allSlides: "All Slides",
+      dragToReorder: "Drag to reorder",
+      clickToEdit: "Click to edit",
+      slides: "Slides",
     },
   },
   fr: {
@@ -276,6 +292,14 @@ const translations: Record<Language, Translations> = {
       exportLesson: "Exporter la leçon",
       completeLesson: "Terminer la leçon",
       back: "Retour",
+      edit: "Modifier",
+      editDone: "Terminer",
+      editCancel: "Annuler",
+      editSlides: "Modifier les diapositives",
+      allSlides: "Toutes les diapositives",
+      dragToReorder: "Glisser pour réorganiser",
+      clickToEdit: "Cliquer pour modifier",
+      slides: "Diapositives",
     },
   },
 };

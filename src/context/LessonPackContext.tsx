@@ -26,12 +26,32 @@ function resolveImageUrls(pack: LessonPack): LessonPack {
       ...pack.meta,
       slides: pack.meta.slides.map((slide) => ({
         ...slide,
-        image_url: slide.image_url
-          ? convertFileSrc(`${base}/${slide.image_url}`)
-          : null,
+        image_url:
+          slide.image_url && !slide.image_url.startsWith("http")
+            ? convertFileSrc(`${base}/${slide.image_url}`)
+            : slide.image_url,
       })),
     },
   };
+}
+
+/**
+ * Reverse of resolveImageUrls — strips the Tauri asset:// prefix from
+ * image_url fields so the original relative paths are restored before saving.
+ */
+export function revertImageUrls(
+  slides: LessonPack["meta"]["slides"],
+  extractedPath: string,
+): LessonPack["meta"]["slides"] {
+  const base = extractedPath.replace(/[\\/]+$/, "");
+  const resolvedBase = convertFileSrc(`${base}/`);
+  return slides.map((slide) => ({
+    ...slide,
+    image_url:
+      slide.image_url && slide.image_url.startsWith(resolvedBase)
+        ? decodeURIComponent(slide.image_url.slice(resolvedBase.length))
+        : slide.image_url,
+  }));
 }
 
 export const LessonPackProvider = ({ children }: { children: ReactNode }) => {

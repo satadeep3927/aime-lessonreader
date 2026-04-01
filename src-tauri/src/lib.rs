@@ -127,8 +127,9 @@ async fn save_lesson_pack(
     extracted_path: String,
     original_path: String,
     canvas_data: serde_json::Value,
+    slides: Option<serde_json::Value>,
 ) -> Result<(), String> {
-    lesson_pack::save_lesson_pack(&extracted_path, &original_path, canvas_data)
+    lesson_pack::save_lesson_pack(&extracted_path, &original_path, canvas_data, slides)
         .map_err(|e| e.to_string())
 }
 

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@aime.ai/renderer-react':
-        specifier: ^1.5.0
-        version: 1.5.0(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)
+        specifier: ^1.6.0
+        version: 1.6.0(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.4))
@@ -123,8 +123,8 @@ importers:
 
 packages:
 
-  '@aime.ai/renderer-react@1.5.0':
-    resolution: {integrity: sha512-7y3Xn50uNfTT2zR3hPL8ReWF8bt3yMDzz64VbZzWQVN3451qRCP04RrKsZiP/JH8NENo1On1qENV5a57G1Fwog==}
+  '@aime.ai/renderer-react@1.6.0':
+    resolution: {integrity: sha512-X8cyI1cm1yci+a4Koh/Yvtumj8+Yj4e//yjmmRUALq3giaSj7C/2KJ19tNNXCmFhCH1hS2o9j9DvblRFDVF/wg==}
     peerDependencies:
       '@blocksuite/block-std': 0.19.5
       '@blocksuite/blocks': 0.19.5
@@ -4152,7 +4152,7 @@ packages:
 
 snapshots:
 
-  '@aime.ai/renderer-react@1.5.0(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)':
+  '@aime.ai/renderer-react@1.6.0(@blocksuite/block-std@0.19.5(yjs@13.6.30))(@blocksuite/blocks@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/icons@2.1.75(@types/react@19.2.14)(lit@3.3.2)(react@19.2.4))(@blocksuite/presets@0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30))(@blocksuite/store@0.19.5(lit@3.3.2)(yjs@13.6.30))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(lit@3.3.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(yjs@13.6.30)':
     dependencies:
       '@blocksuite/block-std': 0.19.5(yjs@13.6.30)
       '@blocksuite/blocks': 0.19.5(@types/react@19.2.14)(react@19.2.4)(yjs@13.6.30)

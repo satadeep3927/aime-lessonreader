@@ -397,14 +397,38 @@ fn zip_add_dir<W: Write + std::io::Seek>(
     Ok(())
 }
 
-/// Write canvasData to .meta.json then rezip the extracted dir back into the
-/// original .aimepack file — both steps are atomic on the same filesystem.
+/// Write canvasData and optionally slides to .meta.json, then rezip the
+/// extracted dir back into the original .aimepack file — both steps are
+/// atomic on the same filesystem.
 pub fn save_lesson_pack(
     extracted_path: &str,
     original_path: &str,
     canvas_data: serde_json::Value,
+    slides: Option<serde_json::Value>,
 ) -> Result<()> {
-    save_canvas_data(extracted_path, canvas_data)?;
+    let meta_path = Path::new(extracted_path).join(".meta.json");
+    let tmp_path  = Path::new(extracted_path).join(".meta.json.tmp");
+
+    let raw = fs::read_to_string(&meta_path)
+        .context("Failed to read .meta.json")?;
+    let mut obj: serde_json::Value = serde_json::from_str(&raw)
+        .context("Failed to parse .meta.json")?;
+
+    let map = obj.as_object_mut()
+        .ok_or_else(|| anyhow::anyhow!(".meta.json root is not a JSON object"))?;
+
+    map.insert("canvasData".to_string(), canvas_data);
+    if let Some(s) = slides {
+        map.insert("slides".to_string(), s);
+    }
+
+    let serialised = serde_json::to_string_pretty(&obj)
+        .context("Failed to serialise .meta.json")?;
+    fs::write(&tmp_path, &serialised)
+        .context("Failed to write .meta.json.tmp")?;
+    fs::rename(&tmp_path, &meta_path)
+        .context("Failed to rename .meta.json.tmp → .meta.json")?;
+
     rezip_directory(Path::new(extracted_path), Path::new(original_path))
 }
 

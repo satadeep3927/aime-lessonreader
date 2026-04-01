@@ -151,11 +151,13 @@ export const lessonPackService = {
     extractedPath: string,
     originalPath: string,
     canvasData: unknown,
+    slides?: unknown,
   ): Promise<void> {
     await invoke("save_lesson_pack", {
       extractedPath,
       originalPath,
       canvasData,
+      slides: slides ?? null,
     });
   },
 };
