@@ -1,6 +1,13 @@
+import { CompleteLessonSheet } from "@/components/CompleteLessonSheet";
+import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { useLessonPack } from "@/context/LessonPackContext";
+import { useOnline } from "@/hooks/useOnline";
+import { lessonPackService } from "@/service/lessonPackService";
 import {
   BlockSuiteCanvas,
+  EditButton,
+  EditView,
   FloatingNavigation,
   LessonProvider,
   LessonWindow,
@@ -8,18 +15,13 @@ import {
   PresentButton,
   SlideNavigation,
   SlideSidebar,
-  SlideViewer,
+  SlideViewer
 } from "@aime.ai/renderer-react";
 import "@aime.ai/renderer-react/style.css";
-import { useEffect, useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { lessonPackService } from "@/service/lessonPackService";
-import { toast } from "sonner";
-import { useLanguage } from "@/context/LanguageContext";
-import { useOnline } from "@/hooks/useOnline";
-import { useAuth } from "@/context/AuthContext";
 import { CheckCircle, WifiOff } from "lucide-react";
-import { CompleteLessonSheet } from "@/components/CompleteLessonSheet";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export const PresentationViewer = () => {
   const { currentPack, updatePackMeta } = useLessonPack();
@@ -74,10 +76,11 @@ export const PresentationViewer = () => {
   }
 
   return (
-    <div className="flex-1 flex overflow-hidden relative">
+    <div className="flex-1 flex relative">
       <LessonProvider pack={currentPack.meta} labels={t.lessonLabels}>
         <SlideNavigation>
           <PresentButton />
+          <EditButton />
           <button
             onClick={handleSaveChanges}
             disabled={pendingCanvasData === null || isSaving}
@@ -117,6 +120,7 @@ export const PresentationViewer = () => {
             }
             onSave={handleCanvasChange}
           />
+          <EditView />
         </LessonWindow>
         <FloatingNavigation />
         <NotesPanel />
