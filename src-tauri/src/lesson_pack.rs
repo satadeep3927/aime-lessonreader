@@ -441,6 +441,39 @@ pub fn cleanup_lesson_pack(extracted_path: &str) -> Result<()> {
     Ok(())
 }
 
+/// Write raw image bytes into `{extracted_path}/images/{filename}`.
+/// Returns the relative path `"images/{filename}"`.
+pub fn save_image_to_pack(extracted_path: &str, filename: &str, data: Vec<u8>) -> Result<String> {
+    let images_dir = Path::new(extracted_path).join("images");
+    fs::create_dir_all(&images_dir).context("Failed to create images dir")?;
+    let dest = images_dir.join(filename);
+    fs::write(&dest, &data).context("Failed to write image file")?;
+    Ok(format!("images/{}", filename))
+}
+
+/// Download an image from `url` into `{extracted_path}/images/` and return
+/// the relative path `"images/{filename}"`.
+pub async fn download_image_to_pack(extracted_path: &str, url: &str) -> Result<String> {
+    let response = reqwest::get(url).await.context("HTTP request failed")?;
+    if !response.status().is_success() {
+        anyhow::bail!("Image download failed: HTTP {}", response.status());
+    }
+    let bytes = response.bytes().await.context("Failed to read image bytes")?;
+
+    // Derive filename from URL path, stripping any query string
+    let filename = url
+        .split('?')
+        .next()
+        .unwrap_or(url)
+        .rsplit('/')
+        .next()
+        .filter(|s| !s.is_empty())
+        .unwrap_or("image.jpg")
+        .to_string();
+
+    save_image_to_pack(extracted_path, &filename, bytes.to_vec())
+}
+
 // ─── Downloaded Lessons ───────────────────────────────────────────────────────
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

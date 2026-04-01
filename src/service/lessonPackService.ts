@@ -147,6 +147,21 @@ export const lessonPackService = {
     await invoke("save_canvas_data", { extractedPath, canvasData });
   },
 
+  async downloadImageToPack(
+    extractedPath: string,
+    url: string,
+  ): Promise<string> {
+    return await invoke<string>("download_image_to_pack", { extractedPath, url });
+  },
+
+  async saveImageToPack(
+    extractedPath: string,
+    filename: string,
+    data: number[],
+  ): Promise<string> {
+    return await invoke<string>("save_image_to_pack", { extractedPath, filename, data });
+  },
+
   async saveLessonPack(
     extractedPath: string,
     originalPath: string,

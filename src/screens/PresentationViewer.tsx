@@ -1,9 +1,11 @@
 import { CompleteLessonSheet } from "@/components/CompleteLessonSheet";
+import { ImagePickerDialog } from "@/components/ImagePickerDialog";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useLessonPack, revertImageUrls } from "@/context/LessonPackContext";
 import { useOnline } from "@/hooks/useOnline";
 import { lessonPackService } from "@/service/lessonPackService";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import {
   type AnySlide,
   BlockSuiteCanvas,
@@ -34,6 +36,10 @@ export const PresentationViewer = () => {
   const [pendingCanvasData, setPendingCanvasData] = useState<unknown>(null);
   const [pendingSlides, setPendingSlides] = useState<AnySlide[] | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [imagePicker, setImagePicker] = useState<{
+    open: boolean;
+    resolve: ((url: string | null) => void) | null;
+  }>({ open: false, resolve: null });
 
   useEffect(() => {
     if (!currentPack) {
@@ -89,6 +95,9 @@ export const PresentationViewer = () => {
             setPendingSlides(
               revertImageUrls(pack.slides, currentPack.extracted_path),
             );
+          },
+          onSelectImage(resolve) {
+            setImagePicker({ open: true, resolve });
           },
         }}
         pack={currentPack.meta}
@@ -148,6 +157,23 @@ export const PresentationViewer = () => {
           lessonIntentId={currentPack.meta.lesson_intent_id}
         />
       )}
+      <ImagePickerDialog
+        open={imagePicker.open}
+        onOpenChange={(open) => {
+          if (!open) {
+            imagePicker.resolve?.(null);
+            setImagePicker({ open: false, resolve: null });
+          }
+        }}
+        extractedPath={currentPack.extracted_path}
+        onSelect={(relativePath) => {
+          const assetUrl = convertFileSrc(
+            `${currentPack.extracted_path.replace(/[\\/]+$/, "")}/${relativePath}`,
+          );
+          imagePicker.resolve?.(assetUrl);
+          setImagePicker({ open: false, resolve: null });
+        }}
+      />
     </div>
   );
 };

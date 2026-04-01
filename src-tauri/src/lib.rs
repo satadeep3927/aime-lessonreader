@@ -123,6 +123,26 @@ async fn save_canvas_data(
 }
 
 #[tauri::command]
+async fn download_image_to_pack(
+    extracted_path: String,
+    url: String,
+) -> Result<String, String> {
+    lesson_pack::download_image_to_pack(&extracted_path, &url)
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn save_image_to_pack(
+    extracted_path: String,
+    filename: String,
+    data: Vec<u8>,
+) -> Result<String, String> {
+    lesson_pack::save_image_to_pack(&extracted_path, &filename, data)
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn save_lesson_pack(
     extracted_path: String,
     original_path: String,
@@ -278,7 +298,9 @@ pub fn run() {
             save_lesson_pack,
             patch_meta,
             patch_and_rezip,
-            clear_downloads
+            clear_downloads,
+            download_image_to_pack,
+            save_image_to_pack
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
