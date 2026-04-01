@@ -34,11 +34,17 @@
     "http:default",
     {
       "identifier": "http:allow-fetch",
-      "allow": [{ "url": "https://staging-api.aime52.ai/**" }]
+      "allow": [
+        { "url": "https://staging-api.aime52.ai/**" },
+        { "url": "https://aime-08-01-2025.s3.eu-west-2.amazonaws.com/**" }
+      ]
     },
     {
       "identifier": "http:allow-fetch-send",
-      "allow": [{ "url": "https://staging-api.aime52.ai/**" }]
+      "allow": [
+        { "url": "https://staging-api.aime52.ai/**" },
+        { "url": "https://aime-08-01-2025.s3.eu-west-2.amazonaws.com/**" }
+      ]
     },
     {
       "identifier": "fs:scope-temp",

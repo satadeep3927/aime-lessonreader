@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { lessonPackService } from "@/service/lessonPackService";
 import { cn } from "@/lib/utils";
+import { fetch } from "@tauri-apps/plugin-http";
 import type { BucketImage } from "@/types/images";
 import {
   ChevronLeft,

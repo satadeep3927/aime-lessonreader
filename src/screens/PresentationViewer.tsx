@@ -161,7 +161,6 @@ export const PresentationViewer = () => {
         open={imagePicker.open}
         onOpenChange={(open) => {
           if (!open) {
-            imagePicker.resolve?.(null);
             setImagePicker({ open: false, resolve: null });
           }
         }}
