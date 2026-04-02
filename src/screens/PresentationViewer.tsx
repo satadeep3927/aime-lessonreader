@@ -53,7 +53,8 @@ export const PresentationViewer = () => {
   }, []);
 
   const handleSaveChanges = useCallback(async () => {
-    if (!currentPack || (pendingCanvasData === null && pendingSlides === null)) return;
+    if (!currentPack || (pendingCanvasData === null && pendingSlides === null))
+      return;
     setIsSaving(true);
     try {
       await lessonPackService.saveLessonPack(
@@ -108,7 +109,9 @@ export const PresentationViewer = () => {
           <EditButton />
           <button
             onClick={handleSaveChanges}
-            disabled={(pendingCanvasData === null && pendingSlides === null) || isSaving}
+            disabled={
+              (pendingCanvasData === null && pendingSlides === null) || isSaving
+            }
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-primary text-white hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {isSaving ? t.saving : t.saveChanges}

@@ -1,8 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import type {
-  LessonIntentFilters,
-  LessonIntentRead,
-} from "@/types/api";
+import type { LessonIntentFilters, LessonIntentRead } from "@/types/api";
 
 export const lessonIntentService = {
   async getLessonIntents(
@@ -29,9 +26,12 @@ export const lessonIntentService = {
       params.set("limit", String(filters.limit));
     }
 
-    const { data } = await apiClient.get<LessonIntentRead[]>("api/v1/lesson-intents", {
-      params,
-    });
+    const { data } = await apiClient.get<LessonIntentRead[]>(
+      "api/v1/lesson-intents",
+      {
+        params,
+      },
+    );
     return data;
   },
 

@@ -18,13 +18,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const INDEX_URL =
   "https://aime-08-01-2025.s3.eu-west-2.amazonaws.com/generated/images/index.json";
@@ -70,7 +64,8 @@ export function ImagePickerDialog({
     setLibError(null);
     fetch(INDEX_URL)
       .then((r) => {
-        if (!r.ok) throw new Error(`Failed to load image library (${r.status})`);
+        if (!r.ok)
+          throw new Error(`Failed to load image library (${r.status})`);
         return r.json() as Promise<BucketImage[]>;
       })
       .then(setImages)
@@ -97,7 +92,9 @@ export function ImagePickerDialog({
   // Filtered + paginated images
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return q ? images.filter((img) => img.key.toLowerCase().includes(q)) : images;
+    return q
+      ? images.filter((img) => img.key.toLowerCase().includes(q))
+      : images;
   }, [images, search]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -216,7 +213,9 @@ export function ImagePickerDialog({
                 <p className="text-sm text-destructive px-1">{libError}</p>
               )}
               {!libLoading && !libError && paged.length === 0 && (
-                <p className="text-sm text-muted-foreground px-1">No images found.</p>
+                <p className="text-sm text-muted-foreground px-1">
+                  No images found.
+                </p>
               )}
               {!libLoading && !libError && paged.length > 0 && (
                 <div className="grid grid-cols-5 gap-2 pr-1">
@@ -324,7 +323,9 @@ export function ImagePickerDialog({
                     <X className="size-3.5" />
                   </button>
                 </div>
-                <p className="text-sm text-muted-foreground">{uploadFile.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {uploadFile.name}
+                </p>
               </div>
             )}
 

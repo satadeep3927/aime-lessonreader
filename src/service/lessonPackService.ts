@@ -151,7 +151,10 @@ export const lessonPackService = {
     extractedPath: string,
     url: string,
   ): Promise<string> {
-    return await invoke<string>("download_image_to_pack", { extractedPath, url });
+    return await invoke<string>("download_image_to_pack", {
+      extractedPath,
+      url,
+    });
   },
 
   async saveImageToPack(
@@ -159,7 +162,11 @@ export const lessonPackService = {
     filename: string,
     data: number[],
   ): Promise<string> {
-    return await invoke<string>("save_image_to_pack", { extractedPath, filename, data });
+    return await invoke<string>("save_image_to_pack", {
+      extractedPath,
+      filename,
+      data,
+    });
   },
 
   async saveLessonPack(

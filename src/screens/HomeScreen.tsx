@@ -1,7 +1,11 @@
 import { useLessonPack } from "@/context/LessonPackContext";
 import { useAuth } from "@/context/AuthContext";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
-import { useClearRecent, useOpenLessonPack, useClearDownloads } from "@/mutation/useLessonPack";
+import {
+  useClearRecent,
+  useOpenLessonPack,
+  useClearDownloads,
+} from "@/mutation/useLessonPack";
 import { useLogout } from "@/mutation/useAuth";
 import { useRecentLessons } from "@/query/useLessonPack";
 import { useLessonIntents } from "@/query/useLessonIntents";

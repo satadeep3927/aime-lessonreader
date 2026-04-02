@@ -33,9 +33,7 @@ export const assessmentPackService = {
   /**
    * Get a specific assessment pack by UUID (full detail).
    */
-  async getAssessmentPackDetail(
-    packId: string,
-  ): Promise<AssessmentPackRead> {
+  async getAssessmentPackDetail(packId: string): Promise<AssessmentPackRead> {
     const { data } = await apiClient.get<AssessmentPackRead>(
       `/api/v1/assessment-packs/${packId}/detail`,
     );

@@ -32,11 +32,11 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { useLessonPack } from "@/context/LessonPackContext";
 import { getAssessmentPack } from "@/lib/assessmentPack";
-import { AssessmentPDF } from "@/components/pdf/AssessmentPDF";
-import { HomeworkPDF } from "@/components/pdf/HomeworkPDF";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { generateAssessmentHtml } from "@/lib/assessmentHtml";
+import { generateHomeworkHtml } from "@/lib/homeworkHtml";
+import { printHtml } from "@/lib/printPdf";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, ChevronDown, Download, Loader2 } from "lucide-react";
+import { AlertCircle, ChevronDown, Loader2, Printer } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -373,59 +373,43 @@ export function CompleteLessonSheet({
                       <Separator />
                       <div className="space-y-3">
                         <h3 className="text-sm font-semibold">
-                          Download Assessment
+                          Print Assessment
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                          <PDFDownloadLink
-                            document={
-                              <AssessmentPDF pack={assessmentPack} />
-                            }
-                            fileName={`${assessmentPack.title ?? "assessment"}.pdf`}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              printHtml(
+                                generateAssessmentHtml(assessmentPack),
+                                assessmentPack.title ?? "Assessment",
+                              );
+                              toast.success("Assessment print dialog opened");
+                            }}
                           >
-                            {({ loading }) => (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled={loading}
-                                onClick={() =>
-                                  !loading &&
-                                  toast.success("Assessment PDF downloaded")
-                                }
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                {loading
-                                  ? "Generating…"
-                                  : "Download Assessment"}
-                              </Button>
-                            )}
-                          </PDFDownloadLink>
+                            <Printer className="w-4 h-4 mr-2" />
+                            Print Assessment
+                          </Button>
                           {assessmentPack.homework && (
-                            <PDFDownloadLink
-                              document={
-                                <HomeworkPDF
-                                  homework={assessmentPack.homework}
-                                  lessonTitle={assessmentPack.title ?? undefined}
-                                />
-                              }
-                              fileName={`${assessmentPack.title ?? "homework"}-homework.pdf`}
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                printHtml(
+                                  generateHomeworkHtml(
+                                    assessmentPack.homework!,
+                                    assessmentPack.title ?? undefined,
+                                  ),
+                                  "Homework",
+                                );
+                                toast.success("Homework print dialog opened");
+                              }}
                             >
-                              {({ loading }) => (
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  disabled={loading}
-                                  onClick={() =>
-                                    !loading &&
-                                    toast.success("Homework PDF downloaded")
-                                  }
-                                >
-                                  <Download className="w-4 h-4 mr-2" />
-                                  {loading ? "Generating…" : "Download Homework"}
-                                </Button>
-                              )}
-                            </PDFDownloadLink>
+                              <Printer className="w-4 h-4 mr-2" />
+                              Print Homework
+                            </Button>
                           )}
                         </div>
                       </div>

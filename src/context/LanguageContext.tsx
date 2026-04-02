@@ -242,11 +242,13 @@ const translations: Record<Language, Translations> = {
     noRecentLessonsHint: "Ouvrez un pack de leçons pour commencer",
     noDownloadedLessons: "Aucune leçon téléchargée",
     noDownloadedLessonsHint:
-      "Utilisez « Télécharger et ouvrir » sur une leçon planifiée pour la sauvegarder hors ligne",    clearDownloads: "Effacer les téléchargements",
+      "Utilisez « Télécharger et ouvrir » sur une leçon planifiée pour la sauvegarder hors ligne",
+    clearDownloads: "Effacer les téléchargements",
     clearDownloadsConfirm:
       "Cela supprimera tous les fichiers de leçons téléchargés et ne peut pas être annulé. Continuer ?",
     clearDownloadsTitle: "Effacer les téléchargements",
-    clearDownloadsOk: "Tout supprimer",    previous: "Précédent",
+    clearDownloadsOk: "Tout supprimer",
+    previous: "Précédent",
     next: "Suivant",
     page: "Page",
     colName: "Nom",
