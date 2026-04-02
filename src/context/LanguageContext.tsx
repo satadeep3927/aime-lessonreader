@@ -78,6 +78,8 @@ export interface Translations {
   openingLesson: string;
   session: string;
   week: string;
+  editAssessment: string;
+  viewAssessment: string;
   // Lesson status labels
   statusPlanned: string;
   statusContentGenerated: string;
@@ -161,6 +163,8 @@ const translations: Record<Language, Translations> = {
     openingLesson: "Opening…",
     session: "Session",
     week: "Week",
+    editAssessment: "Edit Assessment",
+    viewAssessment: "View Assessment",
     statusPlanned: "Planned",
     statusContentGenerated: "Content Ready",
     statusDelivered: "Delivered",
@@ -253,6 +257,8 @@ const translations: Record<Language, Translations> = {
     openingLesson: "Ouverture…",
     session: "Session",
     week: "Semaine",
+    editAssessment: "Modifier l'évaluation",
+    viewAssessment: "Voir l'évaluation",
     statusPlanned: "Planifiée",
     statusContentGenerated: "Contenu prêt",
     statusDelivered: "Dispensée",

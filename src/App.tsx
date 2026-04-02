@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import { HomeScreen } from "@/screens/HomeScreen";
 import { PresentationViewer } from "@/screens/PresentationViewer";
 import { LoginScreen } from "@/screens/LoginScreen";
+import { AssessmentEditorScreen } from "@/screens/AssessmentEditorScreen";
+import { AssessmentViewerScreen } from "@/screens/AssessmentViewerScreen";
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Toaster } from "sonner";
@@ -27,6 +29,8 @@ function App() {
           <Route path="/" element={<HomeScreen />} />
           <Route path="/viewer" element={<PresentationViewer />} />
           <Route path="/login" element={<LoginScreen />} />
+          <Route path="/assessment" element={<AssessmentEditorScreen />} />
+          <Route path="/assessment/view" element={<AssessmentViewerScreen />} />
         </Routes>
         <Toaster position="bottom-right" richColors closeButton />
       </div>

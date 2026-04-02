@@ -27,7 +27,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { lessonPackService } from "@/service/lessonPackService";
@@ -48,10 +48,14 @@ const STATUS_STYLES: Record<string, string> = {
 function DownloadedLessonCard({
   lesson,
   onOpen,
+  onOpenAssessment,
+  onViewAssessment,
   isOpening,
 }: {
   lesson: DownloadedLesson;
   onOpen: (path: string) => void;
+  onOpenAssessment: (path: string) => void;
+  onViewAssessment: (path: string) => void;
   isOpening: boolean;
 }) {
   const { t } = useLanguage();
@@ -125,13 +129,31 @@ function DownloadedLessonCard({
           </p>
         )}
         <div className="flex-1" />
-        <button
-          onClick={() => onOpen(lesson.local_path)}
-          disabled={isOpening}
-          className="w-full mt-1 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-60 transition-colors"
-        >
-          {isOpening ? t.openingLesson : t.open}
-        </button>
+        <div className="flex flex-col gap-1.5 mt-1">
+          <button
+            onClick={() => onOpen(lesson.local_path)}
+            disabled={isOpening}
+            className="w-full py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-60 transition-colors"
+          >
+            {isOpening ? t.openingLesson : t.openLesson}
+          </button>
+          <div className="flex gap-1.5">
+            <button
+              onClick={() => onOpenAssessment(lesson.local_path)}
+              disabled={isOpening || !lesson.has_assessment}
+              className="flex-1 py-1.5 rounded-lg border border-primary text-primary text-xs font-medium hover:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {t.editAssessment}
+            </button>
+            <button
+              onClick={() => onViewAssessment(lesson.local_path)}
+              disabled={isOpening || !lesson.has_assessment}
+              className="flex-1 py-1.5 rounded-lg border border-zinc-200 text-zinc-600 text-xs font-medium hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {t.viewAssessment}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -239,6 +261,9 @@ export const HomeScreen = () => {
     { key: "o", ctrl: true, callback: () => openLessonPack.mutate(undefined) },
   ]);
 
+  // Ref to track deferred navigation after opening a pack (ref avoids re-triggering the effect)
+  const pendingRouteRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (
       openLessonPack.isSuccess &&
@@ -246,12 +271,19 @@ export const HomeScreen = () => {
       openLessonPack.data?.lesson_pack
     ) {
       setCurrentPack(openLessonPack.data.lesson_pack);
-      navigate("/viewer");
+      const route = pendingRouteRef.current ?? "/viewer";
+      pendingRouteRef.current = null;
+      navigate(route);
     }
   }, [openLessonPack.isSuccess, openLessonPack.data, setCurrentPack, navigate]);
 
   const handleOpenRecent = (filePath: string) =>
     openLessonPack.mutate(filePath);
+
+  const handleOpenAndNavigate = (path: string, route: string) => {
+    pendingRouteRef.current = route;
+    openLessonPack.mutate(path);
+  };
 
   const handleClearRecent = async () => {
     const ok = await tauriConfirm(t.clearRecentConfirm, {
@@ -577,6 +609,12 @@ export const HomeScreen = () => {
                     key={lesson.intent_id}
                     lesson={lesson}
                     onOpen={(path) => openLessonPack.mutate(path)}
+                    onOpenAssessment={(path) =>
+                      handleOpenAndNavigate(path, "/assessment")
+                    }
+                    onViewAssessment={(path) =>
+                      handleOpenAndNavigate(path, "/assessment/view")
+                    }
                     isOpening={openLessonPack.isPending}
                   />
                 ))}

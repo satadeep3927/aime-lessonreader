@@ -114,6 +114,97 @@ export interface DownloadedLesson {
   scheduled_date: string | null;
   status: LessonIntentStatus;
   description: string | null;
+  has_assessment?: boolean;
+}
+
+// ─── Assessment Pack ─────────────────────────────────────────────────────────
+
+export interface AssessmentQuestionRead {
+  question_number: number;
+  question_type: string;
+  question_text: string;
+  options: string[] | null;
+  answer: string | null;
+  marks: number;
+  micro_objective_id: number | null;
+  bloom_level: string | null;
+  rationale: string | null;
+}
+
+export interface HomeworkTaskRead {
+  task_number: number;
+  task_text: string;
+  marks: number;
+}
+
+export interface HomeworkRead {
+  title: string | null;
+  student_instructions: string[] | null;
+  tasks: HomeworkTaskRead[] | null;
+  submission_note: string | null;
+  total_marks: number;
+}
+
+export interface LmsResultsRead {
+  class_average_score: number;
+  excellent_count: number;
+  good_count: number;
+  satisfactory_count: number;
+  needs_support_count: number;
+  common_strengths: string[];
+  common_misconceptions: string[];
+  recommended_reteach_topics: string[];
+  suggested_next_steps: string;
+}
+
+export interface AssessmentPackRead {
+  id: string;
+  lesson_intent_id: string;
+  lesson_pack_id: string | null;
+  version: number;
+  is_active: boolean;
+  status: string;
+  error_message: string | null;
+  title: string | null;
+  subject: string | null;
+  grade_level: string | null;
+  assessment_type: string | null;
+  total_marks: number | null;
+  estimated_time_minutes: number | null;
+  questions: AssessmentQuestionRead[] | null;
+  homework: HomeworkRead | null;
+  ai_rationale: string | null;
+  lms_results: LmsResultsRead | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssessmentPackListItem {
+  id: string;
+  lesson_intent_id: string;
+  lesson_pack_id: string | null;
+  version: number;
+  is_active: boolean;
+  status: string;
+  error_message: string | null;
+  title: string | null;
+  subject: string | null;
+  grade_level: string | null;
+  assessment_type: string | null;
+  total_marks: number | null;
+  estimated_time_minutes: number | null;
+  question_count: number;
+  has_homework: boolean;
+  homework_total_marks: number;
+  lms_results: LmsResultsRead | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssessmentPackListResponse {
+  items: AssessmentPackListItem[];
+  total: number;
+  active_id: string | null;
 }
 
 // ─── Classes ─────────────────────────────────────────────────────────────────

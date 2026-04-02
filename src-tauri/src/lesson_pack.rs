@@ -490,6 +490,8 @@ pub struct DownloadedLesson {
     pub scheduled_date: Option<String>,
     pub status: String,
     pub description: Option<String>,
+    #[serde(default)]
+    pub has_assessment: bool,
 }
 
 /// Download .aimepack from S3 URL and save to app data dir

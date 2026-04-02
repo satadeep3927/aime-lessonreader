@@ -3,7 +3,7 @@ import type { LessonPackOutput } from "@aime.ai/renderer-react";
 export interface LessonPack {
   extracted_path: string;
   original_path: string;
-  meta: LessonPackOutput;
+  meta: LessonPackOutput & Record<string, unknown>;
 }
 
 export interface OpenFileResult {

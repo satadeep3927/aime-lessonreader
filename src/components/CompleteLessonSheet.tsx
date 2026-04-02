@@ -30,8 +30,13 @@ import {
   useSubmitReflectionAnswers,
 } from "@/query/useReflection";
 import { useLanguage } from "@/context/LanguageContext";
+import { useLessonPack } from "@/context/LessonPackContext";
+import { getAssessmentPack } from "@/lib/assessmentPack";
+import { AssessmentPDF } from "@/components/pdf/AssessmentPDF";
+import { HomeworkPDF } from "@/components/pdf/HomeworkPDF";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, ChevronDown, Loader2 } from "lucide-react";
+import { AlertCircle, ChevronDown, Download, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -59,6 +64,10 @@ export function CompleteLessonSheet({
   lessonIntentId,
 }: CompleteLessonSheetProps) {
   const { t } = useLanguage();
+  const { currentPack } = useLessonPack();
+  const assessmentPack = getAssessmentPack(
+    currentPack?.meta as unknown as Record<string, unknown> | undefined,
+  );
   const [openObjectives, setOpenObjectives] = useState<Set<number>>(new Set());
 
   const getDefault48HoursLater = () => {
@@ -357,6 +366,71 @@ export function CompleteLessonSheet({
                         </div>
                       </>
                     )}
+
+                  {/* PDF Downloads */}
+                  {assessmentPack && (
+                    <>
+                      <Separator />
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-semibold">
+                          Download Assessment
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          <PDFDownloadLink
+                            document={
+                              <AssessmentPDF pack={assessmentPack} />
+                            }
+                            fileName={`${assessmentPack.title ?? "assessment"}.pdf`}
+                          >
+                            {({ loading }) => (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                disabled={loading}
+                                onClick={() =>
+                                  !loading &&
+                                  toast.success("Assessment PDF downloaded")
+                                }
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                {loading
+                                  ? "Generating…"
+                                  : "Download Assessment"}
+                              </Button>
+                            )}
+                          </PDFDownloadLink>
+                          {assessmentPack.homework && (
+                            <PDFDownloadLink
+                              document={
+                                <HomeworkPDF
+                                  homework={assessmentPack.homework}
+                                  lessonTitle={assessmentPack.title ?? undefined}
+                                />
+                              }
+                              fileName={`${assessmentPack.title ?? "homework"}-homework.pdf`}
+                            >
+                              {({ loading }) => (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  disabled={loading}
+                                  onClick={() =>
+                                    !loading &&
+                                    toast.success("Homework PDF downloaded")
+                                  }
+                                >
+                                  <Download className="w-4 h-4 mr-2" />
+                                  {loading ? "Generating…" : "Download Homework"}
+                                </Button>
+                              )}
+                            </PDFDownloadLink>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {/* LMS Integration */}
                   {!reflection.is_answered && (

@@ -23,7 +23,8 @@
         "alwaysOnTop": true,
         "url": "splash.html",
         "transparent": true,
-        "shadow": false
+        "shadow": false,
+        "visible": false
       },
       {
         "label": "main",
@@ -32,7 +33,7 @@
         "height": 800,
         "center": true,
         "decorations": true,
-        "visible": false
+        "visible": true
       }
     ],
     "security": {

@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useLessonPack } from "@/context/LessonPackContext";
 import { lessonIntentService } from "@/service/lessonIntentService";
 import { lessonPackService } from "@/service/lessonPackService";
+import { assessmentPackService } from "@/service/assessmentPackService";
 import type { DownloadedLesson, LessonIntentRead } from "@/types/api";
+import { toast } from "sonner";
 
 export const useDownloadAndOpen = () => {
   const { setCurrentPack } = useLessonPack();
@@ -45,8 +47,8 @@ export const useDownloadAndOpen = () => {
         scheduled_date: intent.scheduled_date,
         status: intent.status,
         description: intent.description,
+        has_assessment: false,
       };
-      await lessonPackService.addDownloadedLesson(record);
 
       // 4. Open the downloaded file using existing Tauri command
       const opened = await lessonPackService.openLessonPack(localPath);
@@ -66,7 +68,30 @@ export const useDownloadAndOpen = () => {
           ...opened.lesson_pack.meta,
           lesson_intent_id: intent.id,
         };
+
+        // 6. Try to fetch the active assessment pack and bake it in
+        try {
+          const assessmentPack =
+            await assessmentPackService.getActiveAssessmentPack(intent.id);
+          if (assessmentPack) {
+            await lessonPackService.patchAndRezip(
+              opened.lesson_pack.extracted_path,
+              localPath,
+              { assessmentPack },
+            );
+            opened.lesson_pack.meta = {
+              ...opened.lesson_pack.meta,
+              assessmentPack,
+            };
+            record.has_assessment = true;
+          }
+        } catch {
+          // Assessment pack not available — continue silently
+        }
       }
+
+      // Persist the record (now with has_assessment set correctly)
+      await lessonPackService.addDownloadedLesson(record);
 
       return opened;
     },
@@ -75,6 +100,7 @@ export const useDownloadAndOpen = () => {
         setCurrentPack(data.lesson_pack);
         // Invalidate downloaded lessons so the tab refreshes
         queryClient.invalidateQueries({ queryKey: ["downloadedLessons"] });
+        toast.success("Lesson downloaded successfully");
         navigate("/viewer");
       }
     },
