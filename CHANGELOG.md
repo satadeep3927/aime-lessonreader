@@ -5,6 +5,41 @@ All notable changes to AIME Lesson Studio will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0 "Calabash"] - 2026-04-02 — From Reader to Studio
+
+> *Named after the calabash gourd — a vessel carved, shaped, and passed between hands across every region of Africa. In Cameroon, it holds palm wine at gatherings, resonates inside the mvet, and stores milk among Fulani herders. It starts as something simple. It becomes whatever you need it to be.*
+
+### Added
+
+- **Assessment Editor** — full in-app editing of assessment packs: edit question text, options, answers, marks, and question types via collapsible panels with ShadCN UI; changes are saved back into the `.aimepack` file
+- **Assessment Viewer** — read-only assessment viewer with answer toggle, markdown-rendered questions, MCQ option highlighting, homework display, and bloom level metadata
+- **Homework support** — homework tasks, student instructions, marks, and submission notes are displayed in both editor and viewer; homework is fully integrated into the assessment pack lifecycle
+- **Print to PDF** — replaced `@react-pdf/renderer` with an HTML-to-Print approach using `marked` for markdown rendering; assessment and homework print cleanly via the OS print dialog with proper formatting, page breaks, and student-facing content only
+- **Slide editing** — teachers can now edit slide content directly inside the presentation viewer via `EditView` from `@aime.ai/renderer-react`; includes image replacement from a cloud-hosted image library
+- **Image Picker with AIME Image Library** — browse, search, and paginate through AIME's curated cloud-hosted educational image library or upload local images; selected images are embedded into the `.aimepack` for offline portability
+- **Language support** — English and French translations via `LanguageContext`; all UI strings are internationalised including greetings, buttons, status labels, error messages, and the Complete Lesson sheet
+- **Assessment Pack API integration** — full service layer (`assessmentPackService`) for fetching active packs, listing versions, and syncing with the cloud
+- **Downloaded lessons panel** — cards in the Downloaded tab now show Edit Assessment and View Assessment buttons; teachers can jump directly into assessment editing from the home screen
+
+### Changed
+
+- **Complete Lesson sheet** — print buttons replace PDF download links; assessment and homework are now printed via the OS dialog instead of generating in-memory PDFs
+- **Canvas stability** — `BlockSuiteCanvas` from `@aime.ai/renderer-react` now handles save/restore more reliably; pending canvas data is tracked locally and flushed on explicit save
+
+### Removed
+
+- `@react-pdf/renderer` dependency and all associated PDF components (`AssessmentPDF`, `HomeworkPDF`, `MarkdownText`)
+
+### Fixed
+
+- Print dialog not opening in Tauri webview — switched from `window.open()` to hidden iframe approach
+- Invalid HTML nesting — `<p>` wrappers around `<Markdown>` changed to `<div>` to prevent `p > ol` violations
+- PDF text overlap — separated flex container styles from text styles in renderer components
+- `LessonPack.meta` type extended to `LessonPackOutput & Record<string, unknown>` to support dynamic fields like `assessmentPack`
+- ScrollArea overflow in both Assessment Editor and Viewer screens
+
+---
+
 ## [1.0.0 "Baobab"] - 2026-03-18 — First Major Release
 
 > *Dedicated to Africa and Cameroon — named after the Baobab, the ancient Tree of Life that has sheltered communities across the continent for thousands of years.*
