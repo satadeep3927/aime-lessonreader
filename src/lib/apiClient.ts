@@ -1,8 +1,6 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import type { RefreshTokenRequest, TokenResponse } from "@/types/api";
-
-const BASE_URL = "https://staging-api.aime52.ai";
-
+import { getEnv, ENV_URLS } from "@/lib/env";
 // ─── Token storage ────────────────────────────────────────────────────────────
 
 const TOKEN_KEY = "aime_access_token";
@@ -24,7 +22,7 @@ export const tokenStorage = {
 // ─── Axios instance ───────────────────────────────────────────────────────────
 
 export const apiClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: ENV_URLS[getEnv()],
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
   // Use the fetch adapter so requests go through window.fetch —
@@ -81,7 +79,7 @@ apiClient.interceptors.response.use(
 
     try {
       const { data } = await axios.post<TokenResponse>(
-        `${BASE_URL}/api/v1/auth/token/refresh`,
+        `${apiClient.defaults.baseURL}/api/v1/auth/token/refresh`,
         { refresh_token: refreshToken } satisfies RefreshTokenRequest,
         { headers: { "Content-Type": "application/json" }, adapter: "fetch" },
       );

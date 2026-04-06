@@ -80,6 +80,10 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+[data-env="staging"] {
+  --primary: oklch(79.5% 0.184 86.047);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

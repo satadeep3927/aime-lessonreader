@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 // keep using the real browser fetch, otherwise Tauri's permission scope will block
 // them and the webview crashes before React even mounts.
 const _nativeFetch = window.fetch.bind(window);
-const API_ORIGIN = "https://staging-api.aime52.ai";
+const API_ORIGINS = ["https://api.aime52.ai", "https://staging-api.aime52.ai"];
 window.fetch = (input, init?) => {
   const url =
     typeof input === "string"
@@ -16,7 +16,7 @@ window.fetch = (input, init?) => {
       : input instanceof URL
         ? input.href
         : (input as Request).url;
-  if (url.startsWith(API_ORIGIN)) {
+  if (API_ORIGINS.some((origin) => url.startsWith(origin))) {
     return tauriFetch(
       input as Parameters<typeof tauriFetch>[0],
       init,

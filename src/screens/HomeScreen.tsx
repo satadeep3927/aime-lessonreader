@@ -25,6 +25,8 @@ import {
   Globe,
   HardDrive,
   Hash,
+  LayoutGrid,
+  List,
   LogIn,
   LogOut,
   Search,
@@ -41,6 +43,7 @@ import { SafeImage } from "@/components/SafeImage";
 import type { DownloadedLesson } from "@/types/api";
 
 type Tab = "scheduled" | "recent" | "downloaded";
+type ScheduledView = "grid" | "grouped";
 
 const STATUS_STYLES: Record<string, string> = {
   planned: "bg-amber-100 text-amber-700",
@@ -176,6 +179,7 @@ export const HomeScreen = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("recent");
+  const [scheduledView, setScheduledView] = useState<ScheduledView>("grid");
 
   const hour = new Date().getHours();
   const greeting =
@@ -220,6 +224,21 @@ export const HomeScreen = () => {
 
   const hasPrevPage = page > 1;
   const hasNextPage = (lessonIntents?.length ?? 0) === PAGE_SIZE;
+
+  // Group intents by class name for grouped view
+  const groupedIntents = filteredIntents
+    ? Object.entries(
+        filteredIntents.reduce<Record<string, typeof filteredIntents>>(
+          (acc, intent) => {
+            const key = intent.class_name ?? "Unassigned";
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(intent);
+            return acc;
+          },
+          {},
+        ),
+      ).sort(([a], [b]) => a.localeCompare(b))
+    : [];
 
   const handleClassChange = (val: string) => {
     setClassId(val === "" ? "" : Number(val));
@@ -489,6 +508,32 @@ export const HomeScreen = () => {
                   className="text-sm pl-8 pr-3 py-1.5 rounded-lg border border-zinc-200 bg-white text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-primary w-40"
                 />
               </div>
+
+              {/* View toggle */}
+              <div className="flex items-center border border-zinc-200 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setScheduledView("grid")}
+                  className={`p-1.5 transition-colors ${
+                    scheduledView === "grid"
+                      ? "bg-primary text-white"
+                      : "bg-white text-zinc-500 hover:text-zinc-800"
+                  }`}
+                  title="Grid view"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setScheduledView("grouped")}
+                  className={`p-1.5 transition-colors ${
+                    scheduledView === "grouped"
+                      ? "bg-primary text-white"
+                      : "bg-white text-zinc-500 hover:text-zinc-800"
+                  }`}
+                  title="Group by class"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 
@@ -529,11 +574,38 @@ export const HomeScreen = () => {
               <div className="text-zinc-500 text-sm">{t.loading}</div>
             ) : filteredIntents && filteredIntents.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                  {filteredIntents.map((intent) => (
-                    <LessonIntentCard key={intent.id} intent={intent} />
-                  ))}
-                </div>
+                {scheduledView === "grid" ? (
+                  <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                    {filteredIntents.map((intent) => (
+                      <LessonIntentCard key={intent.id} intent={intent} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {groupedIntents.map(([className, intents]) => (
+                      <section key={className}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Users className="w-4 h-4 text-primary" />
+                          <h2 className="text-sm font-semibold text-zinc-800">
+                            Scheduled Lessons for{" "}
+                            <span className="text-primary">{className}</span>
+                          </h2>
+                          <span className="text-xs text-zinc-400 ml-1">
+                            ({intents.length})
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                          {intents.map((intent) => (
+                            <LessonIntentCard
+                              key={intent.id}
+                              intent={intent}
+                            />
+                          ))}
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                )}
 
                 {/* Pagination */}
                 {(hasPrevPage || hasNextPage) && (

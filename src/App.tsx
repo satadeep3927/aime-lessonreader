@@ -8,12 +8,16 @@ import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Toaster } from "sonner";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { initEnv } from "@/lib/env";
+import { EnvSwitcherDialog } from "@/components/EnvSwitcherDialog";
 
 function App() {
   useEffect(() => {
     // Keep splash screen visible for a minimum detailed time (e.g., 2.5 seconds)
     // to prevent flashing and ensure a smooth experience.
     const minSplashDuration = 2500;
+
+    initEnv();
 
     setTimeout(() => {
       invoke("close_splashscreen").catch((e) =>
@@ -33,6 +37,7 @@ function App() {
           <Route path="/assessment/view" element={<AssessmentViewerScreen />} />
         </Routes>
         <Toaster position="bottom-right" richColors closeButton />
+        <EnvSwitcherDialog />
       </div>
     </LanguageProvider>
   );
