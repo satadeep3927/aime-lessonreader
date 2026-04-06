@@ -34,4 +34,27 @@ export default defineConfig(async () => ({
       "@": "/src",
     },
   },
+  build: {
+    rollupOptions: {
+      plugins: [
+        // Fix CJS/ESM interop: simple-xml-to-json has no default export but
+        // @blocksuite/blocks imports it as `import c from 'simple-xml-to-json'`.
+        {
+          name: "fix-simple-xml-to-json",
+          resolveId(source: string) {
+            if (source === "simple-xml-to-json") {
+              return { id: "simple-xml-to-json", moduleSideEffects: false };
+            }
+            return null;
+          },
+          load(id: string) {
+            if (id === "simple-xml-to-json") {
+              return `import { convertXML } from 'simple-xml-to-json/lib/simpleXmlToJson.min.mjs';\nexport default { convertXML };\nexport { convertXML };`;
+            }
+            return null;
+          },
+        },
+      ],
+    },
+  },
 }));
