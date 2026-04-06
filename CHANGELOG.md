@@ -5,6 +5,27 @@ All notable changes to AIME Lesson Studio will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0 "Calabash"] - 2026-04-06 — Cloud Sync & Polish
+
+### Added
+
+- **Cloud sync for lesson changes** — after saving slide or canvas edits locally, teachers are prompted to sync changes back to the cloud via `PATCH /lesson-intents/{id}/pack`; supports "Sync to Cloud", "Always Sync", and "Skip" options with persistent preference
+- **Grouped scheduled view** — Scheduled tab can toggle between flat grid and grouped-by-class view with section headers per class
+- **Environment switcher** — hidden developer tool (`Ctrl+Alt+S`) to toggle between production and staging APIs with passphrase protection; staging mode changes the primary colour to amber/gold for visual differentiation
+
+### Changed
+
+- **API client** — base URL is now dynamic, driven by environment state; defaults to production (`api.aime52.ai`)
+- **Tauri native fetch routing** — both production and staging API origins are routed through Tauri's native HTTP client to bypass CORS
+
+### Fixed
+
+- Lesson download silently failing when S3 returns an error — `download_aimepack` now checks HTTP status before saving
+- Production API URL missing from Tauri HTTP permission scope — added `api.aime52.ai` to `http:allow-fetch` and `http:allow-fetch-send`
+- Local image paths sent to cloud API — relative `image_url` paths are now prefixed with the S3 base URL before syncing
+
+---
+
 ## [2.0.0 "Calabash"] - 2026-04-02 — From Reader to Studio
 
 > *Named after the calabash gourd — a vessel carved, shaped, and passed between hands across every region of Africa. In Cameroon, it holds palm wine at gatherings, resonates inside the mvet, and stores milk among Fulani herders. It starts as something simple. It becomes whatever you need it to be.*
