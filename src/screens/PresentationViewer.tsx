@@ -71,15 +71,29 @@ export const PresentationViewer = () => {
     isAuthenticated &&
     !!currentPack?.meta.lesson_intent_id;
 
+  const S3_IMAGE_PREFIX =
+    "https://aime-08-01-2025.s3.eu-west-2.amazonaws.com/generated/images/";
+
   const performCloudSync = useCallback(
     async (slides: AnySlide[] | null, canvasData: unknown | null) => {
       if (!currentPack?.meta.lesson_intent_id) return;
       setIsSyncing(true);
       try {
+        // Prefix local relative image_url paths with S3 base URL for cloud
+        const cloudSlides = slides?.map((slide) => ({
+          ...slide,
+          image_url:
+            slide.image_url &&
+            !slide.image_url.startsWith("http") &&
+            !slide.image_url.startsWith("asset://")
+              ? `${S3_IMAGE_PREFIX}${slide.image_url.replace(/^(images|assets)\//, "")}`
+              : slide.image_url,
+        }));
+
         await lessonIntentService.updateLessonPack(
           currentPack.meta.lesson_intent_id,
           {
-            ...(slides !== null && { slides }),
+            ...(cloudSlides !== null && cloudSlides !== undefined && { slides: cloudSlides }),
             ...(canvasData !== null && {
               canvas_data:
                 canvasData instanceof Uint8Array
