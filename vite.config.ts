@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
+import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
@@ -30,31 +30,11 @@ export default defineConfig(async () => ({
     },
   },
   resolve: {
-    alias: {
-      "@": "/src",
-    },
-  },
-  build: {
-    rollupOptions: {
-      plugins: [
-        // Fix CJS/ESM interop: simple-xml-to-json has no default export but
-        // @blocksuite/blocks imports it as `import c from 'simple-xml-to-json'`.
-        {
-          name: "fix-simple-xml-to-json",
-          resolveId(source: string) {
-            if (source === "simple-xml-to-json") {
-              return { id: "simple-xml-to-json", moduleSideEffects: false };
-            }
-            return null;
-          },
-          load(id: string) {
-            if (id === "simple-xml-to-json") {
-              return `import { convertXML } from 'simple-xml-to-json/lib/simpleXmlToJson.min.mjs';\nexport default { convertXML };\nexport { convertXML };`;
-            }
-            return null;
-          },
-        },
-      ],
-    },
+    alias: [
+      // Fix CJS/ESM interop: simple-xml-to-json has no default export but
+      // @blocksuite/blocks imports it as `import c from 'simple-xml-to-json'`.
+      { find: /^simple-xml-to-json$/, replacement: fileURLToPath(new URL("src/lib/simple-xml-to-json-shim.js", import.meta.url)) },
+      { find: "@", replacement: "/src" },
+    ],
   },
 }));
