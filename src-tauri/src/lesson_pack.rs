@@ -496,8 +496,11 @@ pub struct DownloadedLesson {
 
 /// Download .aimepack from S3 URL and save to app data dir
 pub async fn download_aimepack(url: String, intent_id: String, app: AppHandle) -> Result<String> {
-    let response = reqwest::get(&url).await?;
-    let bytes = response.bytes().await?;
+    let response = reqwest::get(&url).await.context("HTTP request failed")?;
+    if !response.status().is_success() {
+        anyhow::bail!("Download failed: HTTP {}", response.status());
+    }
+    let bytes = response.bytes().await.context("Failed to read response bytes")?;
 
     let app_dir = app.path().app_data_dir()?;
     let lessons_dir = app_dir.join("downloaded_lessons");

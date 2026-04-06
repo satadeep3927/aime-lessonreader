@@ -1,5 +1,9 @@
 import { apiClient } from "@/lib/apiClient";
-import type { LessonIntentFilters, LessonIntentRead } from "@/types/api";
+import type {
+  LessonIntentFilters,
+  LessonIntentRead,
+  LessonPackServerRead,
+} from "@/types/api";
 
 export const lessonIntentService = {
   async getLessonIntents(
@@ -48,5 +52,19 @@ export const lessonIntentService = {
     await apiClient.patch(`/api/v1/lesson-intents/${intentId}`, {
       status: "delivered",
     });
+  },
+
+  async updateLessonPack(
+    intentId: string,
+    payload: {
+      slides?: unknown[];
+      canvas_data?: Record<string, unknown>;
+    },
+  ): Promise<LessonPackServerRead> {
+    const { data } = await apiClient.patch<LessonPackServerRead>(
+      `/api/v1/lesson-intents/${intentId}/pack`,
+      payload,
+    );
+    return data;
   },
 };

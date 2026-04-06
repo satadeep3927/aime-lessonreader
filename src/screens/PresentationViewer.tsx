@@ -1,9 +1,15 @@
+import {
+  CloudSyncDialog,
+  getSyncPreference,
+  setSyncPreference,
+} from "@/components/CloudSyncDialog";
 import { CompleteLessonSheet } from "@/components/CompleteLessonSheet";
 import { ImagePickerDialog } from "@/components/ImagePickerDialog";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useLessonPack, revertImageUrls } from "@/context/LessonPackContext";
 import { useOnline } from "@/hooks/useOnline";
+import { lessonIntentService } from "@/service/lessonIntentService";
 import { lessonPackService } from "@/service/lessonPackService";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import {
@@ -36,6 +42,14 @@ export const PresentationViewer = () => {
   const [pendingCanvasData, setPendingCanvasData] = useState<unknown>(null);
   const [pendingSlides, setPendingSlides] = useState<AnySlide[] | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [savedSlidesSnapshot, setSavedSlidesSnapshot] = useState<
+    AnySlide[] | null
+  >(null);
+  const [savedCanvasSnapshot, setSavedCanvasSnapshot] = useState<
+    unknown | null
+  >(null);
   const [imagePicker, setImagePicker] = useState<{
     open: boolean;
     resolve: ((url: string | null) => void) | null;
@@ -52,10 +66,66 @@ export const PresentationViewer = () => {
     setPendingCanvasData(data);
   }, []);
 
+  const canSyncToCloud =
+    isOnline &&
+    isAuthenticated &&
+    !!currentPack?.meta.lesson_intent_id;
+
+  const performCloudSync = useCallback(
+    async (slides: AnySlide[] | null, canvasData: unknown | null) => {
+      if (!currentPack?.meta.lesson_intent_id) return;
+      setIsSyncing(true);
+      try {
+        await lessonIntentService.updateLessonPack(
+          currentPack.meta.lesson_intent_id,
+          {
+            ...(slides !== null && { slides }),
+            ...(canvasData !== null && {
+              canvas_data:
+                canvasData instanceof Uint8Array
+                  ? { bytes: Array.from(canvasData) }
+                  : { bytes: canvasData },
+            }),
+          },
+        );
+        toast.success(t.syncedToCloud);
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : t.cloudSyncFailed,
+        );
+      } finally {
+        setIsSyncing(false);
+        setSyncDialogOpen(false);
+        setSavedSlidesSnapshot(null);
+        setSavedCanvasSnapshot(null);
+      }
+    },
+    [currentPack, t],
+  );
+
+  const handleSyncChoice = useCallback(
+    (choice: "sync" | "skip" | "always") => {
+      if (choice === "skip") {
+        setSyncDialogOpen(false);
+        setSavedSlidesSnapshot(null);
+        setSavedCanvasSnapshot(null);
+        return;
+      }
+      if (choice === "always") {
+        setSyncPreference("always");
+      }
+      performCloudSync(savedSlidesSnapshot, savedCanvasSnapshot);
+    },
+    [performCloudSync, savedSlidesSnapshot, savedCanvasSnapshot],
+  );
+
   const handleSaveChanges = useCallback(async () => {
     if (!currentPack || (pendingCanvasData === null && pendingSlides === null))
       return;
     setIsSaving(true);
+    // Capture for cloud sync before clearing
+    const slidesForSync = pendingSlides;
+    const canvasForSync = pendingCanvasData;
     try {
       await lessonPackService.saveLessonPack(
         currentPack.extracted_path,
@@ -75,12 +145,31 @@ export const PresentationViewer = () => {
       setPendingCanvasData(null);
       setPendingSlides(null);
       toast.success(t.lessonSaved);
+
+      // Cloud sync flow
+      if (canSyncToCloud) {
+        const pref = getSyncPreference();
+        if (pref === "always") {
+          performCloudSync(slidesForSync, canvasForSync);
+        } else {
+          setSavedSlidesSnapshot(slidesForSync);
+          setSavedCanvasSnapshot(canvasForSync);
+          setSyncDialogOpen(true);
+        }
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t.failedToSave);
     } finally {
       setIsSaving(false);
     }
-  }, [currentPack, pendingCanvasData, pendingSlides, updatePackMeta]);
+  }, [
+    currentPack,
+    pendingCanvasData,
+    pendingSlides,
+    updatePackMeta,
+    canSyncToCloud,
+    performCloudSync,
+  ]);
   const canCompleteLesson =
     isOnline && isAuthenticated && !!currentPack?.meta.lesson_intent_id;
 
@@ -175,6 +264,12 @@ export const PresentationViewer = () => {
           imagePicker.resolve?.(assetUrl);
           setImagePicker({ open: false, resolve: null });
         }}
+      />
+      <CloudSyncDialog
+        open={syncDialogOpen}
+        onChoice={handleSyncChoice}
+        isSyncing={isSyncing}
+        labels={t}
       />
     </div>
   );

@@ -96,6 +96,15 @@ export interface Translations {
   failedToComplete: string;
   requiresOnline: string;
   requiresSignIn: string;
+  // Cloud Sync
+  syncToCloud: string;
+  syncToCloudTitle: string;
+  syncToCloudDesc: string;
+  syncing: string;
+  alwaysSync: string;
+  skipSync: string;
+  syncedToCloud: string;
+  cloudSyncFailed: string;
   // CompleteLessonSheet
   completeLessonTitle: string;
   completeLessonDesc: string;
@@ -179,6 +188,14 @@ const translations: Record<Language, Translations> = {
     failedToComplete: "Failed to complete lesson",
     requiresOnline: "Requires internet connection",
     requiresSignIn: "Sign in to use this feature",
+    syncToCloud: "Sync to Cloud",
+    syncToCloudTitle: "Sync to Cloud?",
+    syncToCloudDesc: "Your changes have been saved locally. Would you like to sync them to the cloud so they're available on all your devices?",
+    syncing: "Syncing…",
+    alwaysSync: "Always Sync",
+    skipSync: "Skip",
+    syncedToCloud: "Synced to cloud",
+    cloudSyncFailed: "Cloud sync failed",
     completeLessonTitle: "Complete Lesson",
     completeLessonDesc:
       "Answer reflection questions and mark learning objectives before completing the lesson.",
@@ -275,6 +292,14 @@ const translations: Record<Language, Translations> = {
     failedToComplete: "Échec de la finalisation de la leçon",
     requiresOnline: "Connexion internet requise",
     requiresSignIn: "Connectez-vous pour utiliser cette fonctionnalité",
+    syncToCloud: "Synchroniser",
+    syncToCloudTitle: "Synchroniser vers le cloud ?",
+    syncToCloudDesc: "Vos modifications ont été enregistrées localement. Souhaitez-vous les synchroniser vers le cloud pour y accéder sur tous vos appareils ?",
+    syncing: "Synchronisation…",
+    alwaysSync: "Toujours synchroniser",
+    skipSync: "Ignorer",
+    syncedToCloud: "Synchronisé avec le cloud",
+    cloudSyncFailed: "Échec de la synchronisation",
     completeLessonTitle: "Terminer la leçon",
     completeLessonDesc:
       "Répondez aux questions de réflexion et marquez les objectifs avant de terminer.",
